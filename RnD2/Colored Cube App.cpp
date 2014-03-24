@@ -1,43 +1,3 @@
-/*
-
-
-
-			THIS IS RUGGER AND DUNSTAN 2.0!
-			..Sorry, no grav balls in this one.
-
-			wasd to move, arrows to shoot
-			uncomment the following define to engage no-clip mode
-
-			
-*/
-
-//#define DEBUGGING //DR. BIRMINGHAM MODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //=============================================================================
 // Color Cube App.cpp by Frank Luna (C) 2008 All Rights Reserved.
 //
@@ -50,8 +10,6 @@
 
 
 #include "d3dApp.h"
-//#include "input.h"
-//#include "textDX.h"
 #include "Box.h"
 #include "GameObject.h"
 #include "cameraObject.h"
@@ -141,14 +99,11 @@ private:
  
 private:
 	Line rLine, bLine, gLine;
-	Box mBox, redBox, brick, camBox, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
+	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
 	Player player;
 	vector<Bullet*> pBullets, enBullets[gameNS::NUM_CAMS];
 	LineObject xLine, yLine, zLine;
 	Wall walls[gameNS::NUM_WALLS];
-	cameraObject enemyCam[gameNS::NUM_CAMS];
-	//Bullet enBullet[gameNS::NUM_CAMS];
-	//Gravball gravball;
 	Wall floor;
 	Money money[gameNS::NUM_MONEY];
 	vector<GameObject> ragePickups;
@@ -232,8 +187,7 @@ void ColoredCubeApp::initApp()
 	mBox.init(md3dDevice, 1.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
-	camBox.init(md3dDevice, 1.0f, BLACK);
-	bulletBox.init(md3dDevice, 0.5f, BEACH_SAND);
+	bulletBox .init(md3dDevice, 0.5f, BEACH_SAND);
 	eBulletBox.init(md3dDevice, 0.5f, RED);
 	maroonBox.init(md3dDevice, 10000, colorNS::MAROON);
 	//redBox.init(md3dDevice, 0.00001f, RED);
@@ -326,98 +280,12 @@ void ColoredCubeApp::initApp()
 	walls[40].init(&brick, 2.0f, Vector3(-30, 0, 70), 1, 1, 2, 20);
 #pragma endregion
 
-	//for(int i=0; i<gameNS::NUM_CAMS; i++)
-	//{
-	//	enBullet[i].init(&eBulletBox, 2.0f, Vector3(0,0,0), Vector3(0,0,0), bulletNS::SPEED, 1);
-	//	
-	//}
-#pragma region Camera Placement
-	enemyCam[0].init(&camBox, enBullets[0], 2.0f, Vector3(-90,0,15), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[1].init(&camBox, enBullets[1], 2.0f, Vector3(-35,0,5), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[2].init(&camBox, enBullets[2], 2.0f, Vector3(-35,0,45), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[3].init(&camBox, enBullets[3], 2.0f, Vector3(-35,0,60), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[4].init(&camBox, enBullets[4], 2.0f, Vector3(-75,0,60), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[5].init(&camBox, enBullets[5], 2.0f, Vector3(-35,0,75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[6].init(&camBox, enBullets[6], 2.0f, Vector3(-75,0,95), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[7].init(&camBox, enBullets[7], 2.0f, Vector3(-5,0,95), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[8].init(&camBox, enBullets[8], 2.0f, Vector3(-5,0,55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[9].init(&camBox, enBullets[9], 2.0f, Vector3(-25,0,75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[10].init(&camBox, enBullets[10], 2.0f, Vector3(15,0,16), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[11].init(&camBox, enBullets[11], 2.0f, Vector3(-25,0,16), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[12].init(&camBox, enBullets[12], 2.0f, Vector3(0,0,45), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[13].init(&camBox, enBullets[13], 2.0f, Vector3(10,0,75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[14].init(&camBox, enBullets[14], 2.0f, Vector3(30,0,90), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[15].init(&camBox, enBullets[15], 2.0f, Vector3(60,0,90), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[16].init(&camBox, enBullets[16], 2.0f, Vector3(90,0,90), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[17].init(&camBox, enBullets[17], 2.0f, Vector3(30,0,70), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[18].init(&camBox, enBullets[18], 2.0f, Vector3(60,0,70), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[19].init(&camBox, enBullets[19], 2.0f, Vector3(90,0,70), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[20].init(&camBox, enBullets[20], 2.0f, Vector3(30,0,50), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[21].init(&camBox, enBullets[21], 2.0f, Vector3(60,0,50), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[22].init(&camBox, enBullets[22], 2.0f, Vector3(90,0,50), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[23].init(&camBox, enBullets[23], 2.0f, Vector3(45,0,60), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[24].init(&camBox, enBullets[24], 2.0f, Vector3(30,0,30), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[25].init(&camBox, enBullets[25], 2.0f, Vector3(60,0,30), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[26].init(&camBox, enBullets[26], 2.0f, Vector3(90,0,30), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[27].init(&camBox, enBullets[27], 2.0f, Vector3(90,0,10), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[28].init(&camBox, enBullets[28], 2.0f, Vector3(30,0,5), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[29].init(&camBox, enBullets[29], 2.0f, Vector3(70,0,-20), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[30].init(&camBox, enBullets[30], 2.0f, Vector3(90,0,-20), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[31].init(&camBox, enBullets[31], 2.0f, Vector3(90,0,-90), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[32].init(&camBox, enBullets[32], 2.0f, Vector3(55,0,-65), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[33].init(&camBox, enBullets[33], 2.0f, Vector3(30,0,-92), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[34].init(&camBox, enBullets[34], 2.0f, Vector3(-8,0,-60), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[35].init(&camBox, enBullets[35], 2.0f, Vector3(10,0,-5), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[36].init(&camBox, enBullets[36], 2.0f, Vector3(10,0,-25), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[37].init(&camBox, enBullets[37], 2.0f, Vector3(10,0,-45), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[38].init(&camBox, enBullets[38], 2.0f, Vector3(10,0,-65), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[39].init(&camBox, enBullets[39], 2.0f, Vector3(20,0,-15), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[40].init(&camBox, enBullets[40], 2.0f, Vector3(20,0,-35), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[41].init(&camBox, enBullets[41], 2.0f, Vector3(20,0,-55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[42].init(&camBox, enBullets[42], 2.0f, Vector3(20,0,-75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[43].init(&camBox, enBullets[43], 2.0f, Vector3(30,0,-5), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[44].init(&camBox, enBullets[44], 2.0f, Vector3(30,0,-25), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[45].init(&camBox, enBullets[45], 2.0f, Vector3(30,0,-45), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[46].init(&camBox, enBullets[46], 2.0f, Vector3(30,0,-65), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[47].init(&camBox, enBullets[47], 2.0f, Vector3(40,0,-15), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[48].init(&camBox, enBullets[48], 2.0f, Vector3(40,0,-35), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[49].init(&camBox, enBullets[49], 2.0f, Vector3(40,0,-55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[50].init(&camBox, enBullets[50], 2.0f, Vector3(40,0,-75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[51].init(&camBox, enBullets[51], 2.0f, Vector3(-25,0,6), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[52].init(&camBox, enBullets[52], 2.0f, Vector3(-25,0,-6), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[53].init(&camBox, enBullets[53], 2.0f, Vector3(-25,0,-43), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[54].init(&camBox, enBullets[54], 2.0f, Vector3(-35,0,-6), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[55].init(&camBox, enBullets[55], 2.0f, Vector3(-35,0,-43), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[56].init(&camBox, enBullets[56], 2.0f, Vector3(-50,0,-25), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[57].init(&camBox, enBullets[57], 2.0f, Vector3(-10,0,-25), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[58].init(&camBox, enBullets[58], 2.0f, Vector3(-65,0,-45), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[59].init(&camBox, enBullets[59], 2.0f, Vector3(-75,0,-45), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[60].init(&camBox, enBullets[60], 2.0f, Vector3(-95,0,-15), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[61].init(&camBox, enBullets[61], 2.0f, Vector3(-95,0,-50), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[62].init(&camBox, enBullets[62], 2.0f, Vector3(-95,0,-95), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[63].init(&camBox, enBullets[63], 2.0f, Vector3(-33,0,-95), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[64].init(&camBox, enBullets[64], 2.0f, Vector3(-46,0,-95), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[65].init(&camBox, enBullets[65], 2.0f, Vector3(-59,0,-95), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[66].init(&camBox, enBullets[66], 2.0f, Vector3(-72,0,-95), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[67].init(&camBox, enBullets[67], 2.0f, Vector3(-20,0,-75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[68].init(&camBox, enBullets[68], 2.0f, Vector3(-33,0,-75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[69].init(&camBox, enBullets[69], 2.0f, Vector3(-46,0,-75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[70].init(&camBox, enBullets[70], 2.0f, Vector3(-59,0,-75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[71].init(&camBox, enBullets[71], 2.0f, Vector3(-72,0,-75), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[72].init(&camBox, enBullets[72], 2.0f, Vector3(-20,0,-55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[73].init(&camBox, enBullets[73], 2.0f, Vector3(-33,0,-55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[74].init(&camBox, enBullets[74], 2.0f, Vector3(-46,0,-55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[75].init(&camBox, enBullets[75], 2.0f, Vector3(-59,0,-55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[76].init(&camBox, enBullets[76], 2.0f, Vector3(-72,0,-55), Vector3(0,0,0), 0, 0, 1);
-	enemyCam[77].init(&blueBox, enBullets[77], 2.0f, Vector3(-20,0,-95), Vector3(0,0,0), 0, 0, 1); //dunstan will always be the last camera in the list
-#pragma endregion
-
+	//Initialize money placement
 	for(int i=0; i<gameNS::NUM_MONEY; i++)
-	{
 		money[i].init(&goldBox, 2.0f, Vector3(rand()%190 - 90, 0, rand()%180 - 90), Vector3(0,0,0), 0, 1, rand()%2);
-	}
+	
 
-	//Initializing text strings yay
+	//Initializing Text Strings
 	sText.addLine("WELCOME RUGGER !", 10, 10);
 	sText.addLine("WASD TO MOVE", 10, 30);
 	sText.addLine("ARROW KEYS TO SHOOT", 10, 50);
@@ -443,10 +311,7 @@ void ColoredCubeApp::onResize()
 void ColoredCubeApp::updateScene(float dt)
 {
 	if(!endScreen && !startScreen)
-	{
-	
-		if(!enemyCam[gameNS::NUM_CAMS-1].getActiveState()) endScreen = true;
-	
+	{	
 		D3DApp::updateScene(dt);
 		Vector3 oldPos = player.getPosition();
 
@@ -488,36 +353,6 @@ void ColoredCubeApp::updateScene(float dt)
 					shotTimer = 0;
 				}		
 			}
-			for(int j=0; j<gameNS::NUM_CAMS; j++)
-			{
-				for(int k=0; k<enBullets[j].size(); k++)
-				{
-					if(enBullets[j][k]->collided(&walls[i])) 
-					{
-						enBullets[j][k]->setInActive();
-						enBullets[j][k]->setVelocity(Vector3(0,0,0));
-					}
-					if(player.collided(enBullets[j][k]))
-					{
-						enBullets[j][k]->setInActive();
-						enBullets[j][k]->setVelocity(Vector3(0,0,0));
-						score--;
-						audio->stopCue(OUCH1);
-						audio->stopCue(OUCH2);
-						audio->stopCue(SAD);
-						switch(rand()%3+1){
-						case 1:
-							audio->playCue(OUCH1);
-							break;
-						case 2:
-							audio->playCue(OUCH2);
-							break;
-						case 3:
-							audio->playCue(SAD);
-						}
-					}
-				}
-			}
 		}
 
 		for(int i=0; i<gameNS::NUM_MONEY; i++)
@@ -532,61 +367,13 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	
 		floor.update(dt);
-		//gameObject2.update(dt);
-		//gameObject3.update(dt);
-		//spinner.update(dt);
 		xLine.update(dt);
-		//xLine.setPosition(player.getPosition());
 		yLine.update(dt);
-		//yLine.setPosition(player.getPosition());
 		zLine.update(dt);
-		//zLine.setPosition(player.getPosition());
-		//wall.update(dt);
-		//quad1.update(dt);
+
 
 		for(int i=0; i<gameNS::NUM_WALLS; i++)walls[i].update(dt);
-		for(int i=0; i<gameNS::NUM_CAMS; i++)
-		{
-			for (int j = 0; j < pBullets.size(); j++) {
-				if(pBullets[j]->collided(&enemyCam[i])&& enemyCam[i].getActiveState())
-				{
-					enemyCam[i].setInActive();
-					audio->playCue(HIT);
-					pBullets[j]->setInActive();
-					pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
-					pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
-					score++;
-				}
-			}
-			enemyCam[i].update(dt, &player);
-			enemyCam[i].shoot(&player);
-			//if(!enemyCam[i].getActiveState())
-			//	enemyTimer[i] = 0;
-			//for(int k=0; k<enBullets[k].size(); k++)
-			//{
-			//	enBullets[i][k]->update(dt);
-			//}
-		}
-		int numberInRange=0;
-		for(int i=0; i<gameNS::NUM_CAMS; i++){
-			if(enemyCam[i].isInRange(player.getPosition()) && enemyTimer[i] == 0 && enemyCam[i].getActiveState()){
-				audio->playCue(WOOP_WOOP);
-				enemyTimer[i]=1;
-			}
-			if(!enemyCam[i].isInRange(player.getPosition()) || !enemyCam[i].getActiveState()){
-				enemyTimer[i]=0;
-			}
-			numberInRange+=enemyTimer[i];
-		}
-		if(numberInRange==0) audio->stopCue(WOOP_WOOP);
-		//spinAmount += dt ;
-		//if (ToRadian(spinAmount*40)>2*PI)
-		//	spinAmount = 0;
-		//Build the view matrix.
-		//D3DXVECTOR3 pos(-100.0f,100.0f,50.0f);
-		//D3DXVECTOR3 pos(-50.0f, 150.0f, 0.0f);
-		//D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
-		//D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+
 	}
 	else if (startScreen)
 	{
@@ -621,16 +408,6 @@ void ColoredCubeApp::updateScene(float dt)
 				}
 			}
 		}
-		for(int i=0; i<gameNS::NUM_CAMS; i++)
-		{
-			for(int k=0; k<gameNS::NUM_MONEY; k++)
-			{
-				if(money[k].getActiveState() && money[k].collided(&enemyCam[i]))
-				{
-					money[k].setInActive();
-				}
-			}
-		}
 	}
 #pragma endregion
 }
@@ -640,8 +417,9 @@ void ColoredCubeApp::drawScene()
 	D3DApp::drawScene();
 	incrementedYMargin = 5;
 	int lineHeight = 20;
-	if(!startScreen && !endScreen)
-	{
+
+
+	/*if(!startScreen && !endScreen)*/ {
 		// Restore default states, input layout and primitive topology 
 		// because mFont->DrawText changes them.  Note that we can 
 		// restore the default states by passing null.
@@ -666,9 +444,9 @@ void ColoredCubeApp::drawScene()
 		mfxFLIPVar->SetRawValue(&foo[0], 0, sizeof(int));
 
 		//draw the lines
-		//drawLine(&xLine);
-		//drawLine(&yLine);
-		//drawLine(&zLine);
+		drawLine(&xLine);
+		drawLine(&yLine);
+		drawLine(&zLine);
 
 	
 		/*****************************************
@@ -677,27 +455,16 @@ void ColoredCubeApp::drawScene()
 		for(int i=0; i<gameNS::NUM_WALLS; i++)walls[i].draw(mfxWVPVar, mTech, &mVP);
 		for(int i=0; i<gameNS::NUM_MONEY; i++) money[i].draw(mfxWVPVar, mTech, &mVP);
 	
-		////draw the boxes
-		//test.draw(mfxWVPVar, mTech, &mVP);
+		////draw stuff
 		floor.draw(mfxWVPVar, mTech, &mVP);
 		player.draw(mfxWVPVar, mTech, &mVP);
-		//pBullet.draw(mfxWVPVar, mTech, &mVP);
-		//Player & bullet classes implemented
-		//gravball.draw(mfxWVPVar, mTech, &mVP);
-		//gameObject1.draw(mfxWVPVar, mTech, &mVP);	
 
-		/*****************************************
-		Enemy Cameras
-		*******************************************/
-		for(int i=0; i<gameNS::NUM_CAMS; i++){
-			enemyCam[i].draw(mfxWVPVar, mTech, &mVP);
-	//		enBullet[i].draw(mfxWVPVar, mTech, &mVP);
-			for(int j=0; j<enBullets[i].size(); j++)
-			{
-				enBullets[i][j]->draw(mfxWVPVar, mTech, &mVP);
-			}
-		}
 
+
+
+		/****************************************
+		Debug text initialization
+		*****************************************/
 		// We specify DT_NOCLIP, so we do not care about width/height of the rect.
 		RECT R = {5, 5, 0, 0};
 		//mFont->DrawText(0, mFrameStats.c_str(), -1, &R, DT_NOCLIP, BLACK);
@@ -712,21 +479,19 @@ void ColoredCubeApp::drawScene()
 				yMargin = incrementedYMargin;
 				incrementedYMargin += lineHeight;
 			}
-
-			
 		}
 		//RECT POS = {xMargin, yMargin, 0, 0};
 		RECT POS = {5, 5, 0, 0};
-
 		std::wostringstream outs;   
 		outs.precision(6);
 		//outs << debugText.lines[i].s.c_str();
 		outs << L"Score: " << score;
 		std::wstring sc = outs.str();
-
 		mFont->DrawText(0, sc.c_str(), -1, &POS, DT_NOCLIP, WHITE);
 	}
-	else if(startScreen)
+
+
+	/*else*/ if(startScreen && false)
 	{		
 		for (int i = 0; i < sText.getSize(); i++)
 		{
@@ -749,8 +514,8 @@ void ColoredCubeApp::drawScene()
 			mFont->DrawText(0, outs.str().c_str(), -1, &POS, DT_NOCLIP, WHITE);
 		}
 	}
-	else
-	{
+	else { // End Screen Definition
+		if (false) {
 		for (int i = 0; i < eText.getSize(); i++)
 		{
 			int xMargin = eText.lines[i].x;
@@ -781,6 +546,7 @@ void ColoredCubeApp::drawScene()
 		std::wstring sc = outs.str();
 
 		mFont->DrawText(0, sc.c_str(), -1, &POS, DT_NOCLIP, WHITE);
+		}
 	}
 	mSwapChain->Present(0, 0);
 }
