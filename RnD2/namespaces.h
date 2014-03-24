@@ -30,14 +30,7 @@ namespace colorNS
 
     enum DISPLAY_MODE{TOGGLE, FULLSCREEN, WINDOW};
 }
-namespace gameNS {
-	const int NUM_WALLS = 41;
-	const int PERIMETER = 4;
-	const int NUM_CAMS = 78;
-	const int NUM_MONEY = 200;
-	const int NUM_BULLETS = 5;
-	const int NUM_RAGE_PICKUPS = 4;
-}
+
 namespace fontNS
 {
     const char DEBUGFONT[] = "Courier New";

@@ -26,10 +26,17 @@
 #include "Audio.h"
 #include "Money.h"
 #include "namespaces.h"
+#include "pickup.h"
 #include <ctime>
 using std::time;
 
-
+namespace gameNS {
+	const int NUM_WALLS = 41;
+	const int PERIMETER = 4;
+	const int NUM_MONEY = 200;
+	const int NUM_BULLETS = 5;
+	const int NUM_PICKUPS = 4;
+}
 
 class ColoredCubeApp : public D3DApp
 {
@@ -38,11 +45,22 @@ public:
 	~ColoredCubeApp();
 
 	void initApp();
-	void onResize();
+	void initOrigin();
+	void initPickups();
+
 	void updateScene(float dt);
+	void updatePickups(float dt);
+	void updateOrigin(float dt);
+	
 	void drawScene(); 
-	Vector3 moveRuggerDirection();
 	void drawLine(LineObject*);
+	void drawOrigin();
+	void drawPickups();
+
+	void onResize();
+	Vector3 moveRuggerDirection();
+	void printText(DebugText text);
+	void printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, int value = -1);
 
 private:
 	void buildFX();
@@ -52,17 +70,16 @@ private:
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
 	Player player;
-	vector<Bullet*> pBullets, enBullets[gameNS::NUM_CAMS];
+	vector<Bullet*> pBullets;
 	LineObject xLine, yLine, zLine;
 	Wall walls[gameNS::NUM_WALLS];
 	Wall floor;
 	Money money[gameNS::NUM_MONEY];
-	vector<GameObject> ragePickups;
+	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
 
 	float spinAmount;
 	int shotTimer;
-	int enemyTimer[gameNS::NUM_CAMS];
 	ID3D10Effect* mFX;
 	ID3D10EffectTechnique* mTech;
 	ID3D10InputLayout* mVertexLayout;
@@ -83,6 +100,7 @@ private:
 	int incrementedYMargin;
 
 	int score;
+	int lineHeight;
 	bool firstpass;
 	bool startScreen, endScreen;
 	DebugText sText, eText;
@@ -121,7 +139,7 @@ void ColoredCubeApp::initApp()
 	D3DApp::initApp();
 #pragma region Base object initialization
 
-	startScreen = false;
+	startScreen = true;
 
 	mBox.init(md3dDevice, 1.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
@@ -137,43 +155,25 @@ void ColoredCubeApp::initApp()
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
 
-	xLine.init(&rLine, Vector3(0,0,0), 5);
-	xLine.setPosition(Vector3(0,0,0));
-	yLine.init(&bLine, Vector3(0,0,0), 5);
-	yLine.setPosition(Vector3(0,0,0));
-	yLine.setRotationZ(ToRadian(90));
-	zLine.init(&gLine, Vector3(0,0,0), 5);
-	zLine.setPosition(Vector3(0,0,0));
-	zLine.setRotationY(ToRadian(90));
+	initOrigin();
 
 	for (int i = 0; i < gameNS::NUM_BULLETS; i++) {
 		pBullets.push_back(new Bullet());
 		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0,0,0), Vector3(0,0,0), 0, 1);
 	}
-	for(int j=0; j<gameNS::NUM_CAMS; j++){
-		for (int i = 0; i < gameNS::NUM_BULLETS; i++) {
-			enBullets[j].push_back(new Bullet());
-			enBullets[j][i]->init(&eBulletBox, 2.0f, Vector3(0,0,0), Vector3(0,0,0), 0, 1);
-		}
-		enemyTimer[j]= 0;
-	}
 
-	for (int i = 0; i < gameNS::NUM_RAGE_PICKUPS; i++) {
-		ragePickups.push_back(GameObject());
-	}
+	for (int i = 0; i < gameNS::NUM_PICKUPS; i++)
+		pickups.push_back(Pickup());
 
-	
-	ragePickups[0].init(&tealBox, 2.0f, Vector3(-35,0,95), Vector3(0,0,0),0,1);
-	ragePickups[1].init(&tealBox, 2.0f, Vector3(6,0,-80), Vector3(0,0,0),0,1);
-	ragePickups[2].init(&tealBox, 2.0f, Vector3(-84,0,-56), Vector3(0,0,0),0,1);
-	ragePickups[3].init(&tealBox, 2.0f, Vector3(10,0,80), Vector3(0,0,0),0,1);
-	
+	initPickups();
 
 	//floor.init(&yellowGreenBox, sqrt(2.0), Vector3(-5,-0.02,-5), Vector3(0,0,0), 0, 1);
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 100, 0.01, 100);
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(-90,0,85), Vector3(0,0,0), 0, 1);
-	
+
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
+
+	
 
 //				   geom,  rad,  position,			sc,	w,  h,  d
 	walls[0].init(&brick, 2.0f, Vector3(0, 0, 100),	1, 100, 10, 1);
@@ -236,7 +236,17 @@ void ColoredCubeApp::initApp()
 	shotTimer = 0;
 	buildFX();
 	buildVertexLayouts();
-	audio->playCue(MUSIC);
+	
+
+	//UNCOMMENT THIS FOR MUSIC
+	//audio->playCue(MUSIC);
+}
+
+void ColoredCubeApp::initPickups() {
+	pickups[0].init(&tealBox, Vector3(-35,0,95));
+	pickups[1].init(&tealBox, Vector3(-6,0,-80));
+	pickups[2].init(&tealBox, Vector3(-84,0,-56));
+	pickups[3].init(&tealBox, Vector3(10,0,80));
 }
 
 void ColoredCubeApp::updateScene(float dt)
@@ -256,13 +266,7 @@ void ColoredCubeApp::updateScene(float dt)
 		player.setVelocity(moveRuggerDirection() * player.getSpeed());
 		player.update(dt);
 	
-		for (int i = 0; i < ragePickups.size(); i++) {
-			if (player.collided(&ragePickups[i])) {
-				ragePickups[i].setInActive();
-				player.charge();
-			}
-			ragePickups[i].update(dt);
-		}
+		updatePickups(dt);
 
 		for(int i=0; i<gameNS::NUM_WALLS; i++)
 		{
@@ -297,9 +301,7 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	
 		floor.update(dt);
-		xLine.update(dt);
-		yLine.update(dt);
-		zLine.update(dt);
+		updateOrigin(dt);
 
 
 		for(int i=0; i<gameNS::NUM_WALLS; i++)walls[i].update(dt);
@@ -343,42 +345,43 @@ void ColoredCubeApp::updateScene(float dt)
 #pragma endregion
 }
 
+void ColoredCubeApp::updatePickups(float dt) {
+	for (int i = 0; i < pickups.size(); i++) {
+			if (player.collided(&pickups[i])) {
+				pickups[i].setInActive();
+				player.charge();
+			}
+			pickups[i].update(dt);
+	}
+}
+
 void ColoredCubeApp::drawScene()
 {
 	D3DApp::drawScene();
 	incrementedYMargin = 5;
-	int lineHeight = 20;
+	lineHeight = 20;
 
 
 	if(!startScreen && !endScreen) {
-		// Restore default states, input layout and primitive topology 
-		// because mFont->DrawText changes them.  Note that we can 
-		// restore the default states by passing null.
+		//Restore Default States
 		md3dDevice->OMSetDepthStencilState(0, 0);
 		float blendFactors[] = {0.0f, 0.0f, 0.0f, 0.0f};
 		md3dDevice->OMSetBlendState(0, blendFactors, 0xffffffff);
 		md3dDevice->IASetInputLayout(mVertexLayout);
-
 		// set some variables for the shader
-		int foo[1];
-		foo[0] = 0;
+		int foo[1];	foo[0] = 0;
 		// set the point to the shader technique
 		D3D10_TECHNIQUE_DESC techDesc;
 		mTech->GetDesc(&techDesc);
 
-		//Set mVP to be view*projection, so we can pass that into GO::draw(..)
-		mVP = mView*mProj;
-		for (int i = 0; i < ragePickups.size(); i++)
-			ragePickups[i].draw(mfxWVPVar, mTech, &mVP);
 
+
+
+		drawPickups();
 		//setting the color flip variable in the shader
 		mfxFLIPVar->SetRawValue(&foo[0], 0, sizeof(int));
 
-		//draw the lines
-		drawLine(&xLine);
-		drawLine(&yLine);
-		drawLine(&zLine);
-
+		drawOrigin();
 	
 		/*****************************************
 		Walls!
@@ -390,96 +393,46 @@ void ColoredCubeApp::drawScene()
 		floor.draw(mfxWVPVar, mTech, &mVP);
 		player.draw(mfxWVPVar, mTech, &mVP);
 
-
-
-
-		/****************************************
-		Debug text initialization
-		*****************************************/
-		// We specify DT_NOCLIP, so we do not care about width/height of the rect.
-		RECT R = {5, 5, 0, 0};
-		//mFont->DrawText(0, mFrameStats.c_str(), -1, &R, DT_NOCLIP, BLACK);
-		for (int i = 0; i < debugText.getSize(); i++)
-		{
-			int xMargin = debugText.lines[i].x;
-			int yMargin = debugText.lines[i].y;
-
-			if (xMargin == -1)
-				xMargin = 5;
-			if (yMargin == -1) {
-				yMargin = incrementedYMargin;
-				incrementedYMargin += lineHeight;
-			}
-		}
-		//RECT POS = {xMargin, yMargin, 0, 0};
-		RECT POS = {5, 5, 0, 0};
-		std::wostringstream outs;   
-		outs.precision(6);
-		//outs << debugText.lines[i].s.c_str();
-		outs << L"Score: " << score;
-		std::wstring sc = outs.str();
-		mFont->DrawText(0, sc.c_str(), -1, &POS, DT_NOCLIP, WHITE);
+		//Print Score
+		printText("Score: ", 5, 5, 0, 0, score);
+		
 	}
-
-
 	else if(startScreen)
-	{		
-		for (int i = 0; i < sText.getSize(); i++)
-		{
-			int xMargin = sText.lines[i].x;
-			int yMargin = sText.lines[i].y;
-
-			if (xMargin == -1)
-				xMargin = 5;
-			if (yMargin == -1) {
-				yMargin = incrementedYMargin;
-				incrementedYMargin += lineHeight;
-			}
-
-			RECT POS = {xMargin, yMargin, 0, 0};
-
-			std::wostringstream outs;   
-			outs.precision(6);
-			outs << sText.lines[i].s.c_str();
-
-			mFont->DrawText(0, outs.str().c_str(), -1, &POS, DT_NOCLIP, WHITE);
-		}
-	}
-	else { // End Screen Definition
-		if (false) {
-		for (int i = 0; i < eText.getSize(); i++)
-		{
-			int xMargin = eText.lines[i].x;
-			int yMargin = eText.lines[i].y;
-
-			if (xMargin == -1)
-				xMargin = 5;
-			if (yMargin == -1) {
-				yMargin = incrementedYMargin;
-				incrementedYMargin += lineHeight;
-			}
-
-			RECT POS = {xMargin, yMargin, 0, 0};
-
-			std::wostringstream outs;   
-			outs.precision(6);
-			outs << eText.lines[i].s.c_str();
-
-			mFont->DrawText(0, outs.str().c_str(), -1, &POS, DT_NOCLIP, WHITE);
-		}
-		//RECT POS = {xMargin, yMargin, 0, 0};
-		RECT POS = {300, 350, 0, 0};
-
-		std::wostringstream outs;
-		outs.precision(6);
-		//outs << debugText.lines[i].s.c_str();
-		outs << L"Score: " << score;
-		std::wstring sc = outs.str();
-
-		mFont->DrawText(0, sc.c_str(), -1, &POS, DT_NOCLIP, WHITE);
-		}
+		printText(sText);
+	else { // End Screen 
+		printText(eText);
+		printText("Score: ", 300, 350, 0, 0, score);
 	}
 	mSwapChain->Present(0, 0);
+}
+
+void ColoredCubeApp::printText(DebugText text) {
+	for (int i = 0; i < text.getSize(); i++)
+		{
+			int xMargin = text.lines[i].x;
+			int yMargin = text.lines[i].y;
+
+			if (xMargin == -1)
+				xMargin = 5;
+			if (yMargin == -1) {
+				yMargin = incrementedYMargin;
+				incrementedYMargin += lineHeight;
+			}
+			printText(text.lines[i].s, xMargin, yMargin, 0, 0);
+		}
+}
+
+void ColoredCubeApp::printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, int value) {
+	
+	RECT POS = {rectPosX, rectPosY, rectWidth, rectHeight};
+	std::wostringstream outs;   
+	outs.precision(6);
+	if (value != -1)
+		outs << text.c_str() << score;
+	else 
+		outs << text.c_str();
+	std::wstring sc = outs.str();
+	mFont->DrawText(0, sc.c_str(), -1, &POS, DT_NOCLIP, WHITE);
 }
 
 void ColoredCubeApp::drawLine(LineObject* line) {
@@ -573,4 +526,36 @@ void ColoredCubeApp::onResize()
 
 	float aspect = (float)mClientWidth/mClientHeight;
 	D3DXMatrixPerspectiveFovLH(&mProj, 0.25f*PI, aspect, 1.0f, 1000.0f);
+}
+
+void ColoredCubeApp::initOrigin() {
+	xLine.init(&rLine, Vector3(0,0,0), 5);
+	xLine.setPosition(Vector3(0,0,0));
+	yLine.init(&bLine, Vector3(0,0,0), 5);
+	yLine.setPosition(Vector3(0,0,0));
+	yLine.setRotationZ(ToRadian(90));
+	zLine.init(&gLine, Vector3(0,0,0), 5);
+	zLine.setPosition(Vector3(0,0,0));
+	zLine.setRotationY(ToRadian(90));
+
+}
+
+void ColoredCubeApp::drawOrigin() {
+	//draw the lines
+	drawLine(&xLine);
+	drawLine(&yLine);
+	drawLine(&zLine);
+}
+
+void ColoredCubeApp::updateOrigin(float dt) {
+	xLine.update(dt);
+	yLine.update(dt);
+	zLine.update(dt);
+}
+
+void ColoredCubeApp::drawPickups() {
+	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
+	mVP = mView*mProj;
+	for (int i = 0; i < pickups.size(); i++)
+	pickups[i].draw(mfxWVPVar, mTech, &mVP);
 }
