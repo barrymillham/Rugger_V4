@@ -12,7 +12,6 @@
 #include "d3dApp.h"
 #include "Box.h"
 #include "GameObject.h"
-#include "cameraObject.h"
 #include "Line.h"
 #include "Quad.h"
 #include <d3dx9math.h>
@@ -114,7 +113,9 @@ private:
 	//my edits
 	D3DXMATRIX worldBox1, worldBox2;
 
+	//Theta represents vertical rotation (z-axis rotation)
 	float mTheta;
+	//Phi represents horizontal rotation (y-axis rotation)
 	float mPhi;
 	int incrementedYMargin;
 
@@ -127,7 +128,7 @@ private:
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 : D3DApp(hInstance), mFX(0), mTech(0), mVertexLayout(0),
-  mfxWVPVar(0), mTheta(0.0f), mPhi(PI*0.25f)
+  mfxWVPVar(0), mTheta(0.0f), mPhi(0.0f)
 {
 	srand(time(0));
 	D3DXMatrixIdentity(&mView);
@@ -305,6 +306,30 @@ void ColoredCubeApp::updateScene(float dt)
 	Vector3 oldPos = player.getPosition();
 	//firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
 
+	//if(input->getMouseRawX() < 0)
+	if(input->isKeyDown(KEY_A))
+	{
+		mPhi -= 2.0f*dt;
+	}
+	//if(input->getMouseRawX() > 0)
+	if(input->isKeyDown(KEY_D))
+	{
+		mPhi += 2.0f*dt;
+	}
+	//if(input->getMouseRawY() < 0)
+	if(input->isKeyDown(KEY_W))
+	{
+		mTheta += 2.0f*dt;
+	}
+	//if(input->getMouseRawY() > 0)
+	if(input->isKeyDown(KEY_S))
+	{
+		mTheta -= 2.0f*dt;
+	}
+	// Restrict the angle mPhi and radius mRadius.
+	if( mPhi < 0.1f )	mPhi = 0.1f;
+	if( mPhi > PI-0.1f)	mPhi = PI-0.1f;
+
 	if(playing)
 	{	
 		//General Update
@@ -347,8 +372,28 @@ void ColoredCubeApp::firstPassCleanup() {
 }
 
 void ColoredCubeApp::updateCamera() {
-	D3DXVECTOR3 pos(player.getPosition().x - 25, player.getPosition().y + 50, player.getPosition().z);
-	D3DXVECTOR3 target(player.getPosition());
+	//D3DXVECTOR3 pos(player.getPosition().x - 25, player.getPosition().y + 50, player.getPosition().z);
+	//D3DXVECTOR3 target(player.getPosition());
+
+	//pos will eventually be player.x, player.height, player.z)
+	D3DXVECTOR3 pos(0, 0, 0);
+	//target will start pointing in the +x direction and will be rotated according to the camera's net rotations
+	//Should eventually be pos.x+1, pos.y, pos.z to make the camera rotate according to its own axis
+	//D3DXVECTOR3 target(1, 0, 0);
+
+	D3DXVECTOR4 t4(1, 0, 0, 1);
+	Matrix rotZ, rotY, trans;
+	D3DXMatrixRotationZ(&rotZ, mTheta);
+	D3DXMatrixRotationY(&rotY, mPhi);
+	D3DXMatrixTranslation(&trans, pos.x, pos.y, pos.z);
+	//Rotate around the Z-axis first, then the Y-axis, then translate to the camera position
+	Matrix transform = rotZ * rotY * trans;
+	//t4 now holds the final position of the camera target point
+	D3DXVec4Transform(&t4, &t4, &transform);
+	//Assign it into a Vec3 and we should be good to go
+	D3DXVECTOR3 target(t4.x, t4.y, t4.z);
+
+	//Up remains unchanged.
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&mView, &pos, &target, &up);
 }
@@ -384,6 +429,7 @@ void ColoredCubeApp::handleUserInput() {
 	if(input->isKeyDown(VK_RIGHT)) player.shoot(RIGHT);
 	if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
 	else player.setSpeed(20);
+
 }
 
 void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
@@ -559,16 +605,16 @@ Vector3 ColoredCubeApp::moveRuggerDirection()
 {
 	Vector3 dir = Vector3(0,0,0);
 
-	if(input->isKeyDown(KEY_W))
-	{
-		dir.x = 1;
-	}
-	if(input->isKeyDown(KEY_S)) dir.x = -1;
-	if(input->isKeyDown(KEY_A)) dir.z = 1;
-	if(input->isKeyDown(KEY_D)) dir.z = -1;
+	//if(input->isKeyDown(KEY_W))
+	//{
+	//	dir.x = 1;
+	//}
+	//if(input->isKeyDown(KEY_S)) dir.x = -1;
+	//if(input->isKeyDown(KEY_A)) dir.z = 1;
+	//if(input->isKeyDown(KEY_D)) dir.z = -1;
 
-	if(dir != Vector3(0,0,0))
-			D3DXVec3Normalize(&dir, &dir);
+	//if(dir != Vector3(0,0,0))
+	//		D3DXVec3Normalize(&dir, &dir);
 
 	return dir;
 }

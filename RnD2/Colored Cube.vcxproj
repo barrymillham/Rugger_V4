@@ -89,7 +89,6 @@
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Bullet.cpp" />
-    <ClCompile Include="cameraObject.cpp" />
     <ClCompile Include="Colored Cube App.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="debugText.cpp" />
@@ -109,7 +108,6 @@
     <ClInclude Include="audio.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="Bullet.h" />
-    <ClInclude Include="cameraObject.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
