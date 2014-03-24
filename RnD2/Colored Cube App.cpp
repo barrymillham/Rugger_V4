@@ -316,19 +316,19 @@ void ColoredCubeApp::updateScene(float dt)
 	{
 		mPhi += 2.0f*dt;
 	}
-	//if(input->getMouseRawY() < 0)
-	if(input->isKeyDown(KEY_W))
+	if(input->getMouseRawY() < 0)
+	//if(input->isKeyDown(KEY_W))
 	{
 		mTheta += 2.0f*dt;
 	}
-	//if(input->getMouseRawY() > 0)
-	if(input->isKeyDown(KEY_S))
+	if(input->getMouseRawY() > 0)
+	//if(input->isKeyDown(KEY_S))
 	{
 		mTheta -= 2.0f*dt;
 	}
 	// Restrict the angle mPhi and radius mRadius.
-	if( mPhi < 0.1f )	mPhi = 0.1f;
-	if( mPhi > PI-0.1f)	mPhi = PI-0.1f;
+	if( mTheta < -(PI/2.0f) + 0.01f)	mTheta = -(PI/2.0f) + 0.01f;
+	if( mTheta > PI/2.0f - 0.01f)	mTheta = (PI/2.0f) - 0.01f;
 
 	if(playing)
 	{	
@@ -376,7 +376,7 @@ void ColoredCubeApp::updateCamera() {
 	//D3DXVECTOR3 target(player.getPosition());
 
 	//pos will eventually be player.x, player.height, player.z)
-	D3DXVECTOR3 pos(0, 0, 0);
+	D3DXVECTOR3 pos(0, 5, 0);
 	//target will start pointing in the +x direction and will be rotated according to the camera's net rotations
 	//Should eventually be pos.x+1, pos.y, pos.z to make the camera rotate according to its own axis
 	//D3DXVECTOR3 target(1, 0, 0);
