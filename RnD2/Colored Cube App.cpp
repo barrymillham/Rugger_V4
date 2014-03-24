@@ -21,7 +21,6 @@
 #include "gameError.h"
 #include "Player.h"
 #include "Bullet.h"
-#include "Gravball.h"
 #include "debugText.h"
 #include "Audio.h"
 #include "Money.h"
@@ -47,20 +46,40 @@ public:
 	void initApp();
 	void initOrigin();
 	void initPickups();
+	void initBullets();
+	void initBasicGeometry();
+	void initTextStrings();
+	void initMoneyPositions();
+	void initBasicVariables();
+	void initWallPositions();
+	void initUniqueObjects();
 
 	void updateScene(float dt);
 	void updatePickups(float dt);
 	void updateOrigin(float dt);
+	void updateWalls(float dt);
+	void updateUniqueObjects(float dt);
+	void updatePlayer(float dt);
+	void updateCamera();
 	
+	void handleUserInput();
+	void handleWallCollisions(Vector3 pos);
+	void handlePickupCollisions(float dt);
+
 	void drawScene(); 
 	void drawLine(LineObject*);
 	void drawOrigin();
 	void drawPickups();
+	void drawWalls();
+	void drawMoney();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
 	void printText(DebugText text);
 	void printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, int value = -1);
+	void setDeviceAndShaderInformation();
+	void doEndScreen();
+	void firstPassCleanup();
 
 private:
 	void buildFX();
@@ -134,13 +153,51 @@ ColoredCubeApp::~ColoredCubeApp()
   // 
 }
 
+
+
 void ColoredCubeApp::initApp()
 {
 	D3DApp::initApp();
-#pragma region Base object initialization
 
-	startScreen = true;
+	initBasicGeometry();
+	initBasicVariables(); //Like shotTimer, etc.
+	initTextStrings(); //Like start/end screen text
+	initUniqueObjects(); //Like the floor
 
+	initOrigin();
+	initBullets();
+	initPickups();
+	initWallPositions();
+	initMoneyPositions();
+
+	
+	
+		
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(-90,0,85), Vector3(0,0,0), 0, 1);
+
+	buildFX();
+	buildVertexLayouts();
+	audio->playCue(MUSIC);
+}
+
+void ColoredCubeApp::initPickups() {
+	for (int i = 0; i < gameNS::NUM_PICKUPS; i++)
+		pickups.push_back(Pickup());
+
+	pickups[0].init(&tealBox, Vector3(-35,0,95));
+	pickups[1].init(&tealBox, Vector3(-6,0,-80));
+	pickups[2].init(&tealBox, Vector3(-84,0,-56));
+	pickups[3].init(&tealBox, Vector3(10,0,80));
+}
+
+void ColoredCubeApp::initBullets() {
+	for (int i = 0; i < gameNS::NUM_BULLETS; i++) {
+		pBullets.push_back(new Bullet());
+		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0,0,0), Vector3(0,0,0), 0, 1);
+	}
+}
+
+void ColoredCubeApp::initBasicGeometry() {
 	mBox.init(md3dDevice, 1.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
@@ -154,27 +211,30 @@ void ColoredCubeApp::initApp()
 	rLine.init(md3dDevice, 10.0f, RED);
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
+}
 
-	initOrigin();
+void ColoredCubeApp::initTextStrings() {
+	sText.addLine("WELCOME RUGGER !", 10, 10);
+	sText.addLine("WASD TO MOVE", 10, 30);
+	sText.addLine("ARROW KEYS TO SHOOT", 10, 50);
+	sText.addLine("HOLD SHIFT TO SPRINT!", 10, 70);
+	sText.addLine("GO KILL DUNSTAN FOR ME!", 10, 90);
+	sText.addLine("PRESS ANY KEY TO BEGIN !", 250, 300);
+	eText.addLine("CONGRATS RUGGER I WON!", 250, 300);
+}
 
-	for (int i = 0; i < gameNS::NUM_BULLETS; i++) {
-		pBullets.push_back(new Bullet());
-		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0,0,0), Vector3(0,0,0), 0, 1);
-	}
+void ColoredCubeApp::initMoneyPositions() {
+	for(int i=0; i<gameNS::NUM_MONEY; i++)
+		money[i].init(&goldBox, 2.0f, Vector3(rand()%190 - 90, 0, rand()%180 - 90), Vector3(0,0,0), 0, 1, rand()%2);
+}
 
-	for (int i = 0; i < gameNS::NUM_PICKUPS; i++)
-		pickups.push_back(Pickup());
+void ColoredCubeApp::initBasicVariables() {
+	startScreen = false;
+	shotTimer = 0;
+}
 
-	initPickups();
-
-	//floor.init(&yellowGreenBox, sqrt(2.0), Vector3(-5,-0.02,-5), Vector3(0,0,0), 0, 1);
-	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 100, 0.01, 100);
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(-90,0,85), Vector3(0,0,0), 0, 1);
-
-	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
-
+void ColoredCubeApp::initWallPositions() {
 	
-
 //				   geom,  rad,  position,			sc,	w,  h,  d
 	walls[0].init(&brick, 2.0f, Vector3(0, 0, 100),	1, 100, 10, 1);
 	walls[1].init(&brick, 2.0f, Vector3(0, 0, -100),1, 100, 10, 1);
@@ -217,118 +277,60 @@ void ColoredCubeApp::initApp()
 	walls[38].init(&brick, 2.0f, Vector3(-50, 0, 49), 1, 20, 2, 1);
 	walls[39].init(&brick, 2.0f, Vector3(-50, 0, 70), 1, 20, 2, 1);
 	walls[40].init(&brick, 2.0f, Vector3(-30, 0, 70), 1, 1, 2, 20);
-#pragma endregion
 
-	//Initialize money placement
-	for(int i=0; i<gameNS::NUM_MONEY; i++)
-		money[i].init(&goldBox, 2.0f, Vector3(rand()%190 - 90, 0, rand()%180 - 90), Vector3(0,0,0), 0, 1, rand()%2);
-	
-
-	//Initializing Text Strings
-	sText.addLine("WELCOME RUGGER !", 10, 10);
-	sText.addLine("WASD TO MOVE", 10, 30);
-	sText.addLine("ARROW KEYS TO SHOOT", 10, 50);
-	sText.addLine("HOLD SHIFT TO SPRINT!", 10, 70);
-	sText.addLine("GO KILL DUNSTAN FOR ME!", 10, 90);
-	sText.addLine("PRESS ANY KEY TO BEGIN !", 250, 300);
-	eText.addLine("CONGRATS RUGGER I WON!", 250, 300);
-
-	shotTimer = 0;
-	buildFX();
-	buildVertexLayouts();
-	
-
-	//UNCOMMENT THIS FOR MUSIC
-	//audio->playCue(MUSIC);
 }
 
-void ColoredCubeApp::initPickups() {
-	pickups[0].init(&tealBox, Vector3(-35,0,95));
-	pickups[1].init(&tealBox, Vector3(-6,0,-80));
-	pickups[2].init(&tealBox, Vector3(-84,0,-56));
-	pickups[3].init(&tealBox, Vector3(10,0,80));
+void ColoredCubeApp::initUniqueObjects() {
+	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 100, 0.01, 100);
+	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
 }
+
+void ColoredCubeApp::initOrigin() {
+	xLine.init(&rLine, Vector3(0,0,0), 5);
+	xLine.setPosition(Vector3(0,0,0));
+	yLine.init(&bLine, Vector3(0,0,0), 5);
+	yLine.setPosition(Vector3(0,0,0));
+	yLine.setRotationZ(ToRadian(90));
+	zLine.init(&gLine, Vector3(0,0,0), 5);
+	zLine.setPosition(Vector3(0,0,0));
+	zLine.setRotationY(ToRadian(90));
+
+}
+
+
 
 void ColoredCubeApp::updateScene(float dt)
 {
-	if(!endScreen && !startScreen)
+	bool playing = (!endScreen && !startScreen);
+	Vector3 oldPos = player.getPosition();
+	//firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
+
+	if(playing)
 	{	
+		//General Update
 		D3DApp::updateScene(dt);
-		Vector3 oldPos = player.getPosition();
-
-		if(input->isKeyDown(VK_UP)) player.shoot(UP);
-		if(input->isKeyDown(VK_DOWN)) player.shoot(DOWN);
-		if(input->isKeyDown(VK_LEFT)) player.shoot(LEFT);
-		if(input->isKeyDown(VK_RIGHT)) player.shoot(RIGHT);
-		if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
-		else player.setSpeed(20);
-		
-		player.setVelocity(moveRuggerDirection() * player.getSpeed());
-		player.update(dt);
-	
-		updatePickups(dt);
-
-		for(int i=0; i<gameNS::NUM_WALLS; i++)
-		{
-			if(player.collided(&walls[i]))
-			{
-				//DEBUGGING AND LEVEL LAYOUT, COMMENT THIS OUT
-				#ifdef DEBUGGING
-				
-				#else
-				player.setPosition(oldPos);
-				#endif
-			}
-			for (int j = 0; j < pBullets.size(); j++) {
-				if (pBullets[j]->collided(&walls[i])) {
-					pBullets[j]->setInActive();
-					pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
-					pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
-					shotTimer = 0;
-				}		
-			}
-		}
-
-		for(int i=0; i<gameNS::NUM_MONEY; i++)
-		{
-			if(player.collided(&money[i]))
-			{
-				money[i].setInActive();
-				score += money[i].getPoints();
-				audio->playCue(CASH);
-			}
-			money[i].update(dt);
-		}
-	
-		floor.update(dt);
 		updateOrigin(dt);
+		handleUserInput();
+		updatePlayer(dt);
+		updatePickups(dt);
+		updateWalls(dt);
+		updateUniqueObjects(dt); //Like floor
 
 
-		for(int i=0; i<gameNS::NUM_WALLS; i++)walls[i].update(dt);
-
+		//Handle Collisions
+		handleWallCollisions(oldPos);
+		handlePickupCollisions(dt);
 	}
-	else if (startScreen)
-	{
-		if(input->anyKeyPressed()) startScreen = false;
-	}
-	else
-	{
-		Sleep(1000);
-		if(input->anyKeyPressed())
-		{
-			endScreen = false;
-			PostQuitMessage(0);
-		}
-	}
-	D3DXVECTOR3 pos(player.getPosition().x - 25, player.getPosition().y + 50, player.getPosition().z);
-	D3DXVECTOR3 target(player.getPosition());
-	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
-	D3DXMatrixLookAtLH(&mView, &pos, &target, &up);
 
-#pragma region first-pass cleanup 
-	//I don't think we need any of this first pass stuff. If we do, we can come back and add it in again.
+	else if (startScreen) if(input->anyKeyPressed()) startScreen = false;
+	else doEndScreen();
+
+	updateCamera();
+}
+
+void ColoredCubeApp::firstPassCleanup() {
 	//For the first update pass, we want to remove any money that is colliding with cameras or walls
-	/*if(firstpass)
+	if(firstpass)
 	{
 		firstpass = false;
 		for(int i=0; i<gameNS::NUM_WALLS; i++)
@@ -341,8 +343,77 @@ void ColoredCubeApp::updateScene(float dt)
 				}
 			}
 		}
-	}*/
-#pragma endregion
+	}
+}
+
+void ColoredCubeApp::updateCamera() {
+	D3DXVECTOR3 pos(player.getPosition().x - 25, player.getPosition().y + 50, player.getPosition().z);
+	D3DXVECTOR3 target(player.getPosition());
+	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	D3DXMatrixLookAtLH(&mView, &pos, &target, &up);
+}
+
+void ColoredCubeApp::doEndScreen() {
+	Sleep(2000);
+	if(input->anyKeyPressed())
+	{
+		endScreen = false;
+		PostQuitMessage(0);
+	}
+}
+
+void ColoredCubeApp::updateUniqueObjects(float dt) {
+	floor.update(dt);
+	//big floor update must also be added here for it to show.
+}
+
+void ColoredCubeApp::updateWalls(float dt) {
+	for(int i=0; i<gameNS::NUM_WALLS; i++)
+		walls[i].update(dt);
+}
+
+void ColoredCubeApp::updatePlayer(float dt) {
+	player.setVelocity(moveRuggerDirection() * player.getSpeed());
+	player.update(dt);
+}
+
+void ColoredCubeApp::handleUserInput() {
+	if(input->isKeyDown(VK_UP)) player.shoot(UP);
+	if(input->isKeyDown(VK_DOWN)) player.shoot(DOWN);
+	if(input->isKeyDown(VK_LEFT)) player.shoot(LEFT);
+	if(input->isKeyDown(VK_RIGHT)) player.shoot(RIGHT);
+	if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
+	else player.setSpeed(20);
+}
+
+void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
+	for(int i=0; i<gameNS::NUM_WALLS; i++)
+	{
+		if(player.collided(&walls[i]))
+			player.setPosition(pos);
+
+		for (int j = 0; j < pBullets.size(); j++) {
+			if (pBullets[j]->collided(&walls[i])) {
+				pBullets[j]->setInActive();
+				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
+				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
+				shotTimer = 0;
+			}		
+		}
+	}
+}
+
+void ColoredCubeApp::handlePickupCollisions(float dt) {
+	for(int i=0; i<gameNS::NUM_MONEY; i++)
+	{
+		if(player.collided(&money[i]))
+		{
+			money[i].setInActive();
+			score += money[i].getPoints();
+			audio->playCue(CASH);
+		}
+		money[i].update(dt);
+	}
 }
 
 void ColoredCubeApp::updatePickups(float dt) {
@@ -355,47 +426,33 @@ void ColoredCubeApp::updatePickups(float dt) {
 	}
 }
 
+void ColoredCubeApp::updateOrigin(float dt) {
+	xLine.update(dt);
+	yLine.update(dt);
+	zLine.update(dt);
+}
+
+
+
 void ColoredCubeApp::drawScene()
 {
 	D3DApp::drawScene();
 	incrementedYMargin = 5;
 	lineHeight = 20;
+	bool playing = (!startScreen && !endScreen);
 
+	setDeviceAndShaderInformation();
 
-	if(!startScreen && !endScreen) {
-		//Restore Default States
-		md3dDevice->OMSetDepthStencilState(0, 0);
-		float blendFactors[] = {0.0f, 0.0f, 0.0f, 0.0f};
-		md3dDevice->OMSetBlendState(0, blendFactors, 0xffffffff);
-		md3dDevice->IASetInputLayout(mVertexLayout);
-		// set some variables for the shader
-		int foo[1];	foo[0] = 0;
-		// set the point to the shader technique
-		D3D10_TECHNIQUE_DESC techDesc;
-		mTech->GetDesc(&techDesc);
-
-
-
-
-		drawPickups();
-		//setting the color flip variable in the shader
-		mfxFLIPVar->SetRawValue(&foo[0], 0, sizeof(int));
+	if(playing) {		
 
 		drawOrigin();
-	
-		/*****************************************
-		Walls!
-		*******************************************/
-		for(int i=0; i<gameNS::NUM_WALLS; i++)walls[i].draw(mfxWVPVar, mTech, &mVP);
-		for(int i=0; i<gameNS::NUM_MONEY; i++) money[i].draw(mfxWVPVar, mTech, &mVP);
-	
-		////draw stuff
 		floor.draw(mfxWVPVar, mTech, &mVP);
+		drawWalls();
+		drawPickups();
+		drawMoney();
 		player.draw(mfxWVPVar, mTech, &mVP);
 
-		//Print Score
-		printText("Score: ", 5, 5, 0, 0, score);
-		
+		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
 	}
 	else if(startScreen)
 		printText(sText);
@@ -403,7 +460,18 @@ void ColoredCubeApp::drawScene()
 		printText(eText);
 		printText("Score: ", 300, 350, 0, 0, score);
 	}
-	mSwapChain->Present(0, 0);
+	
+	mSwapChain->Present(0, 0); //Comment this out for expert mode
+}
+
+void ColoredCubeApp::drawWalls() {
+	for(int i=0; i<gameNS::NUM_WALLS; i++)
+		walls[i].draw(mfxWVPVar, mTech, &mVP);
+}
+
+void ColoredCubeApp::drawMoney() {
+	for(int i=0; i<gameNS::NUM_MONEY; i++) 
+		money[i].draw(mfxWVPVar, mTech, &mVP);
 }
 
 void ColoredCubeApp::printText(DebugText text) {
@@ -505,6 +573,21 @@ Vector3 ColoredCubeApp::moveRuggerDirection()
 	return dir;
 }
 
+void ColoredCubeApp::setDeviceAndShaderInformation() {
+	//Restore Default States
+	md3dDevice->OMSetDepthStencilState(0, 0);
+	float blendFactors[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	md3dDevice->OMSetBlendState(0, blendFactors, 0xffffffff);
+	md3dDevice->IASetInputLayout(mVertexLayout);
+	// set some variables for the shader
+	int foo[1];	foo[0] = 0;
+	// set the point to the shader technique
+	D3D10_TECHNIQUE_DESC techDesc;
+	mTech->GetDesc(&techDesc);
+	//setting the color flip variable in the shader
+	mfxFLIPVar->SetRawValue(&foo[0], 0, sizeof(int));
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
 	// Enable run-time memory check for debug builds.
@@ -528,29 +611,11 @@ void ColoredCubeApp::onResize()
 	D3DXMatrixPerspectiveFovLH(&mProj, 0.25f*PI, aspect, 1.0f, 1000.0f);
 }
 
-void ColoredCubeApp::initOrigin() {
-	xLine.init(&rLine, Vector3(0,0,0), 5);
-	xLine.setPosition(Vector3(0,0,0));
-	yLine.init(&bLine, Vector3(0,0,0), 5);
-	yLine.setPosition(Vector3(0,0,0));
-	yLine.setRotationZ(ToRadian(90));
-	zLine.init(&gLine, Vector3(0,0,0), 5);
-	zLine.setPosition(Vector3(0,0,0));
-	zLine.setRotationY(ToRadian(90));
-
-}
-
 void ColoredCubeApp::drawOrigin() {
 	//draw the lines
 	drawLine(&xLine);
 	drawLine(&yLine);
 	drawLine(&zLine);
-}
-
-void ColoredCubeApp::updateOrigin(float dt) {
-	xLine.update(dt);
-	yLine.update(dt);
-	zLine.update(dt);
 }
 
 void ColoredCubeApp::drawPickups() {

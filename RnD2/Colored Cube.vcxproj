@@ -95,7 +95,6 @@
     <ClCompile Include="debugText.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />
-    <ClCompile Include="Gravball.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="LineObject.cpp" />
@@ -118,7 +117,6 @@
     <ClInclude Include="gameError.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
-    <ClInclude Include="Gravball.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="LineObject.h" />
