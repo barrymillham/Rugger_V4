@@ -25,60 +25,11 @@
 #include "debugText.h"
 #include "Audio.h"
 #include "Money.h"
+#include "namespaces.h"
 #include <ctime>
 using std::time;
 
-namespace colorNS
-{
-    // Some common colors
-    // ARGB numbers range from 0 through 255
-    // A = Alpha channel (transparency where 255 is opaque)
-    // R = Red, G = Green, B = Blue
-    const COLOR_ARGB ORANGE  = D3DCOLOR_ARGB(255,255,165,  0);
-    const COLOR_ARGB BROWN   = D3DCOLOR_ARGB(255,139, 69, 19);
-    const COLOR_ARGB LTGRAY  = D3DCOLOR_ARGB(255,192,192,192);
-    const COLOR_ARGB GRAY    = D3DCOLOR_ARGB(255,128,128,128);
-    const COLOR_ARGB OLIVE   = D3DCOLOR_ARGB(255,128,128,  0);
-    const COLOR_ARGB PURPLE  = D3DCOLOR_ARGB(255,128,  0,128);
-    const COLOR_ARGB MAROON  = D3DCOLOR_ARGB(255,128,  0,  0);
-    const COLOR_ARGB TEAL    = D3DCOLOR_ARGB(255,  0,128,128);
-    const COLOR_ARGB GREEN   = D3DCOLOR_ARGB(255,  0,128,  0);
-    const COLOR_ARGB NAVY    = D3DCOLOR_ARGB(255,  0,  0,128);
-    const COLOR_ARGB WHITE   = D3DCOLOR_ARGB(255,255,255,255);
-    const COLOR_ARGB YELLOW  = D3DCOLOR_ARGB(255,255,255,  0);
-    const COLOR_ARGB MAGENTA = D3DCOLOR_ARGB(255,255,  0,255);
-    const COLOR_ARGB RED     = D3DCOLOR_ARGB(255,255,  0,  0);
-    const COLOR_ARGB CYAN    = D3DCOLOR_ARGB(255,  0,255,255);
-    const COLOR_ARGB LIME    = D3DCOLOR_ARGB(255,  0,255,  0);
-    const COLOR_ARGB BLUE    = D3DCOLOR_ARGB(255,  0,  0,255);
-    const COLOR_ARGB BLACK   = D3DCOLOR_ARGB(255,  0,  0,  0);
-    const COLOR_ARGB FILTER  = D3DCOLOR_ARGB(  0,  0,  0,  0);  // use to specify drawing with colorFilter
-    const COLOR_ARGB ALPHA25 = D3DCOLOR_ARGB( 64,255,255,255);  // AND with color to get 25% alpha
-    const COLOR_ARGB ALPHA50 = D3DCOLOR_ARGB(128,255,255,255);  // AND with color to get 50% alpha
-    const COLOR_ARGB BACK_COLOR = NAVY;                         // background color of game
-    const COLOR_ARGB TRANSCOLOR = MAGENTA;                      // transparent color
 
-    enum DISPLAY_MODE{TOGGLE, FULLSCREEN, WINDOW};
-}
-
-namespace gameNS {
-	const int NUM_WALLS = 41;
-	const int PERIMETER = 4;
-	const int NUM_CAMS = 78;
-	const int NUM_MONEY = 200;
-	const int NUM_BULLETS = 5;
-	const int NUM_RAGE_PICKUPS = 4;
-}
-
-namespace fontNS
-{
-    const char DEBUGFONT[] = "Courier New";
-	const char NORMALFONT[] = "Arial Bold";
-    const int FONT_HEIGHT = 14;         //height in pixels
-	const int FONT_BIG_SIZE = 255;
-	const COLOR_ARGB FONT_COLOR = colorNS::WHITE;
-	
-}
 
 class ColoredCubeApp : public D3DApp
 {
@@ -90,7 +41,7 @@ public:
 	void onResize();
 	void updateScene(float dt);
 	void drawScene(); 
-	Vector3 moveCube();
+	Vector3 moveRuggerDirection();
 	void drawLine(LineObject*);
 
 private:
@@ -136,21 +87,6 @@ private:
 	bool startScreen, endScreen;
 	DebugText sText, eText;
 };
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
-{
-	// Enable run-time memory check for debug builds.
-#if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-#endif
-
-
-	ColoredCubeApp theApp(hInstance);
-	
-	theApp.initApp();
-
-	return theApp.run();
-}
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 : D3DApp(hInstance), mFX(0), mTech(0), mVertexLayout(0),
@@ -303,14 +239,6 @@ void ColoredCubeApp::initApp()
 	audio->playCue(MUSIC);
 }
 
-void ColoredCubeApp::onResize()
-{
-	D3DApp::onResize();
-
-	float aspect = (float)mClientWidth/mClientHeight;
-	D3DXMatrixPerspectiveFovLH(&mProj, 0.25f*PI, aspect, 1.0f, 1000.0f);
-}
-
 void ColoredCubeApp::updateScene(float dt)
 {
 	if(!endScreen && !startScreen)
@@ -325,7 +253,7 @@ void ColoredCubeApp::updateScene(float dt)
 		if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
 		else player.setSpeed(20);
 		
-		player.setVelocity(moveCube() * player.getSpeed());
+		player.setVelocity(moveRuggerDirection() * player.getSpeed());
 		player.update(dt);
 	
 		for (int i = 0; i < ragePickups.size(); i++) {
@@ -606,7 +534,7 @@ void ColoredCubeApp::buildVertexLayouts()
 		PassDesc.IAInputSignatureSize, &mVertexLayout));
 }
 
-Vector3 ColoredCubeApp::moveCube()
+Vector3 ColoredCubeApp::moveRuggerDirection()
 {
 	Vector3 dir = Vector3(0,0,0);
 
@@ -622,4 +550,27 @@ Vector3 ColoredCubeApp::moveCube()
 			D3DXVec3Normalize(&dir, &dir);
 
 	return dir;
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
+{
+	// Enable run-time memory check for debug builds.
+#if defined(DEBUG) | defined(_DEBUG)
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
+
+
+	ColoredCubeApp theApp(hInstance);
+	
+	theApp.initApp();
+
+	return theApp.run();
+}
+
+void ColoredCubeApp::onResize()
+{
+	D3DApp::onResize();
+
+	float aspect = (float)mClientWidth/mClientHeight;
+	D3DXMatrixPerspectiveFovLH(&mProj, 0.25f*PI, aspect, 1.0f, 1000.0f);
 }

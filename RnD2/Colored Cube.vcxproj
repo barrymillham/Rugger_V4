@@ -122,6 +122,7 @@
     <ClInclude Include="Line.h" />
     <ClInclude Include="LineObject.h" />
     <ClInclude Include="Money.h" />
+    <ClInclude Include="namespaces.h" />
     <ClInclude Include="Origin.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quad.h" />
