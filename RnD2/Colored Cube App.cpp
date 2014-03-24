@@ -184,6 +184,9 @@ void ColoredCubeApp::initApp()
 {
 	D3DApp::initApp();
 #pragma region Base object initialization
+
+	startScreen = false;
+
 	mBox.init(md3dDevice, 1.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
@@ -319,10 +322,9 @@ void ColoredCubeApp::updateScene(float dt)
 		if(input->isKeyDown(VK_DOWN)) player.shoot(DOWN);
 		if(input->isKeyDown(VK_LEFT)) player.shoot(LEFT);
 		if(input->isKeyDown(VK_RIGHT)) player.shoot(RIGHT);
-		if(input->isKeyDown(VK_SHIFT)) {
-			player.setSpeed(40);
-		}
+		if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
 		else player.setSpeed(20);
+		
 		player.setVelocity(moveCube() * player.getSpeed());
 		player.update(dt);
 	
@@ -339,11 +341,11 @@ void ColoredCubeApp::updateScene(float dt)
 			if(player.collided(&walls[i]))
 			{
 				//DEBUGGING AND LEVEL LAYOUT, COMMENT THIS OUT
-#ifdef DEBUGGING
+				#ifdef DEBUGGING
 				
-#else
+				#else
 				player.setPosition(oldPos);
-#endif
+				#endif
 			}
 			for (int j = 0; j < pBullets.size(); j++) {
 				if (pBullets[j]->collided(&walls[i])) {
@@ -393,9 +395,10 @@ void ColoredCubeApp::updateScene(float dt)
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&mView, &pos, &target, &up);
 
-#pragma region first-pass cleanup
+#pragma region first-pass cleanup 
+	//I don't think we need any of this first pass stuff. If we do, we can come back and add it in again.
 	//For the first update pass, we want to remove any money that is colliding with cameras or walls
-	if(firstpass)
+	/*if(firstpass)
 	{
 		firstpass = false;
 		for(int i=0; i<gameNS::NUM_WALLS; i++)
@@ -408,7 +411,7 @@ void ColoredCubeApp::updateScene(float dt)
 				}
 			}
 		}
-	}
+	}*/
 #pragma endregion
 }
 
@@ -419,7 +422,7 @@ void ColoredCubeApp::drawScene()
 	int lineHeight = 20;
 
 
-	/*if(!startScreen && !endScreen)*/ {
+	if(!startScreen && !endScreen) {
 		// Restore default states, input layout and primitive topology 
 		// because mFont->DrawText changes them.  Note that we can 
 		// restore the default states by passing null.
@@ -491,7 +494,7 @@ void ColoredCubeApp::drawScene()
 	}
 
 
-	/*else*/ if(startScreen && false)
+	else if(startScreen)
 	{		
 		for (int i = 0; i < sText.getSize(); i++)
 		{
