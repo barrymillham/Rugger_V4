@@ -133,6 +133,8 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="color.fx" />
+    <None Include="lighthelper.fx" />
+    <None Include="lighting.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

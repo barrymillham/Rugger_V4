@@ -17,20 +17,20 @@ GameObject::~GameObject()
 	box = NULL;
 }
 
-void GameObject::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
+void GameObject::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
 {
 	if (!active)
 		return;
 	Matrix mWVP = world* (*mVP);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
-    D3D10_TECHNIQUE_DESC techDesc;
-    mTech->GetDesc( &techDesc );
-    for(UINT p = 0; p < techDesc.Passes; ++p)
-    {
-        mTech->GetPassByIndex( p )->Apply(0);
-        box->draw();
-    }
-		/*box->draw();*/
+	mfxWorldVar->SetMatrix((float*)&world);
+	D3D10_TECHNIQUE_DESC techDesc;
+	mTech->GetDesc( &techDesc );
+	for(UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		mTech->GetPassByIndex( p )->Apply(0);
+		box->draw();
+	}
 }
 
 void GameObject::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s)

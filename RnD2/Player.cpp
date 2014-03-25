@@ -33,12 +33,13 @@ void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vect
 
 }
 
-void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
+void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
 {
 	if (!active)
 		return;
 	Matrix mWVP = world* (*mVP);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
+	mfxWorldVar->SetMatrix((float*)&world);
     D3D10_TECHNIQUE_DESC techDesc;
     mTech->GetDesc( &techDesc );
     for(UINT p = 0; p < techDesc.Passes; ++p)

@@ -182,41 +182,43 @@ void ColoredCubeApp::initApp()
 	initWallPositions();
 
 #pragma region light testing
-	//mLightType = 0;
- //
-	//// Parallel light.
-	//mLights[0].dir      = D3DXVECTOR3(0.57735f, -0.57735f, 0.57735f);
-	////mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	mClearColor = D3DXCOLOR(0.9f, 0.9f, 0.9f, 1.0f);
+	mLightType = 0;
+ 
+	// Parallel light.
+	mLights[0].dir      = D3DXVECTOR3(0.57735f, -0.57735f, 0.57735f);
+	mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	//mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	////mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	//mLights[0].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	////mLights[0].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[0].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	//mLights[0].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
- //
-	//// Pointlight--position is changed every frame to animate.
-	////mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
-	//mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	////mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	////mLights[1].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//mLights[1].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	//mLights[1].att.x    = 0.0f;
-	//mLights[1].att.y    = 0.1f;
-	//mLights[1].att.z    = 0.0f;
-	//mLights[1].range    = 50.0f;
+	mLights[0].pos = D3DXVECTOR3(0, 50, 0);
+ 
+	// Pointlight--position is changed every frame to animate.
+	//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+	mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	//mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	//mLights[1].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[1].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[1].att.x    = 0.0f;
+	mLights[1].att.y    = 0.1f;
+	mLights[1].att.z    = 0.0f;
+	mLights[1].range    = 50.0f;
 
-	//// Spotlight--position and direction changed every frame to animate.
-	////mLights[2].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+	// Spotlight--position and direction changed every frame to animate.
+	mLights[2].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
 	//mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	////mLights[2].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[2].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	//mLights[2].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	////mLights[2].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[2].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	//mLights[2].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	//mLights[2].att.x    = 1.0f;
-	//mLights[2].att.y    = 0.0f;
-	//mLights[2].att.z    = 0.0f;
-	//mLights[2].spotPow  = 64.0f;
-	//mLights[2].range    = 10000.0f;
+	mLights[2].att.x    = 1.0f;
+	mLights[2].att.y    = 0.0f;
+	mLights[2].att.z    = 0.0f;
+	mLights[2].spotPow  = 64.0f;
+	mLights[2].range    = 10000.0f;
 #pragma endregion
 		
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(-90,0,85), Vector3(0,0,0), 0, 1);
@@ -346,14 +348,6 @@ void ColoredCubeApp::updateScene(float dt)
 	Vector3 oldPos = player.getPosition();
 	//firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
 
-#pragma region lights
-	// The spotlight takes on the camera position and is aimed in the
-	// same direction the camera is looking.  In this way, it looks
-	// like we are holding a flashlight.
-	mLights[2].pos = mEyePos;
-	D3DXVec3Normalize(&mLights[2].dir, &(target-mEyePos));
-#pragma endregion
-
 	//if(input->getMouseRawX() < 0)
 	if(input->isKeyDown(KEY_A))
 	{
@@ -419,6 +413,24 @@ void ColoredCubeApp::updateScene(float dt)
 
 	else if (startScreen) if(input->anyKeyPressed()) startScreen = false;
 	else doEndScreen();
+	// The spotlight takes on the camera position and is aimed in the
+	// same direction the camera is looking.  In this way, it looks
+	// like we are holding a flashlight.
+	mLights[2].pos = D3DXVECTOR3(0, 10, 0);
+	D3DXVec3Normalize(&mLights[2].dir, &D3DXVECTOR3(0, -1, 0));
+
+	// The point light circles the scene as a function of time, 
+	// staying 7 units above the land's or water's surface.
+	mLights[1].pos.x = 50.0f*cosf( mTimer.getGameTime() );
+	mLights[1].pos.z = 50.0f*sinf( mTimer.getGameTime() );
+	mLights[1].pos.y = 7.0f;
+
+
+	// The spotlight takes on the camera position and is aimed in the
+	// same direction the camera is looking.  In this way, it looks
+	// like we are holding a flashlight.
+	mLights[2].pos = mEyePos;
+	D3DXVec3Normalize(&mLights[2].dir, &(target-mEyePos));
 
 	updateCamera();
 }
@@ -556,10 +568,10 @@ void ColoredCubeApp::drawScene()
 	if(playing) {		
 
 		//drawOrigin();
-		floor.draw(mfxWVPVar, mTech, &mVP);
+		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
 		drawPickups();
-		player.draw(mfxWVPVar, mTech, &mVP);
+		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
 	}
@@ -570,17 +582,17 @@ void ColoredCubeApp::drawScene()
 		printText("Score: ", 300, 350, 0, 0, score);
 	}
 	
-	//// We specify DT_NOCLIP, so we do not care about width/height of the rect.
-	//RECT R = {5, 5, 0, 0};
-	//md3dDevice->RSSetState(0);
-	//mFont->DrawText(0, mFrameStats.c_str(), -1, &R, DT_NOCLIP, BLACK);
+	// We specify DT_NOCLIP, so we do not care about width/height of the rect.
+	RECT R = {5, 5, 0, 0};
+	md3dDevice->RSSetState(0);
+	mFont->DrawText(0, mFrameStats.c_str(), -1, &R, DT_NOCLIP, BLACK);
 
 	mSwapChain->Present(0, 0); //Comment this out for expert mode
 }
 
 void ColoredCubeApp::drawWalls() {
 	for(int i=0; i<gameNS::NUM_WALLS; i++)
-		walls[i].draw(mfxWVPVar, mTech, &mVP);
+		walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
 
 void ColoredCubeApp::printText(DebugText text) {
@@ -621,31 +633,7 @@ void ColoredCubeApp::drawLine(LineObject* line) {
 
 void ColoredCubeApp::buildFX()
 {
-	DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
-#if defined( DEBUG ) || defined( _DEBUG )
-    shaderFlags |= D3D10_SHADER_DEBUG;
-	shaderFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
-#endif
- 
-	ID3D10Blob* compilationErrors = 0;
-	HRESULT hr = 0;
-	hr = D3DX10CreateEffectFromFile(L"color.fx", 0, 0, 
-		"fx_4_0", shaderFlags, 0, md3dDevice, 0, 0, &mFX, &compilationErrors, 0);
-	if(FAILED(hr))
-	{
-		if( compilationErrors )
-		{
-			MessageBoxA(0, (char*)compilationErrors->GetBufferPointer(), 0, 0);
-			ReleaseCOM(compilationErrors);
-		}
-		DXTrace(__FILE__, (DWORD)__LINE__, hr, L"D3DX10CreateEffectFromFile", true);
-	} 
-
-	mTech = mFX->GetTechniqueByName("ColorTech");
-	
-	mfxWVPVar = mFX->GetVariableByName("gWVP")->AsMatrix();
-	mfxFLIPVar = mFX->GetVariableByName("flip");
-//		DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+//	DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
 //#if defined( DEBUG ) || defined( _DEBUG )
 //    shaderFlags |= D3D10_SHADER_DEBUG;
 //	shaderFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
@@ -653,7 +641,7 @@ void ColoredCubeApp::buildFX()
 // 
 //	ID3D10Blob* compilationErrors = 0;
 //	HRESULT hr = 0;
-//	hr = D3DX10CreateEffectFromFile(L"lighting.fx", 0, 0, 
+//	hr = D3DX10CreateEffectFromFile(L"color.fx", 0, 0, 
 //		"fx_4_0", shaderFlags, 0, md3dDevice, 0, 0, &mFX, &compilationErrors, 0);
 //	if(FAILED(hr))
 //	{
@@ -665,43 +653,69 @@ void ColoredCubeApp::buildFX()
 //		DXTrace(__FILE__, (DWORD)__LINE__, hr, L"D3DX10CreateEffectFromFile", true);
 //	} 
 //
-//	mTech = mFX->GetTechniqueByName("LightTech");
+//	mTech = mFX->GetTechniqueByName("ColorTech");
 //	
-//	mfxWVPVar    = mFX->GetVariableByName("gWVP")->AsMatrix();
-//	mfxWorldVar  = mFX->GetVariableByName("gWorld")->AsMatrix();
-//	mfxEyePosVar = mFX->GetVariableByName("gEyePosW");
-//	mfxLightVar  = mFX->GetVariableByName("gLight");
-//	mfxLightType = mFX->GetVariableByName("gLightType")->AsScalar();
+//	mfxWVPVar = mFX->GetVariableByName("gWVP")->AsMatrix();
+//	mfxFLIPVar = mFX->GetVariableByName("flip");
+
+		DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+    shaderFlags |= D3D10_SHADER_DEBUG;
+	shaderFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
+#endif
+ 
+	ID3D10Blob* compilationErrors = 0;
+	HRESULT hr = 0;
+	hr = D3DX10CreateEffectFromFile(L"lighting.fx", 0, 0, 
+		"fx_4_0", shaderFlags, 0, md3dDevice, 0, 0, &mFX, &compilationErrors, 0);
+	if(FAILED(hr))
+	{
+		if( compilationErrors )
+		{
+			MessageBoxA(0, (char*)compilationErrors->GetBufferPointer(), 0, 0);
+			ReleaseCOM(compilationErrors);
+		}
+		DXTrace(__FILE__, (DWORD)__LINE__, hr, L"D3DX10CreateEffectFromFile", true);
+	} 
+
+	mTech = mFX->GetTechniqueByName("LightTech");
+	
+	mfxWVPVar    = mFX->GetVariableByName("gWVP")->AsMatrix();
+	mfxWorldVar  = mFX->GetVariableByName("gWorld")->AsMatrix();
+	mfxEyePosVar = mFX->GetVariableByName("gEyePosW");
+	mfxLightVar  = mFX->GetVariableByName("gLight");
+	mfxLightType = mFX->GetVariableByName("gLightType")->AsScalar();
 }
 
 void ColoredCubeApp::buildVertexLayouts()
 {
-	// Create the vertex input layout.
-	D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0}
-	};
-
-	// Create the input layout
-    D3D10_PASS_DESC PassDesc;
-    mTech->GetPassByIndex(0)->GetDesc(&PassDesc);
-    HR(md3dDevice->CreateInputLayout(vertexDesc, 2, PassDesc.pIAInputSignature,
-		PassDesc.IAInputSignatureSize, &mVertexLayout));
-	//	// Create the vertex input layout.
+	//// Create the vertex input layout.
 	//D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 	//{
-	//	{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D10_INPUT_PER_VERTEX_DATA, 0},
-	//	{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
-	//	{"DIFFUSE",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0},
-	//	{"SPECULAR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D10_INPUT_PER_VERTEX_DATA, 0}
+	//	{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
+	//	{"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0}
 	//};
 
 	//// Create the input layout
  //   D3D10_PASS_DESC PassDesc;
  //   mTech->GetPassByIndex(0)->GetDesc(&PassDesc);
- //   HR(md3dDevice->CreateInputLayout(vertexDesc, 4, PassDesc.pIAInputSignature,
+ //   HR(md3dDevice->CreateInputLayout(vertexDesc, 2, PassDesc.pIAInputSignature,
 	//	PassDesc.IAInputSignatureSize, &mVertexLayout));
+	
+	// Create the vertex input layout.
+	D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D10_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
+		{"DIFFUSE",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0},
+		{"SPECULAR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D10_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	// Create the input layout
+    D3D10_PASS_DESC PassDesc;
+    mTech->GetPassByIndex(0)->GetDesc(&PassDesc);
+    HR(md3dDevice->CreateInputLayout(vertexDesc, 4, PassDesc.pIAInputSignature,
+		PassDesc.IAInputSignatureSize, &mVertexLayout));
 }
 
 Vector3 ColoredCubeApp::moveRuggerDirection()
@@ -723,24 +737,39 @@ Vector3 ColoredCubeApp::moveRuggerDirection()
 }
 
 void ColoredCubeApp::setDeviceAndShaderInformation() {
-	//Restore Default States
-	md3dDevice->OMSetDepthStencilState(0, 0);
-	float blendFactors[] = {0.0f, 0.0f, 0.0f, 0.0f};
-	md3dDevice->OMSetBlendState(0, blendFactors, 0xffffffff);
-	md3dDevice->IASetInputLayout(mVertexLayout);
-	// set some variables for the shader
-	int foo[1];	foo[0] = 0;
+	////Restore Default States
+	//md3dDevice->OMSetDepthStencilState(0, 0);
+	//float blendFactors[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	//md3dDevice->OMSetBlendState(0, blendFactors, 0xffffffff);
+	//md3dDevice->IASetInputLayout(mVertexLayout);
+	////// set some variables for the shader
+	////int foo[1];	foo[0] = 0;
 
 	//// Set per frame constants.
 	//mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
 	//mfxLightVar->SetRawValue(&mLights[mLightType], 0, sizeof(Light));
 	//mfxLightType->SetInt(mLightType);
 
-	// set the point to the shader technique
-	D3D10_TECHNIQUE_DESC techDesc;
-	mTech->GetDesc(&techDesc);
-	//setting the color flip variable in the shader
-	mfxFLIPVar->SetRawValue(&foo[0], 0, sizeof(int));
+	//// set the point to the shader technique
+	//D3D10_TECHNIQUE_DESC techDesc;
+	//mTech->GetDesc(&techDesc);
+	//////setting the color flip variable in the shader
+	////mfxFLIPVar->SetRawValue(&foo[0], 0, sizeof(int));
+
+	// Restore default states, input layout and primitive topology 
+	// because mFont->DrawText changes them.  Note that we can 
+	// restore the default states by passing null.
+	md3dDevice->OMSetDepthStencilState(0, 0);
+	float blendFactors[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	md3dDevice->OMSetBlendState(0, blendFactors, 0xffffffff);
+
+    md3dDevice->IASetInputLayout(mVertexLayout);
+    md3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Set per frame constants.
+	mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
+	mfxLightVar->SetRawValue(&mLights[mLightType], 0, sizeof(Light));
+	mfxLightType->SetInt(mLightType);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)

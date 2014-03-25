@@ -22,6 +22,13 @@ Box::~Box()
 void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
 {
 	md3dDevice = device;
+ 
+	mNumVertices = 24;
+	mNumFaces    = 12; // 2 per quad
+
+	D3DXCOLOR diffuse = c;
+	D3DXCOLOR spec = c;
+	//D3DXCOLOR diffuse(0.5,0.5,1,1);
 
 	// Create vertex buffer
     Vertex vertices[] =

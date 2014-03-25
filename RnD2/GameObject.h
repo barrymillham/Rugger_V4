@@ -15,7 +15,7 @@ public:
 	~GameObject();
 
 	void init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s);
-	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
+	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void update(float dt);
 
 	void setPosition (Vector3 pos) {position = pos;}

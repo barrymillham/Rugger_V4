@@ -138,6 +138,12 @@
     <None Include="color.fx">
       <Filter>Resources</Filter>
     </None>
+    <None Include="lighthelper.fx">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="lighting.fx">
+      <Filter>Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Colored Cube.rc">
