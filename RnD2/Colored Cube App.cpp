@@ -221,7 +221,7 @@ void ColoredCubeApp::initApp()
 	mLights[2].range    = 10000.0f;
 #pragma endregion
 		
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(-90,0,85), Vector3(0,0,0), 0, 1);
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(5,5,0), Vector3(0,0,0), 0, 1);
 
 	buildFX();
 	buildVertexLayouts();
@@ -241,7 +241,7 @@ void ColoredCubeApp::initPickups() {
 void ColoredCubeApp::initBullets() {
 	for (int i = 0; i < gameNS::NUM_BULLETS; i++) {
 		pBullets.push_back(new Bullet());
-		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0,0,0), Vector3(0,0,0), 0, 1);
+		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1);
 	}
 }
 
@@ -508,10 +508,10 @@ void ColoredCubeApp::updatePlayer(float dt) {
 }
 
 void ColoredCubeApp::handleUserInput() {
-	if(input->isKeyDown(VK_UP)) player.shoot(UP);
-	if(input->isKeyDown(VK_DOWN)) player.shoot(DOWN);
-	if(input->isKeyDown(VK_LEFT)) player.shoot(LEFT);
-	if(input->isKeyDown(VK_RIGHT)) player.shoot(RIGHT);
+	//if(input->isKeyDown(VK_UP)) player.shoot(UP);
+	//if(input->isKeyDown(VK_DOWN)) player.shoot(DOWN);
+	//if(input->isKeyDown(VK_LEFT)) player.shoot(LEFT);
+	//if(input->isKeyDown(VK_RIGHT)) player.shoot(RIGHT);
 	if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
 	else player.setSpeed(20);
 
@@ -566,7 +566,7 @@ void ColoredCubeApp::drawScene()
 	setDeviceAndShaderInformation();
 
 	if(playing) {		
-
+		mVP = mView*mProj;
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
@@ -804,7 +804,7 @@ void ColoredCubeApp::drawOrigin() {
 
 void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
-	mVP = mView*mProj;
+	
 	for (int i = 0; i < pickups.size(); i++)
 	pickups[i].draw(mfxWVPVar, mTech, &mVP);
 }

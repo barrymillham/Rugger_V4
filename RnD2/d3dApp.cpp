@@ -194,7 +194,6 @@ void D3DApp::onResize()
 	//Culling?
 	D3D10_RASTERIZER_DESC rasterizerState;
 	rasterizerState.CullMode = D3D10_CULL_BACK;
-	//rasterizerState.FillMode = D3D10_FILL_WIREFRAME;
 	rasterizerState.FillMode = D3D10_FILL_SOLID;
 	rasterizerState.FrontCounterClockwise = true;
     rasterizerState.DepthBias = false;
@@ -203,7 +202,7 @@ void D3DApp::onResize()
     rasterizerState.DepthClipEnable = true;
     rasterizerState.ScissorEnable = false;
     rasterizerState.MultisampleEnable = false;
-    rasterizerState.AntialiasedLineEnable = true;		
+    rasterizerState.AntialiasedLineEnable = true;
 	
 	md3dDevice->CreateRasterizerState( &rasterizerState, &pRS);
 	md3dDevice->RSSetState(pRS);
