@@ -190,6 +190,24 @@ void D3DApp::onResize()
 	vp.MaxDepth = 1.0f;
 
 	md3dDevice->RSSetViewports(1, &vp);
+
+	//Culling?
+	D3D10_RASTERIZER_DESC rasterizerState;
+	rasterizerState.CullMode = D3D10_CULL_NONE;
+	rasterizerState.FillMode = D3D10_FILL_SOLID;
+	//rasterizerState.FillMode = D3D10_FILL_SOLID;
+	rasterizerState.FrontCounterClockwise = true;
+    rasterizerState.DepthBias = false;
+    rasterizerState.DepthBiasClamp = 0;
+    rasterizerState.SlopeScaledDepthBias = 0;
+    rasterizerState.DepthClipEnable = true;
+    rasterizerState.ScissorEnable = false;
+    rasterizerState.MultisampleEnable = false;
+    rasterizerState.AntialiasedLineEnable = true;		
+	
+	md3dDevice->CreateRasterizerState( &rasterizerState, &pRS);
+	md3dDevice->RSSetState(pRS);
+	//end culling
 }
 
 void D3DApp::updateScene(float dt)
