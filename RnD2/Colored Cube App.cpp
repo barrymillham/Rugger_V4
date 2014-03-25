@@ -27,6 +27,7 @@
 #include "pickup.h"
 #include <ctime>
 using std::time;
+#include "Light.h"
 
 namespace gameNS {
 	const int NUM_WALLS = 41;
@@ -95,6 +96,10 @@ private:
 	Money money[gameNS::NUM_MONEY];
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
+
+	//Lighting-specific declarations
+	//Light mLights[3];
+	//int mLightType; // 0 (parallel), 1 (point), 2 (spot)
 
 	float spinAmount;
 	int shotTimer;
@@ -316,13 +321,13 @@ void ColoredCubeApp::updateScene(float dt)
 	{
 		mPhi += 2.0f*dt;
 	}
-	if(input->getMouseRawY() < 0)
-	//if(input->isKeyDown(KEY_W))
+	//if(input->getMouseRawY() < 0)
+	if(input->isKeyDown(KEY_W))
 	{
 		mTheta += 2.0f*dt;
 	}
-	if(input->getMouseRawY() > 0)
-	//if(input->isKeyDown(KEY_S))
+	//if(input->getMouseRawY() > 0)
+	if(input->isKeyDown(KEY_S))
 	{
 		mTheta -= 2.0f*dt;
 	}
