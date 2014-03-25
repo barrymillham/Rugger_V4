@@ -222,7 +222,6 @@ void ColoredCubeApp::initApp()
 #pragma endregion
 		
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(5,5,0), Vector3(0,0,0), 0, 1);
-
 	buildFX();
 	buildVertexLayouts();
 	audio->playCue(MUSIC);
