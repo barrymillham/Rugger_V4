@@ -22,7 +22,6 @@
 #include "Bullet.h"
 #include "debugText.h"
 #include "Audio.h"
-#include "Money.h"
 #include "namespaces.h"
 #include "pickup.h"
 #include <ctime>
@@ -32,7 +31,6 @@ using std::time;
 namespace gameNS {
 	const int NUM_WALLS = 41;
 	const int PERIMETER = 4;
-	const int NUM_MONEY = 200;
 	const int NUM_BULLETS = 5;
 	const int NUM_PICKUPS = 4;
 }
@@ -49,7 +47,6 @@ public:
 	void initBullets();
 	void initBasicGeometry();
 	void initTextStrings();
-	void initMoneyPositions();
 	void initBasicVariables();
 	void initWallPositions();
 	void initUniqueObjects();
@@ -71,7 +68,6 @@ public:
 	void drawOrigin();
 	void drawPickups();
 	void drawWalls();
-	void drawMoney();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
@@ -93,7 +89,6 @@ private:
 	LineObject xLine, yLine, zLine;
 	Wall walls[gameNS::NUM_WALLS];
 	Wall floor;
-	Money money[gameNS::NUM_MONEY];
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
 
@@ -174,7 +169,6 @@ void ColoredCubeApp::initApp()
 	initBullets();
 	initPickups();
 	initWallPositions();
-	initMoneyPositions();
 
 	
 	
@@ -227,11 +221,6 @@ void ColoredCubeApp::initTextStrings() {
 	sText.addLine("GO KILL DUNSTAN FOR ME!", 10, 90);
 	sText.addLine("PRESS ANY KEY TO BEGIN !", 250, 300);
 	eText.addLine("CONGRATS RUGGER I WON!", 250, 300);
-}
-
-void ColoredCubeApp::initMoneyPositions() {
-	for(int i=0; i<gameNS::NUM_MONEY; i++)
-		money[i].init(&goldBox, 2.0f, Vector3(rand()%190 - 90, 0, rand()%180 - 90), Vector3(0,0,0), 0, 1, rand()%2);
 }
 
 void ColoredCubeApp::initBasicVariables() {
@@ -365,13 +354,7 @@ void ColoredCubeApp::firstPassCleanup() {
 		firstpass = false;
 		for(int i=0; i<gameNS::NUM_WALLS; i++)
 		{
-			for(int k=0; k<gameNS::NUM_MONEY; k++)
-			{
-				if(money[k].getActiveState() && money[k].collided(&walls[i]))
-				{
-					money[k].setInActive();
-				}
-			}
+			
 		}
 	}
 }
@@ -455,16 +438,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 }
 
 void ColoredCubeApp::handlePickupCollisions(float dt) {
-	for(int i=0; i<gameNS::NUM_MONEY; i++)
-	{
-		if(player.collided(&money[i]))
-		{
-			money[i].setInActive();
-			score += money[i].getPoints();
-			audio->playCue(CASH);
-		}
-		money[i].update(dt);
-	}
+	
 }
 
 void ColoredCubeApp::updatePickups(float dt) {
@@ -500,7 +474,6 @@ void ColoredCubeApp::drawScene()
 		floor.draw(mfxWVPVar, mTech, &mVP);
 		drawWalls();
 		drawPickups();
-		drawMoney();
 		player.draw(mfxWVPVar, mTech, &mVP);
 
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
@@ -518,11 +491,6 @@ void ColoredCubeApp::drawScene()
 void ColoredCubeApp::drawWalls() {
 	for(int i=0; i<gameNS::NUM_WALLS; i++)
 		walls[i].draw(mfxWVPVar, mTech, &mVP);
-}
-
-void ColoredCubeApp::drawMoney() {
-	for(int i=0; i<gameNS::NUM_MONEY; i++) 
-		money[i].draw(mfxWVPVar, mTech, &mVP);
 }
 
 void ColoredCubeApp::printText(DebugText text) {
