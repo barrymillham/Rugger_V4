@@ -19,14 +19,16 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
 {
 	md3dDevice = device;
  
-	mNumVertices = 8;
+	mNumVertices = 24;
 	mNumFaces    = 12; // 2 per quad
+
+
 
 	// Create vertex buffer
     Vertex vertices[] =
     {
 		//front - 0 1 2 3
-		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), c},
+		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-1.0f, -1.0f, -1.0f), c},
 		{D3DXVECTOR3(-1.0f, +1.0f, -1.0f), c},
 		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), c},
 		{D3DXVECTOR3(+1.0f, -1.0f, -1.0f), c},
@@ -89,7 +91,7 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
 		8, 10, 11,
 		//right
 		12, 13, 14,
-		13, 14, 15,
+		12, 14, 15,
 		//top
 		16, 17, 18,
 		16, 18, 19,
