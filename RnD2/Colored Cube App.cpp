@@ -202,6 +202,8 @@ void ColoredCubeApp::initApp()
 	mLights[1].att.z    = 0.0f;
 	mLights[1].range    = 50.0f;
 
+	mEyePos = D3DXVECTOR3(0, 5, 0);
+
 	// Spotlight--position and direction changed every frame to animate.
 	//mLights[2].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
 	mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
@@ -375,6 +377,14 @@ void ColoredCubeApp::updateScene(float dt)
 	if( mTheta < -(PI/2.0f) + 0.01f)	mTheta = -(PI/2.0f) + 0.01f;
 	if( mTheta > PI/2.0f - 0.01f)	mTheta = (PI/2.0f) - 0.01f;
 
+	if(input->isKeyDown(VK_UP)){
+		mEyePos += target * dt * 20;
+	}
+
+	if(input->isKeyDown(VK_DOWN)){
+		mEyePos -= target * dt * 20;
+	}
+
 	if(playing)
 	{	
 		//General Update
@@ -415,7 +425,6 @@ void ColoredCubeApp::updateCamera() {
 	//D3DXVECTOR3 target(player.getPosition());
 
 	//pos will eventually be player.x, player.height, player.z)
-	mEyePos = D3DXVECTOR3(0, 5, 0);
 	//target will start pointing in the +x direction and will be rotated according to the camera's net rotations
 	//Should eventually be pos.x+1, pos.y, pos.z to make the camera rotate according to its own axis
 	//D3DXVECTOR3 target(1, 0, 0);
