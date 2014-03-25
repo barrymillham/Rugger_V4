@@ -434,6 +434,7 @@ void ColoredCubeApp::updateCamera() {
 
 	//Up remains unchanged.
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+
 	D3DXMatrixLookAtLH(&mView, &mEyePos, &target, &up);
 }
 
