@@ -521,7 +521,7 @@ void ColoredCubeApp::drawScene()
 
 	if(playing) {		
 
-		drawOrigin();
+		//drawOrigin();
 		floor.draw(mfxWVPVar, mTech, &mVP);
 		drawWalls();
 		drawPickups();

@@ -59,12 +59,12 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
 		0, 2, 3,
 
 		// back face
-		4, 5, 6,
-		4, 6, 7,
+		7, 6, 5,
+		7, 5, 4,
 
 		// left face
-		1, 5, 4,
-		1, 4, 0,
+		4, 5, 1,
+		4, 1, 0,
 
 		// right face
 		3, 2, 6,

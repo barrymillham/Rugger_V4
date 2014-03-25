@@ -18,7 +18,7 @@ public:
 	void init(ID3D10Device* device, float scale);
 	void init(ID3D10Device* device, float scale, D3DXCOLOR c);
 	void draw();
-
+	//public static const int NUM_VERTICES = 8;
 private:
 	DWORD mNumVertices;
 	DWORD mNumFaces;
@@ -26,6 +26,8 @@ private:
 	ID3D10Device* md3dDevice;
 	ID3D10Buffer* mVB;
 	ID3D10Buffer* mIB;
+
+	//Vertex vertices[NUM_VERTICES];
 
 };
 
