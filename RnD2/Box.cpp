@@ -6,8 +6,12 @@
 #include "Vertex.h"
 
 Box::Box()
-: mNumVertices(0), mNumFaces(0), md3dDevice(0), mVB(0), mIB(0)
+: md3dDevice(0), mVB(0), mIB(0)
 {
+	diffuse = D3DXCOLOR(1,1,1,1);
+	spec = D3DXCOLOR(1,1,1,1);
+	mNumVertices = 24;
+	mNumFaces    = 12; // 2 per quad
 }
  
 Box::~Box()
@@ -18,12 +22,6 @@ Box::~Box()
 void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
 {
 	md3dDevice = device;
- 
-	mNumVertices = 24;
-	mNumFaces    = 12; // 2 per quad
-
-	D3DXCOLOR diffuse(1,1,1,1);
-	D3DXCOLOR spec(1,1,1,1);
 
 	// Create vertex buffer
     Vertex vertices[] =
@@ -111,14 +109,10 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
     iinitData.pSysMem = indices;
     HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mIB));
 }
-void Box::init(ID3D10Device* device, float scale)
+void Box::init(ID3D10Device* device, float scale) //I don't think this init function is ever called.
 {
+	//I don't think this init function is ever called.
 	md3dDevice = device;
- 
-	mNumVertices = 24;
-	mNumFaces    = 12; // 2 per quad
-	D3DXCOLOR diffuse(1,1,1,1);
-	D3DXCOLOR spec(1,1,1,1);
 
     Vertex vertices[] =
     {
