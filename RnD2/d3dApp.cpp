@@ -112,7 +112,7 @@ void D3DApp::initApp()
 {
 	initMainWindow();
 	initDirect3D();
-
+	input->initialize(mhMainWnd, false);
 	D3DX10_FONT_DESC fontDesc;
 	fontDesc.Height          = 24;
     fontDesc.Width           = 0;

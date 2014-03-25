@@ -110,7 +110,7 @@ private:
 	ID3D10EffectVariable* mfxEyePosVar;
 	ID3D10EffectVariable* mfxLightVar;
 	ID3D10EffectScalarVariable* mfxLightType;
-
+	bool night;
 	//my addition
 	ID3D10EffectVariable* mfxFLIPVar;
 
@@ -132,6 +132,7 @@ private:
 	int lineHeight;
 	bool firstpass;
 	bool startScreen, endScreen;
+	float dt;
 	DebugText sText, eText;
 };
 
@@ -149,6 +150,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	firstpass = true;
 	startScreen = true;
 	endScreen = false;
+	night = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -343,51 +345,45 @@ void ColoredCubeApp::initOrigin() {
 
 void ColoredCubeApp::updateScene(float dt)
 {
+	ColoredCubeApp::dt = dt;
 	bool playing = (!endScreen && !startScreen);
 	Vector3 oldPos = player.getPosition();
+	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 	//firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
 
-	//if(input->getMouseRawX() < 0)
-	if(input->isKeyDown(KEY_A))
-	{
-		mPhi -= 2.0f*dt;
-	}
-	//if(input->getMouseRawX() > 0)
-	if(input->isKeyDown(KEY_D))
-	{
-		mPhi += 2.0f*dt;
-	}
-	//if(input->getMouseRawY() < 0)
-	if(input->isKeyDown(KEY_W))
-	{
-		mTheta += 2.0f*dt;
-	}
-	//if(input->getMouseRawY() > 0)
-	if(input->isKeyDown(KEY_S))
-	{
-		mTheta -= 2.0f*dt;
-	}
-	// Restrict the angle mPhi and radius mRadius.
-	if( mTheta < -(PI/2.0f) + 0.01f)	mTheta = -(PI/2.0f) + 0.01f;
-	if( mTheta > PI/2.0f - 0.01f)	mTheta = (PI/2.0f) - 0.01f;
+	//if(!night)
+	//{
+	//	mLights[0].diffuse.r += 0.1*dt;
+	//	mLights[0].diffuse.g += 0.1*dt;
+	//	mLights[0].diffuse.b += 0.1*dt;
+	//	if(mLights[0].diffuse.r >= 1 || mLights[0].diffuse.g >= 1 || mLights[0].diffuse.b >= 1) night = true;
+	//}
+	//else if (night)
+	//{
+	//	mLights[0].diffuse.r -= 0.1f * dt;
+	//	mLights[0].diffuse.g -= 0.1f * dt;
+	//	mLights[0].diffuse.b -= 0.1f * dt;
+	//	if(mLights[0].diffuse.r <= 1 || mLights[0].diffuse.g <= 1 || mLights[0].diffuse.b <= 1) night = false;
+	//}
+	
 
-	if(input->isKeyDown(VK_UP))
+	if(input->isKeyDown(KEY_W))
 	{
 		D3DXVECTOR3 nTarget;
 		D3DXVec3Normalize(&nTarget, &target);
 		mEyePos += moveAxis * dt * 20;
 	}
-	if(input->isKeyDown(VK_DOWN))
+	if(input->isKeyDown(KEY_S))
 	{
 		D3DXVECTOR3 nTarget;
 		D3DXVec3Normalize(&nTarget, &target);
 		mEyePos -= moveAxis * dt * 20;
 	}
-	if(input->isKeyDown(VK_RIGHT))
+	if(input->isKeyDown(KEY_D))
 	{
 		mEyePos -= perpAxis * dt * 20;
 	}
-	if(input->isKeyDown(VK_LEFT))
+	if(input->isKeyDown(KEY_A))
 	{
 		mEyePos += perpAxis * dt * 20;
 	}
@@ -450,7 +446,35 @@ void ColoredCubeApp::updateCamera() {
 	//D3DXVECTOR3 pos(player.getPosition().x - 25, player.getPosition().y + 50, player.getPosition().z);
 	//D3DXVECTOR3 target(player.getPosition());
 
-	
+	int dx = input->getMouseRawX();
+	int dy = input->getMouseRawY();
+	if(dx < 0)
+	//if(input->isKeyDown(KEY_A))
+	{
+		mPhi -= 8.0f*dt;
+	}
+	if(dx > 0)
+	//if(input->isKeyDown(KEY_D))
+	{
+		mPhi += 8.0f*dt;
+	}
+	if(dy < 0)
+	//if(input->isKeyDown(KEY_W))
+	{
+		mTheta += 6.0f*dt;
+	}
+	if(dy > 0)
+	//if(input->isKeyDown(KEY_S))
+	{
+		mTheta -= 6.0f*dt;
+	}
+	//Restricting the mouse movement
+	RECT restrict = {639, 399, 640, 400};
+	ClipCursor(&restrict);
+
+	// Restrict the angle mPhi and radius mRadius.
+	if( mTheta < -(PI/2.0f) + 0.01f)	mTheta = -(PI/2.0f) + 0.01f;
+	if( mTheta > PI/2.0f - 0.01f)	mTheta = (PI/2.0f) - 0.01f;
 	//target will start pointing in the +x direction and will be rotated according to the camera's net rotations
 	//Should eventually be pos.x+1, pos.y, pos.z to make the camera rotate according to its own axis
 	//D3DXVECTOR3 target(1, 0, 0);
