@@ -25,13 +25,40 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
 	// Create vertex buffer
     Vertex vertices[] =
     {
+		//front - 0 1 2 3
 		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), c},
 		{D3DXVECTOR3(-1.0f, +1.0f, -1.0f), c},
 		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), c},
 		{D3DXVECTOR3(+1.0f, -1.0f, -1.0f), c},
+
+		//left - 7 6 1 0
 		{D3DXVECTOR3(-1.0f, -1.0f, +1.0f), c},
 		{D3DXVECTOR3(-1.0f, +1.0f, +1.0f), c},
+		{D3DXVECTOR3(-1.0f, +1.0f, -1.0f), c},
+		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), c},
+
+		//back - 4 5 6 7
+		{D3DXVECTOR3(+1.0f, -1.0f, +1.0f), c},
 		{D3DXVECTOR3(+1.0f, +1.0f, +1.0f), c},
+		{D3DXVECTOR3(-1.0f, +1.0f, +1.0f), c},
+		{D3DXVECTOR3(-1.0f, -1.0f, +1.0f), c},
+
+		//right - 3 2 5 4 
+		{D3DXVECTOR3(+1.0f, -1.0f, -1.0f), c},
+		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), c},
+		{D3DXVECTOR3(+1.0f, +1.0f, +1.0f), c},
+		{D3DXVECTOR3(+1.0f, -1.0f, +1.0f), c},
+
+		//top - 1 6 5 2
+		{D3DXVECTOR3(-1.0f, +1.0f, -1.0f), c},
+		{D3DXVECTOR3(-1.0f, +1.0f, +1.0f), c},
+		{D3DXVECTOR3(+1.0f, +1.0f, +1.0f), c},
+		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), c},
+
+		//bottom - 7 0 3 4
+		{D3DXVECTOR3(-1.0f, -1.0f, +1.0f), c},
+		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), c},
+		{D3DXVECTOR3(+1.0f, -1.0f, -1.0f), c},
 		{D3DXVECTOR3(+1.0f, -1.0f, +1.0f), c},
     };
 
@@ -50,33 +77,25 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
     vinitData.pSysMem = vertices;
     HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mVB));
 
-
-	// Create the index buffer
-
 	DWORD indices[] = {
-		// front face
-		0, 1, 2,
+		//front
+		0, 1, 2, 
 		0, 2, 3,
-
-		// back face
-		7, 6, 5,
-		7, 5, 4,
-
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-
-		// bottom face
-		4, 0, 3, 
-		4, 3, 7
+		//left
+		4, 5, 6,
+		4, 6, 7,
+		//back
+		8, 9, 10,
+		8, 10, 11,
+		//right
+		12, 13, 14,
+		13, 14, 15,
+		//top
+		16, 17, 18,
+		16, 18, 19,
+		//bottom
+		20, 21, 22,
+		20, 22, 23
 	};
 
 	D3D10_BUFFER_DESC ibd;
@@ -96,17 +115,43 @@ void Box::init(ID3D10Device* device, float scale)
 	mNumVertices = 8;
 	mNumFaces    = 12; // 2 per quad
 
-	// Create vertex buffer
     Vertex vertices[] =
     {
+		//front - 0 1 2 3
 		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), WHITE},
+		{D3DXVECTOR3(-1.0f, +1.0f, -1.0f), WHITE},
+		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), WHITE},
+		{D3DXVECTOR3(+1.0f, -1.0f, -1.0f), WHITE},
+
+		//left - 7 6 1 0
+		{D3DXVECTOR3(-1.0f, -1.0f, +1.0f), BLACK},
+		{D3DXVECTOR3(-1.0f, +1.0f, +1.0f), BLACK},
 		{D3DXVECTOR3(-1.0f, +1.0f, -1.0f), BLACK},
-		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), RED},
+		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), BLACK},
+
+		//back - 4 5 6 7
+		{D3DXVECTOR3(+1.0f, -1.0f, +1.0f), RED},
+		{D3DXVECTOR3(+1.0f, +1.0f, +1.0f), RED},
+		{D3DXVECTOR3(-1.0f, +1.0f, +1.0f), RED},
+		{D3DXVECTOR3(-1.0f, -1.0f, +1.0f), RED},
+
+		//right - 3 2 5 4 
 		{D3DXVECTOR3(+1.0f, -1.0f, -1.0f), GREEN},
-		{D3DXVECTOR3(-1.0f, -1.0f, +1.0f), BLUE},
-		{D3DXVECTOR3(-1.0f, +1.0f, +1.0f), YELLOW},
-		{D3DXVECTOR3(+1.0f, +1.0f, +1.0f), CYAN},
-		{D3DXVECTOR3(+1.0f, -1.0f, +1.0f), MAGENTA},
+		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), GREEN},
+		{D3DXVECTOR3(+1.0f, +1.0f, +1.0f), GREEN},
+		{D3DXVECTOR3(+1.0f, -1.0f, +1.0f), GREEN},
+
+		//top - 1 6 5 2
+		{D3DXVECTOR3(-1.0f, +1.0f, -1.0f), BLUE},
+		{D3DXVECTOR3(-1.0f, +1.0f, +1.0f), BLUE},
+		{D3DXVECTOR3(+1.0f, +1.0f, +1.0f), BLUE},
+		{D3DXVECTOR3(+1.0f, +1.0f, -1.0f), BLUE},
+
+		//bottom - 7 0 3 4
+		{D3DXVECTOR3(-1.0f, -1.0f, +1.0f), YELLOW},
+		{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), YELLOW},
+		{D3DXVECTOR3(+1.0f, -1.0f, -1.0f), YELLOW},
+		{D3DXVECTOR3(+1.0f, -1.0f, +1.0f), YELLOW}
     };
 
 	// Scale the box.
@@ -128,29 +173,24 @@ void Box::init(ID3D10Device* device, float scale)
 	// Create the index buffer
 
 	DWORD indices[] = {
-		// front face
-		0, 1, 2,
+		//front
+		0, 1, 2, 
 		0, 2, 3,
-
-		// back face
-		4, 6, 5,
-		4, 7, 6,
-
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-
-		// bottom face
-		4, 0, 3, 
-		4, 3, 7
+		//left
+		4, 5, 6,
+		4, 6, 7,
+		//back
+		8, 9, 10,
+		8, 10, 11,
+		//right
+		12, 13, 14,
+		13, 14, 15,
+		//top
+		16, 17, 18,
+		16, 18, 19,
+		//bottom
+		20, 21, 22,
+		20, 22, 23
 	};
 
 	D3D10_BUFFER_DESC ibd;
