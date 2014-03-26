@@ -50,7 +50,9 @@ void GameObject::update(float dt)
 {
 	position += velocity*dt;
 	Identity(&world);
-	Translate(&world, position.x, position.y, position.z);
+	Scale(&mScale, width, height, depth);
+	Translate(&mTranslate, position.x, position.y, position.z);
+	world = mScale * mTranslate;
 
 }
 

@@ -25,6 +25,8 @@ const UINT GAME_HEIGHT = 720;               // height of game in pixels
 //const double PI = 3.14159265;
 const double GRAVITY = 2.67428e-11f;
 
+static float heuristicConstant = 5.0f;
+
 const UCHAR KEY_A	= 'A';
 const UCHAR KEY_D   = 'D';
 const UCHAR KEY_W	= 'W';

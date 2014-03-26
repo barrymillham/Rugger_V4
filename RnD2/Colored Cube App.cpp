@@ -28,6 +28,8 @@
 using std::time;
 #include "Light.h"
 
+#include "Waypoint.h"
+
 namespace gameNS {
 	const int NUM_WALLS = 41;
 	const int PERIMETER = 4;
@@ -77,6 +79,9 @@ public:
 	void doEndScreen();
 	void firstPassCleanup();
 
+	//This will need to be relocated into the enemies, so they will individually calculate their paths per frame
+	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
+
 private:
 	void buildFX();
 	void buildVertexLayouts();
@@ -99,6 +104,12 @@ private:
 	D3DXVECTOR3 target;
 	D3DXVECTOR3 perpAxis;
 	D3DXVECTOR3 moveAxis;
+
+	//Pathfinding stuff
+	Box wLine;
+	//GameObject wayLine[100][100];
+	GameObject** wayLine;
+	Waypoint* waypoints[100][100];
 
 	float spinAmount;
 	int shotTimer;
@@ -157,6 +168,11 @@ ColoredCubeApp::~ColoredCubeApp()
 {
 	if( md3dDevice )
 		md3dDevice->ClearState();
+
+	for(int i=0; i<100; i++)
+	{
+		delete [] wayLine[i];
+	}
 
 	ReleaseCOM(mFX);
 	ReleaseCOM(mVertexLayout);
@@ -223,10 +239,35 @@ void ColoredCubeApp::initApp()
 	mLights[2].range    = 10000.0f;
 #pragma endregion
 		
+	//Pathfinding testing
+	wLine.init(md3dDevice, 1.0f, WHITE);
+	wayLine = new GameObject*[100];
+	for(int i=0; i<100; i++) wayLine[i] = new GameObject[100];
+
+	for(int i=0; i<100; i++){
+		for(int j=0; j<100; j++)
+		{
+			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i, 0, j));
+			wayLine[i][j].init(&wLine, 1.0f, waypoints[i][j]->getPosition(), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
+		}
+	}
+	for(int i=0; i<100; i++)
+	{
+		for(int j=0; j<100; j++)
+		{
+			//Currently just waypoints in the cardinal directions
+			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+			if(i+1 < 100) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+			if(j+1 < 100) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+		}
+	}
+
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(5,5,0), Vector3(0,0,0), 0, 1);
 	buildFX();
 	buildVertexLayouts();
-	audio->playCue(MUSIC);
+	//pls no more
+	//audio->playCue(MUSIC);
 }
 
 void ColoredCubeApp::initPickups() {
@@ -338,7 +379,6 @@ void ColoredCubeApp::initOrigin() {
 	zLine.init(&gLine, Vector3(0,0,0), 5);
 	zLine.setPosition(Vector3(0,0,0));
 	zLine.setRotationY(ToRadian(90));
-
 }
 
 
@@ -349,7 +389,9 @@ void ColoredCubeApp::updateScene(float dt)
 	bool playing = (!endScreen && !startScreen);
 	Vector3 oldPos = player.getPosition();
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
-	//firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
+
+	//Going to need to do this to invalidate some of the waypoints
+	firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
 
 	//if(!night)
 	//{
@@ -366,39 +408,11 @@ void ColoredCubeApp::updateScene(float dt)
 	//	if(mLights[0].diffuse.r <= 1 || mLights[0].diffuse.g <= 1 || mLights[0].diffuse.b <= 1) night = false;
 	//}
 	
-
-	if(input->isKeyDown(KEY_W))
-	{
-		moveAxis.y = 0;
-		D3DXVec3Normalize(&moveAxis, &moveAxis);
-		mEyePos += moveAxis * dt * 20;
-	}
-	if(input->isKeyDown(KEY_S))
-	{
-		moveAxis.y = 0;
-		D3DXVec3Normalize(&moveAxis, &moveAxis);
-	
-		mEyePos -= moveAxis * dt * 20;
-	}
-	if(input->isKeyDown(KEY_D))
-	{
-		mEyePos -= perpAxis * dt * 20;
-	}
-	if(input->isKeyDown(KEY_A))
-	{
-		mEyePos += perpAxis * dt * 20;
-	}
-	if(input->isKeyDown(VK_SPACE))
-	{
-		mEyePos.y += 20 * dt;
-	}
-	if(input->isKeyDown(VK_SHIFT))
-	{
-		mEyePos.y -= 20 * dt;
-	}
-
 	if(playing)
 	{	
+		//waypoints
+		for(int i=0; i<100; i++)for(int j=0; j<100; j++)if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
+
 		//General Update
 		D3DApp::updateScene(dt);
 		updateOrigin(dt);
@@ -445,7 +459,14 @@ void ColoredCubeApp::firstPassCleanup() {
 		firstpass = false;
 		for(int i=0; i<gameNS::NUM_WALLS; i++)
 		{
-			
+			for(int j=0; j<100; j++)
+			{
+				for(int k=0; k<100; k++)
+				{
+					//if(walls[i].collided(&wayLine[j][k])) waypoints[j][k]->setActive(false);
+					if(wayLine[j][k].collided(&walls[i])) waypoints[j][k]->setActive(false);
+				}
+			}
 		}
 	}
 }
@@ -459,26 +480,56 @@ void ColoredCubeApp::updateCamera() {
 	if(dx < 0)
 	//if(input->isKeyDown(KEY_A))
 	{
-		mPhi -= 8.0f*dt;
+		mPhi -= 4.0f*dt;
 	}
 	if(dx > 0)
 	//if(input->isKeyDown(KEY_D))
 	{
-		mPhi += 8.0f*dt;
+		mPhi += 4.0f*dt;
 	}
 	if(dy < 0)
 	//if(input->isKeyDown(KEY_W))
 	{
-		mTheta += 6.0f*dt;
+		mTheta += 3.0f*dt;
 	}
 	if(dy > 0)
 	//if(input->isKeyDown(KEY_S))
 	{
-		mTheta -= 6.0f*dt;
+		mTheta -= 3.0f*dt;
 	}
 	//Restricting the mouse movement
 	RECT restrict = {639, 399, 640, 400};
 	ClipCursor(&restrict);
+
+		if(input->isKeyDown(KEY_W))
+	{
+		moveAxis.y = 0;
+		D3DXVec3Normalize(&moveAxis, &moveAxis);
+		mEyePos += moveAxis * dt * 20;
+	}
+	if(input->isKeyDown(KEY_S))
+	{
+		moveAxis.y = 0;
+		D3DXVec3Normalize(&moveAxis, &moveAxis);
+	
+		mEyePos -= moveAxis * dt * 20;
+	}
+	if(input->isKeyDown(KEY_D))
+	{
+		mEyePos -= perpAxis * dt * 20;
+	}
+	if(input->isKeyDown(KEY_A))
+	{
+		mEyePos += perpAxis * dt * 20;
+	}
+	if(input->isKeyDown(VK_SPACE))
+	{
+		mEyePos.y += 20 * dt;
+	}
+	if(input->isKeyDown(VK_SHIFT))
+	{
+		mEyePos.y -= 20 * dt;
+	}
 
 	// Restrict the angle mPhi and radius mRadius.
 	if( mTheta < -(PI/2.0f) + 0.01f)	mTheta = -(PI/2.0f) + 0.01f;
@@ -598,6 +649,8 @@ void ColoredCubeApp::drawScene()
 
 	if(playing) {		
 		mVP = mView*mProj;
+
+		//for(int i=0; i<100; i++) for(int j=0; j<100; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
