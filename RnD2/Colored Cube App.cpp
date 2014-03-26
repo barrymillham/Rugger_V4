@@ -369,14 +369,15 @@ void ColoredCubeApp::updateScene(float dt)
 
 	if(input->isKeyDown(KEY_W))
 	{
-		D3DXVECTOR3 nTarget;
-		D3DXVec3Normalize(&nTarget, &target);
+		moveAxis.y = 0;
+		D3DXVec3Normalize(&moveAxis, &moveAxis);
 		mEyePos += moveAxis * dt * 20;
 	}
 	if(input->isKeyDown(KEY_S))
 	{
-		D3DXVECTOR3 nTarget;
-		D3DXVec3Normalize(&nTarget, &target);
+		moveAxis.y = 0;
+		D3DXVec3Normalize(&moveAxis, &moveAxis);
+	
 		mEyePos -= moveAxis * dt * 20;
 	}
 	if(input->isKeyDown(KEY_D))
@@ -387,7 +388,14 @@ void ColoredCubeApp::updateScene(float dt)
 	{
 		mEyePos += perpAxis * dt * 20;
 	}
-
+	if(input->isKeyDown(VK_SPACE))
+	{
+		mEyePos.y += 20 * dt;
+	}
+	if(input->isKeyDown(VK_SHIFT))
+	{
+		mEyePos.y -= 20 * dt;
+	}
 
 	if(playing)
 	{	
