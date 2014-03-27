@@ -321,14 +321,16 @@ void ColoredCubeApp::initBasicVariables() {
 void ColoredCubeApp::initWallPositions() {
 	
 //				   geom,  rad,  position,			sc,	w,  h,  d
-	walls[0].init(&brick, 2.0f, Vector3(0, 0, 100),	1, 100, 10, 1);
-	walls[1].init(&brick, 2.0f, Vector3(0, 0, -100),1, 100, 10, 1);
-	walls[2].init(&brick, 2.0f, Vector3(100, 0, 0), 1, 1,	10, 100);
-	walls[3].init(&brick, 2.0f, Vector3(-100, 0, 0),1, 1,	2, 100);
-	walls[4].init(&brick, 2.0f, Vector3(-80,0,75),	1, 1,	2,	25);
-	walls[5].init(&brick, 2.0f, Vector3(-80,0,25),	1, 20,	2,	1);
-	walls[6].init(&brick, 2.0f, Vector3(-53.5,0,0),	1, 46.5,2,	1);
-	walls[7].init(&brick, 2.0f, Vector3(-30,0, 25),	1, 1,	2,  25);
+	walls[0].init(&brick, 2.0f, Vector3(155, 0, 250),	1,	95,	10, 1);//	Left/Top wall 
+	walls[1].init(&brick, 2.0f, Vector3(-155, 0, -250),	1,	95,	10, 1);//	Right/back wall
+	walls[2].init(&brick, 2.0f, Vector3(250, 0, 155),	1,	1,	10, 95);//	Top/Left wall
+	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -155),	1,	1,	10, 95);//	Back/Right wall
+
+	walls[4].init(&brick, 2.0f, Vector3(-155, 0, 250),	1,	95,	10, 1);//	Left/Back wall 
+	walls[5].init(&brick, 2.0f, Vector3(155, 0, -250),	1,	95,	10, 1);//	Right/Front wall
+	walls[6].init(&brick, 2.0f, Vector3(250, 0, -155),	1,	1,	10, 95);//	Top/Right wall
+	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 155),	1,	1,	10, 95);//	Back/Left wall
+
 	walls[8].init(&brick, 2.0f, Vector3(-10,0, 50),	1, 10,	2,  1);
 	walls[9].init(&brick, 2.0f, Vector3(0,0, 74),	1, 1,	2,  26);
 	walls[10].init(&brick, 2.0f, Vector3(-5,0, 12),	1, 25,	2,  1);
@@ -366,7 +368,7 @@ void ColoredCubeApp::initWallPositions() {
 }
 
 void ColoredCubeApp::initUniqueObjects() {
-	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 100, 1, 100);
+	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
 }
 
