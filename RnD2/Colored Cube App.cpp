@@ -31,7 +31,7 @@ using std::time;
 #include "Waypoint.h"
 
 namespace gameNS {
-	const int NUM_WALLS = 41;
+	const int NUM_WALLS = 28;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 5;
 	const int NUM_PICKUPS = 4;
@@ -321,51 +321,41 @@ void ColoredCubeApp::initBasicVariables() {
 void ColoredCubeApp::initWallPositions() {
 	
 //				   geom,  rad,  position,				sc,	w,		h,	d
-	walls[0].init(&brick, 2.0f, Vector3(155, 8, 250),	1,	115,	10, 10);//	Left/Top wall 
+	walls[0].init(&brick, 2.0f, Vector3(155, 8, 250),	1,	115,	10, 10);//	Left/Front wall 
 	walls[1].init(&brick, 2.0f, Vector3(-155, 8, -250),	1,	115,	10, 10);//	Right/back wall
-	walls[2].init(&brick, 2.0f, Vector3(250, 8, 155),	1,	1,		10, 95);//	Top/Left wall
-	walls[3].init(&brick, 2.0f, Vector3(-250, 8, -155),	1,	1,		10, 95);//	Back/Right wall
+	walls[2].init(&brick, 2.0f, Vector3(250, 8, 155),	1,	10,		10, 95);//	Front/Left wall
+	walls[3].init(&brick, 2.0f, Vector3(-250, 8, -155),	1,	10,		10, 95);//	Back/Right wall
 
 	walls[4].init(&brick, 2.0f, Vector3(-155, 8, 250),	1,	115,	10, 10);//	Left/Back wall 
 	walls[5].init(&brick, 2.0f, Vector3(155, 8, -250),	1,	115,	10, 10);//	Right/Front wall
-	walls[6].init(&brick, 2.0f, Vector3(250, 8, -155),	1,	1,		10, 95);//	Top/Right wall
-	walls[7].init(&brick, 2.0f, Vector3(-250, 8, 155),	1,	1,		10, 95);//	Back/Left wall
+	walls[6].init(&brick, 2.0f, Vector3(250, 8, -155),	1,	10,		10, 95);//	Front/Right wall
+	walls[7].init(&brick, 2.0f, Vector3(-250, 8, 155),	1,	10,		10, 95);//	Back/Left wall
 
-	walls[8].init(&brick, 2.0f, Vector3(65, 5, 85),		1,	30,		5,	1);//	Left/Top inner wall 
-	walls[9].init(&brick, 2.0f, Vector3(-65, 5, -85),	1,	30,		5,	1);//	Right/back inner wall
-	walls[10].init(&brick, 2.0f, Vector3(85, 5, 65),	1,	1,		5,	30);//	Top/Left inner wall
-	walls[11].init(&brick, 2.0f, Vector3(-85, 5, -65),	1,	1,		5,	30);//	Back/Right inner wall
+	walls[8].init(&brick, 2.0f, Vector3(36, 5, 55),		1,	20,		5,	1);//	Left/Front inner wall 
+	walls[9].init(&brick, 2.0f, Vector3(-36, 5, -55),	1,	20,		5,	1);//	Right/Back inner wall
+	walls[10].init(&brick, 2.0f, Vector3(55, 5, 36),	1,	1,		5,	20);//	Front/Left inner wall
+	walls[11].init(&brick, 2.0f, Vector3(-55, 5, -36),	1,	1,		5,	20);//	Back/Right inner wall
 
-	walls[12].init(&brick, 2.0f, Vector3(-65, 5, 85),	1,	30,		5,	1);//	Left/Back inner wall 
-	walls[13].init(&brick, 2.0f, Vector3(65, 5, -85),	1,	30,		5,	1);//	Right/Front inner wall
-	walls[14].init(&brick, 2.0f, Vector3(85, 5, -65),	1,	1,		5,	30);//	Top/Right inner wall
-	walls[15].init(&brick, 2.0f, Vector3(-85, 5, 65),	1,	1,		5,	30);//	Back/Left inner wall
+	walls[12].init(&brick, 2.0f, Vector3(-36, 5, 55),	1,	20,		5,	1);//	Left/Back inner wall 
+	walls[13].init(&brick, 2.0f, Vector3(36, 5, -55),	1,	20,		5,	1);//	Right/Front inner wall
+	walls[14].init(&brick, 2.0f, Vector3(55, 5, -36),	1,	1,		5,	20);//	Front/Right inner wall
+	walls[15].init(&brick, 2.0f, Vector3(-55, 5, 36),	1,	1,		5,	20);//	Back/Left inner wall
 
-	walls[16].init(&brick, 2.0f, Vector3(50,0, 40), 1, 30,	2,  1);
-	walls[17].init(&brick, 2.0f, Vector3(75,0, 20), 1, 25,	2,  1);
-	walls[18].init(&brick, 2.0f, Vector3(50,0, 10), 1, 30,	2,  1);
-	walls[19].init(&brick, 2.0f, Vector3(80,0, 0), 1, 20,	2,  1);
-	walls[20].init(&brick, 2.0f, Vector3(48.5,0, -30), 1, 1,	2,  30);
-	walls[21].init(&brick, 2.0f, Vector3(60,0, -22.5), 1, 1,	2,  23);
-	walls[22].init(&brick, 2.0f, Vector3(60, 0, -60), 1, 11.5,2,  1);
-	walls[23].init(&brick, 2.0f, Vector3(-15, 0, -75), 1, 1, 2, 25);
-	walls[24].init(&brick, 2.0f, Vector3(-40, 0, -50), 1, 40, 2, 1);
-	walls[25].init(&brick, 2.0f, Vector3(-30, 0, -35), 1, 20, 2, 1);
-	walls[26].init(&brick, 2.0f, Vector3(-30, 0, -15), 1, 20, 2, 1);
-	walls[27].init(&brick, 2.0f, Vector3(-30, 0, -8), 1, 1, 2, 8);
-	walls[28].init(&brick, 2.0f, Vector3(-30, 0, -42), 1, 1, 2, 8);
-	walls[29].init(&brick, 2.0f, Vector3(-60, 0, -31), 1, 1, 2, 18);
-	walls[30].init(&brick, 2.0f, Vector3(-70, 0, -31), 1, 1, 2, 18);
-	walls[31].init(&brick, 2.0f, Vector3(-79, 0, -30), 1, 1, 2, 19);
-	walls[32].init(&brick, 2.0f, Vector3(-79, 0, -85), 1, 1, 2, 15);
-	walls[33].init(&brick, 2.0f, Vector3(-95, 0, -70), 1, 5, 2, 1);
-	walls[34].init(&brick, 2.0f, Vector3(-95, 0, -30), 1, 5, 2, 1);
-	walls[35].init(&brick, 2.0f, Vector3(80, 0, -25), 1, 1, 2, 25);
-	walls[36].init(&brick, 2.0f, Vector3(48.5, 0, -70), 1, 1, 2, 15);
-	walls[37].init(&brick, 2.0f, Vector3(29.5, 0, -85), 1, 20, 2, 1);
-	walls[38].init(&brick, 2.0f, Vector3(-50, 0, 49), 1, 20, 2, 1);
-	walls[39].init(&brick, 2.0f, Vector3(-50, 0, 70), 1, 20, 2, 1);
-	walls[40].init(&brick, 2.0f, Vector3(-30, 0, 70), 1, 1, 2, 20);
+	walls[16].init(&brick, 2.0f, Vector3(150, 10, -150),	1,	20,		20,  20);// Front right corner buildings
+	walls[17].init(&brick, 2.0f, Vector3(150, 10, -50),		1,	20,		20,  20);
+	walls[18].init(&brick, 2.0f, Vector3(50, 10, -150),		1,	20,		20,  20);
+
+	walls[19].init(&brick, 2.0f, Vector3(150, 10, 150),	1,	20,		20,  20);// Front left corner buildings
+	walls[20].init(&brick, 2.0f, Vector3(150, 10, 50),		1,	20,		20,  20);
+	walls[21].init(&brick, 2.0f, Vector3(50, 10, 150),		1,	20,		20,  20);
+
+	walls[22].init(&brick, 2.0f, Vector3(-150, 10, -150),	1,	20,		20,  20);// Back right corner buildings
+	walls[23].init(&brick, 2.0f, Vector3(-150, 10, -50),		1,	20,		20,  20);
+	walls[24].init(&brick, 2.0f, Vector3(-50, 10, -150),		1,	20,		20,  20);
+
+	walls[25].init(&brick, 2.0f, Vector3(-150, 10, 150),	1,	20,		20,  20);// Back left corner buildings
+	walls[26].init(&brick, 2.0f, Vector3(-150, 10, 50),		1,	20,		20,  20);
+	walls[27].init(&brick, 2.0f, Vector3(-50, 10, 150),		1,	20,		20,  20);
 
 }
 
