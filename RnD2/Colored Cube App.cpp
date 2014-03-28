@@ -30,6 +30,9 @@ using std::time;
 
 #include "Waypoint.h"
 
+#include <queue>
+using std::priority_queue;
+
 namespace gameNS {
 	const int NUM_WALLS = 28;
 	const int PERIMETER = 4;
@@ -110,6 +113,9 @@ private:
 	//GameObject wayLine[100][100];
 	GameObject** wayLine;
 	Waypoint* waypoints[100][100];
+	priority_queue<Waypoint*> openWay;
+	priority_queue<Waypoint*> closedWay;
+	Waypoint* dest;
 
 	float spinAmount;
 	int shotTimer;
@@ -262,6 +268,7 @@ void ColoredCubeApp::initApp()
 			if(j+1 < 100) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
 		}
 	}
+	dest = waypoints[98][98];
 
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(5,5,0), Vector3(0,0,0), 0, 1);
 	buildFX();
@@ -406,6 +413,9 @@ void ColoredCubeApp::updateScene(float dt)
 	{	
 		//waypoints
 		for(int i=0; i<100; i++)for(int j=0; j<100; j++)if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
+		//find path
+		
+
 
 		//General Update
 		D3DApp::updateScene(dt);
@@ -450,6 +460,7 @@ void ColoredCubeApp::firstPassCleanup() {
 	//For the first update pass, we want to remove any money that is colliding with cameras or walls
 	if(firstpass)
 	{
+		bool found = false;
 		firstpass = false;
 		for(int i=0; i<gameNS::NUM_WALLS; i++)
 		{
@@ -459,6 +470,12 @@ void ColoredCubeApp::firstPassCleanup() {
 				{
 					//if(walls[i].collided(&wayLine[j][k])) waypoints[j][k]->setActive(false);
 					if(wayLine[j][k].collided(&walls[i])) waypoints[j][k]->setActive(false);
+					//just for now, find a starting node
+					else if(!found)
+					{
+						found = true;
+						openWay.push(waypoints[j][k]);
+					}
 				}
 			}
 		}

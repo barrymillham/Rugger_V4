@@ -17,6 +17,9 @@ public:
 	bool isActive(){return active;}
 	void setActive(bool a){active = a;}
 	void addNeighbor(Waypoint* n){adjacentWaypoints.push_back(n);}
+	list<Waypoint*> getNeighbors(){return adjacentWaypoints;}
+	float getCost(){return cost;}
+	void setCost(float f){cost = f;}
 
 
 private:
@@ -24,8 +27,7 @@ private:
 	D3DXVECTOR3 pos;
 
 	//Heuristic cost and 
-	float hCost;
-	float gCost;
+	float cost;
 
 	//If a waypoint is possible to be moved through
 	bool active;
