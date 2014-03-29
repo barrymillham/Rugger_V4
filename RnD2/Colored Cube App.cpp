@@ -90,6 +90,8 @@ private:
 	void buildVertexLayouts();
  
 private:
+	Box mWallMesh;
+
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
 	Player player;
@@ -127,6 +129,9 @@ private:
 	ID3D10EffectVariable* mfxEyePosVar;
 	ID3D10EffectVariable* mfxLightVar;
 	ID3D10EffectScalarVariable* mfxLightType;
+	ID3D10ShaderResourceView* mDiffuseMapRV;
+	ID3D10ShaderResourceView* mSpecMapRV;
+	ID3D10EffectMatrixVariable* mfxTexMtxVar;
 	bool night;
 	//my addition
 	ID3D10EffectVariable* mfxFLIPVar;
@@ -273,6 +278,15 @@ void ColoredCubeApp::initApp()
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(5,5,0), Vector3(0,0,0), 0, 1);
 	buildFX();
 	buildVertexLayouts();
+
+	mWallMesh.init(md3dDevice, 1.0f);
+
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"Companion Cube.jpg", 0, 0, &mDiffuseMapRV, 0 ));
+
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
+
 	//pls no more
 	//audio->playCue(MUSIC);
 }
