@@ -27,6 +27,7 @@
 #include <ctime>
 using std::time;
 #include "Light.h"
+#include "Enemy.h"
 
 #include "Waypoint.h"
 

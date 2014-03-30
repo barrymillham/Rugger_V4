@@ -52,6 +52,9 @@
     <ClCompile Include="Waypoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+	<ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Box.h">
@@ -117,7 +120,11 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Waypoint.h">
+=======
+    <ClInclude Include="Enemy.h">
+>>>>>>> Enemy Class
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
