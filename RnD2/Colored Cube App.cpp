@@ -211,7 +211,6 @@ void ColoredCubeApp::initApp()
 	initPickups();
 	initWallPositions();
 
-#pragma region light testing
 	mClearColor = D3DXCOLOR(0.9f, 0.9f, 0.9f, 1.0f);
 	mLightType = 0;
  
@@ -249,7 +248,6 @@ void ColoredCubeApp::initApp()
 	mLights[2].att.z    = 0.0f;
 	mLights[2].spotPow  = 64.0f;
 	mLights[2].range    = 10000.0f;
-#pragma endregion
 		
 	//Pathfinding testing
 	wLine.init(md3dDevice, 1.0f, WHITE);
@@ -343,41 +341,41 @@ void ColoredCubeApp::initBasicVariables() {
 void ColoredCubeApp::initWallPositions() {
 	
 //				   geom,  rad,  position,				sc,	w,		h,	d
-	walls[0].init(&brick, 2.0f, Vector3(155, 8, 250),	1,	115,	10, 10);//	Left/Front wall 
-	walls[1].init(&brick, 2.0f, Vector3(-155, 8, -250),	1,	115,	10, 10);//	Right/back wall
-	walls[2].init(&brick, 2.0f, Vector3(250, 8, 155),	1,	10,		10, 95);//	Front/Left wall
-	walls[3].init(&brick, 2.0f, Vector3(-250, 8, -155),	1,	10,		10, 95);//	Back/Right wall
+	walls[0].init(&brick, 2.0f, Vector3(155, 0, 250), 	1,	115,	10, 10);//	Left/Front wall 
+	walls[1].init(&brick, 2.0f, Vector3(-155, 0, -250),	1,	115,	10, 10);//	Right/back wall
+	walls[2].init(&brick, 2.0f, Vector3(250, 0, 155),	1,	10,		10, 95);//	Front/Left wall
+	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -155),	1,	10,		10, 95);//	Back/Right wall
 
-	walls[4].init(&brick, 2.0f, Vector3(-155, 8, 250),	1,	115,	10, 10);//	Left/Back wall 
-	walls[5].init(&brick, 2.0f, Vector3(155, 8, -250),	1,	115,	10, 10);//	Right/Front wall
-	walls[6].init(&brick, 2.0f, Vector3(250, 8, -155),	1,	10,		10, 95);//	Front/Right wall
-	walls[7].init(&brick, 2.0f, Vector3(-250, 8, 155),	1,	10,		10, 95);//	Back/Left wall
+	walls[4].init(&brick, 2.0f, Vector3(-155, 0, 250),	1,	115,	10, 10);//	Left/Back wall 
+	walls[5].init(&brick, 2.0f, Vector3(155, 0, -250),	1,	115,	10, 10);//	Right/Front wall
+	walls[6].init(&brick, 2.0f, Vector3(250, 0, -155),	1,	10,		10, 95);//	Front/Right wall
+	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 155),	1,	10,		10, 95);//	Back/Left wall
 
-	walls[8].init(&brick, 2.0f, Vector3(36, 5, 55),		1,	20,		5,	1);//	Left/Front inner wall 
-	walls[9].init(&brick, 2.0f, Vector3(-36, 5, -55),	1,	20,		5,	1);//	Right/Back inner wall
-	walls[10].init(&brick, 2.0f, Vector3(55, 5, 36),	1,	1,		5,	20);//	Front/Left inner wall
-	walls[11].init(&brick, 2.0f, Vector3(-55, 5, -36),	1,	1,		5,	20);//	Back/Right inner wall
+	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		5,	1);//	Left/Front inner wall 
+	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		5,	1);//	Right/Back inner wall
+	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	1,	1,		5,	20);//	Front/Left inner wall
+	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	1,	1,		5,	20);//	Back/Right inner wall
 
-	walls[12].init(&brick, 2.0f, Vector3(-36, 5, 55),	1,	20,		5,	1);//	Left/Back inner wall 
-	walls[13].init(&brick, 2.0f, Vector3(36, 5, -55),	1,	20,		5,	1);//	Right/Front inner wall
-	walls[14].init(&brick, 2.0f, Vector3(55, 5, -36),	1,	1,		5,	20);//	Front/Right inner wall
-	walls[15].init(&brick, 2.0f, Vector3(-55, 5, 36),	1,	1,		5,	20);//	Back/Left inner wall
+	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	1,	20,		5,	1);//	Left/Back inner wall 
+	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		5,	1);//	Right/Front inner wall
+	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		5,	20);//	Front/Right inner wall
+	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		5,	20);//	Back/Left inner wall
 
-	walls[16].init(&brick, 2.0f, Vector3(150, 10, -150),	1,	20,		20,  20);// Front right corner buildings
-	walls[17].init(&brick, 2.0f, Vector3(150, 10, -50),		1,	20,		20,  20);
-	walls[18].init(&brick, 2.0f, Vector3(50, 10, -150),		1,	20,		20,  20);
+	walls[16].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		20,  20);// Front right corner buildings
+	walls[17].init(&brick, 2.0f, Vector3(150, 0, -50),	1,	20,		20,  20);
+	walls[18].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		20,  20);
 
-	walls[19].init(&brick, 2.0f, Vector3(150, 10, 150),	1,	20,		20,  20);// Front left corner buildings
-	walls[20].init(&brick, 2.0f, Vector3(150, 10, 50),		1,	20,		20,  20);
-	walls[21].init(&brick, 2.0f, Vector3(50, 10, 150),		1,	20,		20,  20);
+	walls[19].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		20,  20);// Front left corner buildings
+	walls[20].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		20,  20);
+	walls[21].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		20,  20);
 
-	walls[22].init(&brick, 2.0f, Vector3(-150, 10, -150),	1,	20,		20,  20);// Back right corner buildings
-	walls[23].init(&brick, 2.0f, Vector3(-150, 10, -50),		1,	20,		20,  20);
-	walls[24].init(&brick, 2.0f, Vector3(-50, 10, -150),		1,	20,		20,  20);
+	walls[22].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		20,  20);// Back right corner buildings
+	walls[23].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		20,  20);
+	walls[24].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		20,  20);
 
-	walls[25].init(&brick, 2.0f, Vector3(-150, 10, 150),	1,	20,		20,  20);// Back left corner buildings
-	walls[26].init(&brick, 2.0f, Vector3(-150, 10, 50),		1,	20,		20,  20);
-	walls[27].init(&brick, 2.0f, Vector3(-50, 10, 150),		1,	20,		20,  20);
+	walls[25].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		20,  20);// Back left corner buildings
+	walls[26].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		20,  20);
+	walls[27].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		20,  20);
 
 }
 
@@ -498,11 +496,9 @@ void ColoredCubeApp::firstPassCleanup() {
 }
 
 void ColoredCubeApp::updateCamera() {
-	//D3DXVECTOR3 pos(player.getPosition().x - 25, player.getPosition().y + 50, player.getPosition().z);
-	//D3DXVECTOR3 target(player.getPosition());
-
 	int dx = input->getMouseRawX();
 	int dy = input->getMouseRawY();
+
 	if(dx < 0)
 	//if(input->isKeyDown(KEY_A))
 	{
@@ -616,10 +612,7 @@ void ColoredCubeApp::updatePlayer(float dt) {
 }
 
 void ColoredCubeApp::handleUserInput() {
-	//if(input->isKeyDown(VK_UP)) player.shoot(UP);
-	//if(input->isKeyDown(VK_DOWN)) player.shoot(DOWN);
-	//if(input->isKeyDown(VK_LEFT)) player.shoot(LEFT);
-	//if(input->isKeyDown(VK_RIGHT)) player.shoot(RIGHT);
+
 	if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
 	else player.setSpeed(20);
 
@@ -743,31 +736,6 @@ void ColoredCubeApp::drawLine(LineObject* line) {
 
 void ColoredCubeApp::buildFX()
 {
-//	DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
-//#if defined( DEBUG ) || defined( _DEBUG )
-//    shaderFlags |= D3D10_SHADER_DEBUG;
-//	shaderFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
-//#endif
-// 
-//	ID3D10Blob* compilationErrors = 0;
-//	HRESULT hr = 0;
-//	hr = D3DX10CreateEffectFromFile(L"color.fx", 0, 0, 
-//		"fx_4_0", shaderFlags, 0, md3dDevice, 0, 0, &mFX, &compilationErrors, 0);
-//	if(FAILED(hr))
-//	{
-//		if( compilationErrors )
-//		{
-//			MessageBoxA(0, (char*)compilationErrors->GetBufferPointer(), 0, 0);
-//			ReleaseCOM(compilationErrors);
-//		}
-//		DXTrace(__FILE__, (DWORD)__LINE__, hr, L"D3DX10CreateEffectFromFile", true);
-//	} 
-//
-//	mTech = mFX->GetTechniqueByName("ColorTech");
-//	
-//	mfxWVPVar = mFX->GetVariableByName("gWVP")->AsMatrix();
-//	mfxFLIPVar = mFX->GetVariableByName("flip");
-
 		DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
     shaderFlags |= D3D10_SHADER_DEBUG;
@@ -799,19 +767,6 @@ void ColoredCubeApp::buildFX()
 
 void ColoredCubeApp::buildVertexLayouts()
 {
-	//// Create the vertex input layout.
-	//D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-	//{
-	//	{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-	//	{"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0}
-	//};
-
-	//// Create the input layout
- //   D3D10_PASS_DESC PassDesc;
- //   mTech->GetPassByIndex(0)->GetDesc(&PassDesc);
- //   HR(md3dDevice->CreateInputLayout(vertexDesc, 2, PassDesc.pIAInputSignature,
-	//	PassDesc.IAInputSignatureSize, &mVertexLayout));
-	
 	// Create the vertex input layout.
 	D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
@@ -832,40 +787,10 @@ Vector3 ColoredCubeApp::moveRuggerDirection()
 {
 	Vector3 dir = Vector3(0,0,0);
 
-	//if(input->isKeyDown(KEY_W))
-	//{
-	//	dir.x = 1;
-	//}
-	//if(input->isKeyDown(KEY_S)) dir.x = -1;
-	//if(input->isKeyDown(KEY_A)) dir.z = 1;
-	//if(input->isKeyDown(KEY_D)) dir.z = -1;
-
-	//if(dir != Vector3(0,0,0))
-	//		D3DXVec3Normalize(&dir, &dir);
-
 	return dir;
 }
 
 void ColoredCubeApp::setDeviceAndShaderInformation() {
-	////Restore Default States
-	//md3dDevice->OMSetDepthStencilState(0, 0);
-	//float blendFactors[] = {0.0f, 0.0f, 0.0f, 0.0f};
-	//md3dDevice->OMSetBlendState(0, blendFactors, 0xffffffff);
-	//md3dDevice->IASetInputLayout(mVertexLayout);
-	////// set some variables for the shader
-	////int foo[1];	foo[0] = 0;
-
-	//// Set per frame constants.
-	//mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
-	//mfxLightVar->SetRawValue(&mLights[mLightType], 0, sizeof(Light));
-	//mfxLightType->SetInt(mLightType);
-
-	//// set the point to the shader technique
-	//D3D10_TECHNIQUE_DESC techDesc;
-	//mTech->GetDesc(&techDesc);
-	//////setting the color flip variable in the shader
-	////mfxFLIPVar->SetRawValue(&foo[0], 0, sizeof(int));
-
 	// Restore default states, input layout and primitive topology 
 	// because mFont->DrawText changes them.  Note that we can 
 	// restore the default states by passing null.
