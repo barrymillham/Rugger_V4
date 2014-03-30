@@ -4,6 +4,8 @@
 #include "d3dUtil.h"
 #include <list>
 using std::list;
+#include <vector>
+using std::vector;
 
 class Waypoint {
 public:
@@ -17,23 +19,40 @@ public:
 	bool isActive(){return active;}
 	void setActive(bool a){active = a;}
 	void addNeighbor(Waypoint* n){adjacentWaypoints.push_back(n);}
-	list<Waypoint*> getNeighbors(){return adjacentWaypoints;}
-	float getCost(){return cost;}
-	void setCost(float f){cost = f;}
+	vector<Waypoint*> getNeighbors(){return adjacentWaypoints;}
+
+	float getFCost() const{return fCost;}
+	void setFCost(float f){fCost = f;}
+	float getGCost() const {return gCost;}
+	void setGCost(float g){gCost = g;}
+
+	void setParent(Waypoint* p){parent = p;}
+	Waypoint* getParent(){return parent;}
 
 
 private:
 	//Position of the waypoint in 3d space, hopefully will correspond to its index in the main array of waypoints
 	D3DXVECTOR3 pos;
 
-	//Heuristic cost and 
-	float cost;
+	//Heuristic cost and actual cost
+	float fCost;
+	float gCost;
 
 	//If a waypoint is possible to be moved through
 	bool active;
 
 	//1-depth adjacency list
-	list<Waypoint*> adjacentWaypoints;
+	vector<Waypoint*> adjacentWaypoints;
+
+	//Parent pointer to reconstruct final path
+	Waypoint* parent;
+};
+
+struct WaypointCompare {
+	bool operator() (const Waypoint* w1, const Waypoint* w2) const
+	{
+		return w1->getFCost() > w2->getFCost();
+	}
 };
 
 #endif

@@ -34,6 +34,12 @@ using std::time;
 #include <queue>
 using std::priority_queue;
 
+bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w);
+void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w);
+float g(Waypoint* src, Waypoint* c);
+float h(Waypoint* dest, Waypoint* c);
+float fCost(Waypoint* dest, Waypoint* src, Waypoint* c);
+
 namespace gameNS {
 	const int NUM_WALLS = 28;
 	const int PERIMETER = 4;
@@ -85,7 +91,7 @@ public:
 
 	//This will need to be relocated into the enemies, so they will individually calculate their paths per frame
 	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
-
+	
 private:
 	void buildFX();
 	void buildVertexLayouts();
@@ -112,13 +118,17 @@ private:
 	D3DXVECTOR3 moveAxis;
 
 	//Pathfinding stuff
-	Box wLine;
+	Box inactiveLine;
+	Box activeLine;
 	//GameObject wayLine[100][100];
 	GameObject** wayLine;
 	Waypoint* waypoints[100][100];
-	priority_queue<Waypoint*> openWay;
-	priority_queue<Waypoint*> closedWay;
+	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> openWay;
+	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> closedWay;
 	Waypoint* dest;
+	Waypoint* src;
+	list<Waypoint*> path;
+	bool found;
 
 	float spinAmount;
 	int shotTimer;
@@ -177,6 +187,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	startScreen = true;
 	endScreen = false;
 	night = false;
+	found = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -253,7 +264,8 @@ void ColoredCubeApp::initApp()
 	mLights[2].range    = 10000.0f;
 		
 	//Pathfinding testing
-	wLine.init(md3dDevice, 1.0f, WHITE);
+	inactiveLine.init(md3dDevice, 1.0f, WHITE);
+	activeLine.init(md3dDevice, 1.0f, RED);
 	wayLine = new GameObject*[100];
 	for(int i=0; i<100; i++) wayLine[i] = new GameObject[100];
 
@@ -261,7 +273,7 @@ void ColoredCubeApp::initApp()
 		for(int j=0; j<100; j++)
 		{
 			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i, 0, j));
-			wayLine[i][j].init(&wLine, 1.0f, waypoints[i][j]->getPosition(), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
+			wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
 		}
 	}
 	for(int i=0; i<100; i++)
@@ -430,7 +442,70 @@ void ColoredCubeApp::updateScene(float dt)
 		//waypoints
 		for(int i=0; i<100; i++)for(int j=0; j<100; j++)if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
 		//find path
+		wayLine[2][2].setBox(&activeLine);
+		wayLine[(int)dest->getPosition().x][(int)dest->getPosition().z].setBox(&activeLine);
 		
+		src = waypoints[2][2];
+		
+
+		//OPEN = priority queue containing START
+		//CLOSED = empty set
+		//while lowest rank in OPEN is not the GOAL:
+		found = true;
+		if(!found)
+		{
+			openWay.push(src);
+
+			while(openWay.top() != dest)
+			//while(openWay.size() > 0)
+			{
+				//current = remove lowest rank item from OPEN
+				Waypoint* current = openWay.top();
+				openWay.pop();
+				//add current to CLOSED
+				closedWay.push(current);
+				
+				//for neighbors of current
+				for(int i=0; i<current->getNeighbors().size(); i++)
+				{
+					Waypoint* n = current->getNeighbors()[i];
+					if(n->isActive())
+					{
+						float gCost = current->getGCost() + 1;
+						float hCost = g(dest, n);
+						float cost = gCost + hCost;
+
+						//if neighbor in OPEN and cost less than g(neighbor):
+						if(queue_contains(openWay, n) && gCost < n->getGCost())
+						{
+							//remove neighbor from OPEN, because new path is better
+							queue_remove(openWay, n);
+							//contained = true;
+						}
+						//if neighbor in CLOSED and cost less than g(neighbor):
+						if (queue_contains(closedWay, n) && gCost < n->getGCost())
+						{
+							//remove neighbor from CLOSED
+							queue_remove(closedWay, n);
+							//contained = true;
+						}
+						//if neighbor not in OPEN and neighbor not in CLOSED:
+						if(!queue_contains(openWay, n) && !queue_contains(closedWay, n))
+						{
+							//set g(neighbor) to cost
+							n->setFCost(cost);
+							n->setGCost(gCost);
+							//set neighbor's parent to current
+							n->setParent(current);
+							//add neighbor to OPEN
+							openWay.push(n);
+							//set priority queue rank to g(neighbor) + h(neighbor)
+						}
+					}
+				}
+			}
+			found = true;
+		}
 
 
 		//General Update
@@ -490,7 +565,7 @@ void ColoredCubeApp::firstPassCleanup() {
 					else if(!found)
 					{
 						found = true;
-						openWay.push(waypoints[j][k]);
+						//openWay.push(waypoints[j][k]);
 					}
 				}
 			}
@@ -672,7 +747,7 @@ void ColoredCubeApp::drawScene()
 	if(playing) {		
 		mVP = mView*mProj;
 
-		//for(int i=0; i<100; i++) for(int j=0; j<100; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		for(int i=0; i<100; i++) for(int j=0; j<100; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
@@ -860,4 +935,61 @@ void ColoredCubeApp::drawPickups() {
 	
 	for (int i = 0; i < pickups.size(); i++)
 	pickups[i].draw(mfxWVPVar, mTech, &mVP);
+}
+
+
+
+
+
+
+//Probably the worst thing I have ever done
+bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w)
+{
+	bool f = false;
+	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> hold;
+	
+	while(!pq.empty())
+	{
+		Waypoint* comp = pq.top();
+		pq.pop();
+		hold.push(comp);
+		if(comp == w) 
+		{
+			f = true;
+		}
+	}
+	
+	pq = hold;
+	return f;
+}
+
+void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w)
+{
+	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> hold;
+	int limit = pq.size();
+	for(int i=0; i<limit; i++)
+	{
+		if(pq.top() == w) pq.pop();//don't copy it over
+		else
+		{
+			hold.push(pq.top());
+			pq.pop();
+		}
+	}
+	pq = hold;
+}
+
+float g(Waypoint* src, Waypoint* current)
+{
+	return abs(src->getPosition().x - current->getPosition().x) + abs(src->getPosition().z - current->getPosition().z);
+}
+
+float h(Waypoint* dest, Waypoint* current)
+{
+	return abs(dest->getPosition().x - current->getPosition().x) + abs(dest->getPosition().z - current->getPosition().z);
+}
+
+float fCost(Waypoint* dest, Waypoint* src, Waypoint* c)
+{
+	return g(src, c) + h(dest, c);
 }

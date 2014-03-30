@@ -44,6 +44,8 @@ public:
 	virtual float getHeight(){return height;}
 	virtual float getDepth(){return depth;}
 
+	void setBox(Box* b){box = b;}
+
 private:
 	
 	float speed;
