@@ -132,7 +132,10 @@ private:
 	ID3D10EffectScalarVariable* mfxLightType;
 	ID3D10ShaderResourceView* mDiffuseMapRV;
 	ID3D10ShaderResourceView* mSpecMapRV;
+	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
+	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
+	D3DXMATRIX mCompCubeWorld;
 	bool night;
 	//my addition
 	ID3D10EffectVariable* mfxFLIPVar;
@@ -674,6 +677,13 @@ void ColoredCubeApp::drawScene()
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
 		drawPickups();
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
+		D3D10_TECHNIQUE_DESC techDesc;
+		mTech->GetDesc( &techDesc );
+		for(UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			mWallMesh.draw();
+		}
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
@@ -763,6 +773,9 @@ void ColoredCubeApp::buildFX()
 	mfxEyePosVar = mFX->GetVariableByName("gEyePosW");
 	mfxLightVar  = mFX->GetVariableByName("gLight");
 	mfxLightType = mFX->GetVariableByName("gLightType")->AsScalar();
+	mfxDiffuseMapVar = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
+	mfxSpecMapVar    = mFX->GetVariableByName("gSpecMap")->AsShaderResource();
+	mfxTexMtxVar     = mFX->GetVariableByName("gTexMtx")->AsMatrix();
 }
 
 void ColoredCubeApp::buildVertexLayouts()
@@ -773,13 +786,14 @@ void ColoredCubeApp::buildVertexLayouts()
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D10_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
 		{"DIFFUSE",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		{"SPECULAR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D10_INPUT_PER_VERTEX_DATA, 0}
+		{"SPECULAR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 36, D3D10_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 48, D3D10_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	// Create the input layout
     D3D10_PASS_DESC PassDesc;
     mTech->GetPassByIndex(0)->GetDesc(&PassDesc);
-    HR(md3dDevice->CreateInputLayout(vertexDesc, 4, PassDesc.pIAInputSignature,
+    HR(md3dDevice->CreateInputLayout(vertexDesc, 5, PassDesc.pIAInputSignature,
 		PassDesc.IAInputSignatureSize, &mVertexLayout));
 }
 
@@ -805,6 +819,10 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
 	mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
 	mfxLightVar->SetRawValue(&mLights[mLightType], 0, sizeof(Light));
 	mfxLightType->SetInt(mLightType);
+	mfxWVPVar->SetMatrix((float*)&mWVP);
+	mfxWorldVar->SetMatrix((float*)&mCompCubeWorld);
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
+	mfxSpecMapVar->SetResource(mSpecMapRV);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
