@@ -193,7 +193,7 @@ void D3DApp::onResize()
 
 	//Culling?
 	D3D10_RASTERIZER_DESC rasterizerState;
-	rasterizerState.CullMode = D3D10_CULL_BACK;
+	rasterizerState.CullMode = D3D10_CULL_NONE;
 	rasterizerState.FillMode = D3D10_FILL_SOLID;
 	rasterizerState.FrontCounterClockwise = true;
     rasterizerState.DepthBias = false;

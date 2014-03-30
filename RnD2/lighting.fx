@@ -18,12 +18,14 @@ cbuffer cbPerObject
 {
 	float4x4 gWorld;
 	float4x4 gWVP;
+	float4x4 gTexMtx;
 };
 
 struct VS_IN
 {
 	float3 posL    : POSITION;
 	float3 normalL : NORMAL;
+	float2 texC	   : TEXCOORD;
 	float4 diffuse : DIFFUSE;
 	float4 spec    : SPECULAR;
 };
@@ -33,6 +35,7 @@ struct VS_OUT
 	float4 posH    : SV_POSITION;
     float3 posW    : POSITION;
     float3 normalW : NORMAL;
+	float2 texC    : TEXCOORD;
     float4 diffuse : DIFFUSE;
     float4 spec    : SPECULAR;
 };
