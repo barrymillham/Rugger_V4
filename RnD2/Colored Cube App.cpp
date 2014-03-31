@@ -754,7 +754,7 @@ void ColoredCubeApp::drawScene()
 	if(playing) {		
 		mVP = mView*mProj;
 
-		for(int i=0; i<100; i++) for(int j=0; j<100; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		//for(int i=0; i<100; i++) for(int j=0; j<100; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
