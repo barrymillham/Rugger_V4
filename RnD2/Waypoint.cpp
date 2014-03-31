@@ -9,8 +9,3 @@ Waypoint::Waypoint(D3DXVECTOR3 position):
 }
 
 Waypoint::~Waypoint() {}
-
-void Waypoint::calculateScore(Waypoint* target)
-{
-	
-}

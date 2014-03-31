@@ -9,10 +9,36 @@ using std::vector;
 
 class Waypoint {
 public:
+	Waypoint()
+	{
+		fCost = 0;
+		gCost = 0;
+		active = true;
+	}
+
 	Waypoint(D3DXVECTOR3 position);
+
+	Waypoint(const Waypoint& w)
+	{
+		fCost = w.fCost;
+		gCost = w.gCost;
+		pos = w.pos;
+		adjacentWaypoints = w.adjacentWaypoints;
+		parent = w.parent;
+	}
+
+	Waypoint& operator=(const Waypoint& w)
+	{
+		fCost = w.fCost;
+		gCost = w.gCost;
+		pos = w.pos;
+		adjacentWaypoints = w.adjacentWaypoints;
+		parent = w.parent;
+		return *this;
+	}
+
 	~Waypoint();
 
-	void calculateScore(Waypoint* target);
 
 	D3DXVECTOR3 getPosition(){return pos;}
 	void setPosition(D3DXVECTOR3 p){pos = p;}

@@ -446,8 +446,8 @@ void ColoredCubeApp::updateScene(float dt)
 		wayLine[(int)dest->getPosition().x][(int)dest->getPosition().z].setBox(&activeLine);
 		
 		src = waypoints[2][2];
+		src->setFCost(g(src, dest));
 		
-
 		//OPEN = priority queue containing START
 		//CLOSED = empty set
 		//while lowest rank in OPEN is not the GOAL:
@@ -456,38 +456,43 @@ void ColoredCubeApp::updateScene(float dt)
 		{
 			openWay.push(src);
 
-			while(openWay.top() != dest)
-			//while(openWay.size() > 0)
+			
+			while(!openWay.empty())
 			{
 				//current = remove lowest rank item from OPEN
 				Waypoint* current = openWay.top();
 				openWay.pop();
-				//add current to CLOSED
-				closedWay.push(current);
-				
+
+				if(current == dest) 
+					break;
+
 				//for neighbors of current
 				for(int i=0; i<current->getNeighbors().size(); i++)
 				{
 					Waypoint* n = current->getNeighbors()[i];
 					if(n->isActive())
 					{
+						//cost to get to n from current
 						float gCost = current->getGCost() + 1;
+						//float gCost = 1;
+						//Cost to get from n to target
 						float hCost = g(dest, n);
+						//total cost through waypoint n
 						float cost = gCost + hCost;
 
 						//if neighbor in OPEN and cost less than g(neighbor):
+						//and this solution is better than what we've seen
 						if(queue_contains(openWay, n) && gCost < n->getGCost())
 						{
 							//remove neighbor from OPEN, because new path is better
 							queue_remove(openWay, n);
-							//contained = true;
 						}
 						//if neighbor in CLOSED and cost less than g(neighbor):
-						if (queue_contains(closedWay, n) && gCost < n->getGCost())
+						//and this solution is better than what we've seen
+						if(queue_contains(closedWay, n) && gCost < n->getGCost())
 						{
 							//remove neighbor from CLOSED
 							queue_remove(closedWay, n);
-							//contained = true;
 						}
 						//if neighbor not in OPEN and neighbor not in CLOSED:
 						if(!queue_contains(openWay, n) && !queue_contains(closedWay, n))
@@ -503,6 +508,8 @@ void ColoredCubeApp::updateScene(float dt)
 						}
 					}
 				}
+				//add current to CLOSED
+				closedWay.push(current);
 			}
 			found = true;
 		}
