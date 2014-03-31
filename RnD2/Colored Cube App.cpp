@@ -759,13 +759,14 @@ void ColoredCubeApp::drawScene()
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
 		drawPickups();
-		mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
+
 		D3D10_TECHNIQUE_DESC techDesc;
 		mTech->GetDesc( &techDesc );
 		for(UINT p = 0; p < techDesc.Passes; ++p)
 		{
 			mWallMesh.draw();
 		}
+
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
