@@ -18,6 +18,17 @@ cbuffer cbPerObject
 {
 	float4x4 gWorld;
 	float4x4 gWVP;
+	float4x4 gTexMtx;
+};
+
+Texture2D gDiffuseMap;
+Texture2D gSpecMap;
+
+SamplerState gTriLinearSam
+{
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = MIRROR;
+	AddressV = MIRROR;
 };
 
 struct VS_IN
@@ -26,6 +37,7 @@ struct VS_IN
 	float3 normalL : NORMAL;
 	float4 diffuse : DIFFUSE;
 	float4 spec    : SPECULAR;
+	float2  uv	   : TEXCOORD;
 };
 
 struct VS_OUT
@@ -35,6 +47,7 @@ struct VS_OUT
     float3 normalW : NORMAL;
     float4 diffuse : DIFFUSE;
     float4 spec    : SPECULAR;
+	float2  uv	   : TEXCOORD;
 };
 
 VS_OUT VS(VS_IN vIn)
@@ -46,12 +59,13 @@ VS_OUT VS(VS_IN vIn)
 	vOut.normalW = mul(float4(vIn.normalL, 0.0f), gWorld);
 		
 	// Transform to homogeneous clip space.
-	vOut.posH = mul(float4(vIn.posL, 1.0f), gWVP);
+	vOut.posH    = mul(float4(vIn.posL, 1.0f), gWVP);
 	
 	// Output vertex attributes for interpolation across triangle.
 	vOut.diffuse = vIn.diffuse;
 	vOut.spec    = vIn.spec;
-	
+	vOut.uv      = mul(float4(vIn.uv, 0.0f, 1.0f), gTexMtx);
+
 	return vOut;
 }
  
@@ -60,6 +74,8 @@ float4 PS(VS_OUT pIn) : SV_Target
 	// Interpolating normal can make it not be of unit length so normalize it.
     pIn.normalW = normalize(pIn.normalW);
    
+	float4 diffuse = gDiffuseMap.Sample( gTriLinearSam, pIn.uv );
+	float4 spec    = gSpecMap.Sample( gTriLinearSam, pIn.uv );
    
     SurfaceInfo v = {pIn.posW, pIn.normalW, pIn.diffuse, pIn.spec};
     

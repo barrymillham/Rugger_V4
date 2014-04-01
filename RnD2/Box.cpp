@@ -34,40 +34,40 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
     Vertex vertices[] =
     {
 		//front - 0 1 2 3
-		{D3DXVECTOR3(-1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec},
+		{D3DXVECTOR3(-1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec, 0.0, 0.0},
+		{D3DXVECTOR3(-1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec, 1.0, 0.0},
+		{D3DXVECTOR3(+1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec, 0.0, 1.0},
+		{D3DXVECTOR3(+1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), diffuse, spec, 1.0, 1.0},
 
 		//left - 7 6 1 0
-		{D3DXVECTOR3(-1.0f, 0.0f, +1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 2.0f, +1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 2.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 0.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec},
+		{D3DXVECTOR3(-1.0f, 0.0f, +1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec, 0.0, 0.0},
+		{D3DXVECTOR3(-1.0f, 2.0f, +1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec, 1.0, 0.0},
+		{D3DXVECTOR3(-1.0f, 2.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec, 0.0, 1.0},
+		{D3DXVECTOR3(-1.0f, 0.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), diffuse, spec, 1.0, 1.0},
 
 		//back - 4 5 6 7
-		{D3DXVECTOR3(+1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec},
+		{D3DXVECTOR3(+1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec, 0.0, 0.0},
+		{D3DXVECTOR3(+1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec, 1.0, 0.0},
+		{D3DXVECTOR3(-1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec, 0.0, 1.0},
+		{D3DXVECTOR3(-1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), diffuse, spec, 1.0, 1.0},
 
 		//right - 3 2 5 4 
-		{D3DXVECTOR3(+1.0f, 0.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 2.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 2.0f, +1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 0.0f, +1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec},
+		{D3DXVECTOR3(+1.0f, 0.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec, 0.0, 0.0},
+		{D3DXVECTOR3(+1.0f, 2.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec, 1.0, 0.0},
+		{D3DXVECTOR3(+1.0f, 2.0f, +1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec, 0.0, 1.0},
+		{D3DXVECTOR3(+1.0f, 0.0f, +1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), diffuse, spec, 1.0, 1.0},
 
 		//top - 1 6 5 2
-		{D3DXVECTOR3(-1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec},
+		{D3DXVECTOR3(-1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec, 0.0, 0.0},
+		{D3DXVECTOR3(-1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec, 1.0, 0.0},
+		{D3DXVECTOR3(+1.0f, 2.0f, +1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec, 0.0, 1.0},
+		{D3DXVECTOR3(+1.0f, 2.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), diffuse, spec, 1.0, 1.0},
 
 		//bottom - 7 0 3 4
-		{D3DXVECTOR3(-1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(-1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec},
-		{D3DXVECTOR3(+1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec},
+		{D3DXVECTOR3(-1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec, 0.0, 0.0},
+		{D3DXVECTOR3(-1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec, 1.0, 0.0},
+		{D3DXVECTOR3(+1.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec, 0.0, 1.0},
+		{D3DXVECTOR3(+1.0f, 0.0f, +1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), diffuse, spec, 1.0, 1.0},
     };
 
 	// Scale the box.
@@ -130,7 +130,6 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
 }
 void Box::init(ID3D10Device* device, float scale) //I don't think this init function is ever called.
 {
-	//I don't think this init function is ever called.
 	md3dDevice = device;
 
     Vertex vertices[] =

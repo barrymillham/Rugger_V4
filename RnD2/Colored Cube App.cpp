@@ -101,6 +101,7 @@ private:
 
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
+	Box testBox;
 	Player player;
 	vector<Bullet*> pBullets;
 	LineObject xLine, yLine, zLine;
@@ -289,7 +290,7 @@ void ColoredCubeApp::initApp()
 	}
 	dest = waypoints[98][98];
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(5,5,0), Vector3(0,0,0), 0, 1);
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1);
 	buildFX();
 	buildVertexLayouts();
 
@@ -323,7 +324,7 @@ void ColoredCubeApp::initBullets() {
 }
 
 void ColoredCubeApp::initBasicGeometry() {
-	mBox.init(md3dDevice, 1.0f, WHITE);
+	mBox.init(md3dDevice, 2.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
 	bulletBox .init(md3dDevice, 0.5f, BEACH_SAND);
@@ -870,7 +871,7 @@ void ColoredCubeApp::buildVertexLayouts()
 		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
 		{"DIFFUSE",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0},
 		{"SPECULAR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 36, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 48, D3D10_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D10_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	// Create the input layout
@@ -888,7 +889,7 @@ Vector3 ColoredCubeApp::moveRuggerDirection()
 }
 
 void ColoredCubeApp::setDeviceAndShaderInformation() {
-	// Restore default states, input layout and primitive topology 
+	// Restore default states, input layout and primitive topology
 	// because mFont->DrawText changes them.  Note that we can 
 	// restore the default states by passing null.
 	md3dDevice->OMSetDepthStencilState(0, 0);
