@@ -17,8 +17,7 @@ struct Vertex
 	D3DXVECTOR3 normal;
 	D3DXCOLOR   diffuse;
 	D3DXCOLOR   spec; // (r, g, b, specPower);
-	float texU;
-	float texV;
+	D3DXVECTOR2 texc;
 };
  
 #endif // VERTEX_H

@@ -8,7 +8,7 @@
  
 cbuffer cbPerFrame
 {
-	Light gLight[7];
+	Light gLight[11];
 	int gLightType; 
 	float3 gEyePosW;
 	int gLightNum;
@@ -82,15 +82,14 @@ float4 PS(VS_OUT pIn) : SV_Target
     
     float3 litColor = {0.0f, 0.0f, 0.0f};
     
-	litColor += PointLight(v, gLight[0], gEyePosW);
+	litColor += ParallelLight(v, gLight[0], gEyePosW);
 	litColor += PointLight(v, gLight[1], gEyePosW);
 	litColor += Spotlight(v, gLight[2], gEyePosW);
-	litColor += PointLight(v, gLight[3], gEyePosW);
-	litColor += PointLight(v, gLight[4], gEyePosW);
-	litColor += PointLight(v, gLight[5], gEyePosW);
-	litColor += PointLight(v, gLight[6], gEyePosW);
-	//litColor += PointLight(v, gLight[7], gEyePosW);
-	   
+	for(int i = 3; i < gLightNum; i++)
+	{
+		litColor += PointLight(v, gLight[i], gEyePosW);
+	}
+
     return float4(litColor, pIn.diffuse.a);
 }
 

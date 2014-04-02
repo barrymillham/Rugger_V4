@@ -22,13 +22,9 @@ public:
 	void charge();
 
 private:
-	bool charging;
-	int rage;
-	float timeCharged;
 	float speed;
 	float radius;
 	double timeSinceLastShot;
 	vector<Bullet*> bullets;
-	Vector3 targetVector;
 };
 

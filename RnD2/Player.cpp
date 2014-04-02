@@ -25,11 +25,7 @@ void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vect
 	width = s;
 	height = s;
 	depth = s;
-	targetVector = Vector3(1, 0, 0);
 	timeSinceLastShot = 500;
-	timeCharged = 0;
-	charging = false;
-	rage = 1;
 
 }
 
@@ -64,26 +60,13 @@ void Player::update(float dt)
 		bullets[i]->update(dt);
 	
 	timeSinceLastShot+=dt;
-	if (charging) 
-		timeCharged+=dt;
 }
 
 void Player::charge() {
-	charging = true;
 }
 
 void Player::shoot(int direction)
 {
-	if (timeCharged > 3) {
-		timeCharged = 0;
-		charging = false;
-		rage = 1;
-	}
-	if (charging)
-		rage = 2;
-	if (timeSinceLastShot > 0.3/rage)
-		timeSinceLastShot = 0;
-	else return;
 	//If the player's got an active bullet on the level, he doesn't get to shoot
 	int index = -1;
 	for (int i = 0; i < bullets.size(); i++) {
@@ -103,28 +86,28 @@ void Player::shoot(int direction)
 		nDir = Vector3(1,0,0);
 		if (this->getVelocity().z > 0) nDir.z = 1;
 		if (this->getVelocity().z < 0) nDir.z = -1;
-		nDir.x *= bulletNS::SPEED*rage;
+		nDir.x *= bulletNS::SPEED;
 		nDir.z *= this->getSpeed()*multiplier;
 	}
 	else if (direction == DOWN) {
 		nDir = Vector3(-1, 0, 0);
 		if (this->getVelocity().z > 0) nDir.z = 1;
 		if (this->getVelocity().z < 0) nDir.z = -1;
-		nDir.x *= bulletNS::SPEED*rage;
+		nDir.x *= bulletNS::SPEED;
 		nDir.z *= this->getSpeed()*multiplier;
 	}
 	else if (direction == LEFT) {
 		nDir = Vector3(0,0,1);
 		if (this->getVelocity().x > 0) nDir.x = 1;
 		if (this->getVelocity().x < 0) nDir.x = -1;
-		nDir.z *= bulletNS::SPEED*rage;
+		nDir.z *= bulletNS::SPEED;
 		nDir.x *= this->getSpeed()*multiplier;
 	}
 	else if (direction == RIGHT) {
 		nDir = Vector3(0,0,-1);
 		if (this->getVelocity().x > 0) nDir.x = 1;
 		if (this->getVelocity().x < 0) nDir.x = -1;
-		nDir.z *= bulletNS::SPEED*rage;
+		nDir.z *= bulletNS::SPEED;
 		nDir.x *= this->getSpeed()*multiplier;
 	}
 
@@ -134,26 +117,5 @@ void Player::shoot(int direction)
 
 void Player::rotateTargeting(int s)
 {
-	//0 for rotating ccw, 1 for cw
-	Matrix rotate;
-	Identity(&rotate);
-	D3DXVECTOR4 tV(0, 0, 0, 0);
-	tV.x = targetVector.x;
-	tV.y = targetVector.y;
-	tV.z = targetVector.z;
-	switch(s)
-	{
-	case 0:
-		D3DXMatrixRotationY(&rotate, ToRadian(-0.25f));
-		D3DXVec4Transform(&tV, &tV, &rotate);
-		
-		break;
-	case 1:
-		D3DXMatrixRotationY(&rotate, ToRadian(0.25f));
-		D3DXVec4Transform(&tV, &tV, &rotate);
-		break;
-	}
-	targetVector.x = tV.x;
-	targetVector.y = tV.y;
-	targetVector.z = tV.z;
+//unneeded, we will use the camera vectors for targeting
 }

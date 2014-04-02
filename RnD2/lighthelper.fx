@@ -104,9 +104,22 @@ float3 Spotlight(SurfaceInfo v, Light L, float3 eyePos)
 	float3 lightVec = normalize(L.pos - v.pos);
 	
 	float s = pow(max(dot(-lightVec, L.dir), 0.0f), L.spotPower);
-	
-	// Scale color by spotlight factor.
-	return litColor*s;
+
+	return litColor * s;
+	//float3 litColor = {0.0f, 0.0f, 0.0f};
+	//float d = length(L.pos - v.pos);
+	//if (d > L.range) return litColor;
+
+	//float3 l = normalize(L.pos - v.pos);
+	//float3 r = L.dir;
+
+	//float s = pow(max(dot(l, -1 * r), 0.0f), L.spotPower);
+	//
+	//s = s/(L.att.x + (L.att.y * d) + L.att.z * pow(d, 2));
+	//
+	//litColor = s * L.spec;
+	//// Scale color by spotlight factor.
+	//return litColor;
 }
 
  
