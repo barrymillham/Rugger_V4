@@ -289,7 +289,7 @@ void ColoredCubeApp::initBasicGeometry() {
 	mBox.init(md3dDevice, 2.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
-	bulletBox .init(md3dDevice, 0.5f, BEACH_SAND);
+	bulletBox.init(md3dDevice, 0.5f, BEACH_SAND);
 	eBulletBox.init(md3dDevice, 0.5f, RED);
 	maroonBox.init(md3dDevice, 10000, colorNS::MAROON);
 	//redBox.init(md3dDevice, 0.00001f, RED);
@@ -340,7 +340,7 @@ void ColoredCubeApp::initWallPositions() {
 	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
 
 	walls[16].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
-	walls[17].init(&brick, 2.0f, Vector3(150, 0, -50),	1,	20,		50,  20);
+	walls[17].init(&brick, 2.0f, Vector3(150, 0, 0),	1,	20,		50,  20);
 	walls[18].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
 
 	walls[19].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
@@ -786,6 +786,15 @@ void ColoredCubeApp::updateCamera() {
 		mEyePos.y -= 20 * dt;
 	}
 
+	if(input->getMouseLButton())
+	{
+		player.fired = true;
+	}
+	if(input->getMouseRButton())
+	{
+		//Do something
+	}
+
 	// Restrict the angle mPhi and radius mRadius.
 	if( mTheta < -(PI/2.0f) + 0.01f)	mTheta = -(PI/2.0f) + 0.01f;
 	if( mTheta > PI/2.0f - 0.01f)	mTheta = (PI/2.0f) - 0.01f;
@@ -863,6 +872,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
 				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
 				shotTimer = 0;
+				player.fired = false;
 			}		
 		}
 	}

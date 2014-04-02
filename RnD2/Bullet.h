@@ -3,7 +3,7 @@
 #include "gameobject.h"
 
 namespace bulletNS {
-	const int SPEED = 50;
+	const int SPEED = 200;
 	const float MASS = 5000;
 }
 

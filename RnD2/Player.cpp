@@ -59,6 +59,11 @@ void Player::update(float dt)
 	for (int i = 0; i < bullets.size(); i++)
 		bullets[i]->update(dt);
 	
+	if(fired == true)
+	{
+		shoot(UP);
+	}
+
 	timeSinceLastShot+=dt;
 }
 

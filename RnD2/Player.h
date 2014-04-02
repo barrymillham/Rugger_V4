@@ -20,6 +20,7 @@ public:
 	void shoot(int direction);
 	void rotateTargeting(int s);
 	void charge();
+	bool fired;
 
 private:
 	float speed;
