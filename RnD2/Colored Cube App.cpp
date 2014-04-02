@@ -45,6 +45,7 @@ namespace gameNS {
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 5;
 	const int NUM_PICKUPS = 4;
+	const int NUM_LIGHTS = 7;
 }
 
 class ColoredCubeApp : public D3DApp
@@ -62,6 +63,8 @@ public:
 	void initBasicVariables();
 	void initWallPositions();
 	void initUniqueObjects();
+	void initLights();
+	void initWaypoints();
 
 	void updateScene(float dt);
 	void updatePickups(float dt);
@@ -109,10 +112,14 @@ private:
 	Wall floor;
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
+	Quad menu;
 
 	//Lighting and Camera-specific declarations
-	Light mLights[3];
+	Light mLights[gameNS::NUM_LIGHTS];
 	int mLightType; // 0 (parallel), 1 (point), 2 (spot)
+	Light sun;
+	int mLightNum;
+	ID3D10EffectScalarVariable* mfxLightNum;
 	D3DXVECTOR3 mEyePos;
 	D3DXVECTOR3 target;
 	D3DXVECTOR3 perpAxis;
@@ -171,6 +178,8 @@ private:
 	bool startScreen, endScreen;
 	float dt;
 	DebugText sText, eText;
+
+	float timect;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -189,6 +198,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	endScreen = false;
 	night = false;
 	found = false;
+	timect = 0.0f;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -215,6 +225,7 @@ void ColoredCubeApp::initApp()
 {
 	D3DApp::initApp();
 	//pos will eventually be player.x, player.height, player.z)
+	startScreen = true;
 	mEyePos = D3DXVECTOR3(0, 5, 0);
 	initBasicGeometry();
 	initBasicVariables(); //Like shotTimer, etc.
@@ -225,70 +236,17 @@ void ColoredCubeApp::initApp()
 	initBullets();
 	initPickups();
 	initWallPositions();
+	initLights();
+	initWaypoints();
 
-	mClearColor = D3DXCOLOR(0.9f, 0.9f, 0.9f, 1.0f);
-	mLightType = 0;
- 
-	// Parallel light.
-	mLights[0].dir      = D3DXVECTOR3(0.57735f, -0.57735f, 0.57735f);
-	mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	//mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//mLights[0].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	mLights[0].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//mLights[0].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	mLights[0].pos = D3DXVECTOR3(0, 50, 0);
- 
-	// Pointlight--position is changed every frame to animate.
-	//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
-	mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	//mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	//mLights[1].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	mLights[1].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	mLights[1].att.x    = 0.0f;
-	mLights[1].att.y    = 0.1f;
-	mLights[1].att.z    = 0.0f;
-	mLights[1].range    = 50.0f;
+	menu.init(md3dDevice, 1.0f, WHITE);
+	menu.setPosition(mEyePos);
+	menu.setRotYAngle(ToRadian(90));
+	menu.setRotZAngle(ToRadian(0));
+	menu.setRotXAngle(ToRadian(-90));
 
-	// Spotlight--position and direction changed every frame to animate.
-	mLights[2].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
-	//mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	mLights[2].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//mLights[2].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	mLights[2].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//mLights[2].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	mLights[2].att.x    = 1.0f;
-	mLights[2].att.y    = 0.0f;
-	mLights[2].att.z    = 0.0f;
-	mLights[2].spotPow  = 64.0f;
-	mLights[2].range    = 10000.0f;
+	mClearColor = D3DXCOLOR(0.15f, 0.15f, 0.15f, 1.0f);
 		
-	//Pathfinding testing
-	inactiveLine.init(md3dDevice, 1.0f, WHITE);
-	activeLine.init(md3dDevice, 1.0f, RED);
-	wayLine = new GameObject*[100];
-	for(int i=0; i<100; i++) wayLine[i] = new GameObject[100];
-
-	for(int i=0; i<100; i++){
-		for(int j=0; j<100; j++)
-		{
-			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i, 0, j));
-			wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
-		}
-	}
-	for(int i=0; i<100; i++)
-	{
-		for(int j=0; j<100; j++)
-		{
-			//Currently just waypoints in the cardinal directions
-			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
-			if(i+1 < 100) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
-			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
-			if(j+1 < 100) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
-		}
-	}
-	dest = waypoints[98][98];
 
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1);
 	buildFX();
@@ -367,31 +325,31 @@ void ColoredCubeApp::initWallPositions() {
 	walls[6].init(&brick, 2.0f, Vector3(250, 0, -155),	1,	10,		10, 95);//	Front/Right wall
 	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 155),	1,	10,		10, 95);//	Back/Left wall
 
-	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		5,	1);//	Left/Front inner wall 
-	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		5,	1);//	Right/Back inner wall
-	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	1,	1,		5,	20);//	Front/Left inner wall
-	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	1,	1,		5,	20);//	Back/Right inner wall
+	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		2.5,	1);//	Left/Front inner wall 
+	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		2.5,	1);//	Right/Back inner wall
+	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	1,	1,		2.5,	20);//	Front/Left inner wall
+	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	1,	1,		2.5,	20);//	Back/Right inner wall
 
-	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	1,	20,		5,	1);//	Left/Back inner wall 
-	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		5,	1);//	Right/Front inner wall
-	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		5,	20);//	Front/Right inner wall
-	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		5,	20);//	Back/Left inner wall
+	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	1,	20,		2.5,	1);//	Left/Back inner wall 
+	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		2.5,	1);//	Right/Front inner wall
+	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		2.5,	20);//	Front/Right inner wall
+	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
 
-	walls[16].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		20,  20);// Front right corner buildings
-	walls[17].init(&brick, 2.0f, Vector3(150, 0, -50),	1,	20,		20,  20);
-	walls[18].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		20,  20);
+	walls[16].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
+	walls[17].init(&brick, 2.0f, Vector3(150, 0, -50),	1,	20,		50,  20);
+	walls[18].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
 
-	walls[19].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		20,  20);// Front left corner buildings
-	walls[20].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		20,  20);
-	walls[21].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		20,  20);
+	walls[19].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
+	walls[20].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
+	walls[21].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
 
-	walls[22].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		20,  20);// Back right corner buildings
-	walls[23].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		20,  20);
-	walls[24].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		20,  20);
+	walls[22].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		50,  20);// Back right corner buildings
+	walls[23].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
+	walls[24].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
 
-	walls[25].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		20,  20);// Back left corner buildings
-	walls[26].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		20,  20);
-	walls[27].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		20,  20);
+	walls[25].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
+	walls[26].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
+	walls[27].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
 
 }
 
@@ -411,10 +369,120 @@ void ColoredCubeApp::initOrigin() {
 	zLine.setRotationY(ToRadian(90));
 }
 
+void ColoredCubeApp::initLights()
+{
+	mLightType = 1;
+	mLightNum = gameNS::NUM_LIGHTS;
+ 
+	// Parallel light.
+	mLights[0].dir      = D3DXVECTOR3(0.57735f, -0.57735f, 0.57735f);
+	mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	mLights[0].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	//mLights[0].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	mLights[0].specular = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//mLights[0].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[0].pos = D3DXVECTOR3(0, 500, 0);
+	mLights[0].range = 1000;
+	mLights[0].att.x = 0.0f;
+	mLights[0].att.y = 0.01f;
+	mLights[0].att.z = 0.0f;
+ 
+	// Pointlight--position is changed every frame to animate.
+	//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+	mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	//mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	//mLights[1].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[1].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[1].att.x    = 0.0f;
+	mLights[1].att.y    = 0.1f;
+	mLights[1].att.z    = 0.0f;
+	mLights[1].range    = 50.0f;
+	
+	// Spotlight--position and direction changed every frame to animate.
+	mLights[2].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+	//mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	mLights[2].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//mLights[2].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	mLights[2].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//mLights[2].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[2].att.x    = 1.0f;
+	mLights[2].att.y    = 0.0f;
+	mLights[2].att.z    = 0.0f;
+	mLights[2].spotPow  = 64.0f;
+	mLights[2].range    = 1.0f;
 
+	//Inner corner lights
+	mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	mLights[3].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	mLights[3].att.x    = 0.0f;
+	mLights[3].att.y    = 0.55f;
+	mLights[3].att.z    = 0.0f;
+	mLights[3].range    = 50.0f;
+	mLights[3].pos = D3DXVECTOR3(45, 10, 45);
+
+	mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	mLights[4].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	mLights[4].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	mLights[4].att.x    = 0.0f;
+	mLights[4].att.y    = 0.55f;
+	mLights[4].att.z    = 0.0f;
+	mLights[4].range    = 50.0f;
+	mLights[4].pos = D3DXVECTOR3(-45, 10, 45);
+
+	mLights[5].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	mLights[5].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	mLights[5].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	mLights[5].att.x    = 0.0f;
+	mLights[5].att.y    = 0.55f;
+	mLights[5].att.z    = 0.0f;
+	mLights[5].range    = 50.0f;
+	mLights[5].pos = D3DXVECTOR3(45, 10, -45);
+
+	mLights[6].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	mLights[6].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	mLights[6].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	mLights[6].att.x    = 0.0f;
+	mLights[6].att.y    = 0.55f;
+	mLights[6].att.z    = 0.0f;
+	mLights[6].range    = 50.0f;
+	mLights[6].pos = D3DXVECTOR3(-45, 10, -45);
+}
+
+void ColoredCubeApp::initWaypoints()
+{
+	//Pathfinding testing
+	inactiveLine.init(md3dDevice, 1.0f, WHITE);
+	activeLine.init(md3dDevice, 1.0f, RED);
+	wayLine = new GameObject*[100];
+	for(int i=0; i<100; i++) wayLine[i] = new GameObject[100];
+
+	for(int i=0; i<100; i++){
+		for(int j=0; j<100; j++)
+		{
+			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i, 0, j));
+			wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
+		}
+	}
+	for(int i=0; i<100; i++)
+	{
+		for(int j=0; j<100; j++)
+		{
+			//Currently just waypoints in the cardinal directions
+			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+			if(i+1 < 100) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+			if(j+1 < 100) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+		}
+	}
+	dest = waypoints[98][98];
+}
 
 void ColoredCubeApp::updateScene(float dt)
 {
+	timect += dt;
 	ColoredCubeApp::dt = dt;
 	bool playing = (!endScreen && !startScreen);
 	Vector3 oldPos = player.getPosition();
@@ -422,7 +490,13 @@ void ColoredCubeApp::updateScene(float dt)
 
 	//Going to need to do this to invalidate some of the waypoints
 	firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
-
+	D3DXMATRIX sunRot;
+	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
+	if(timect >= 1.0f)
+	{
+		timect = 0;
+	}
+	
 	//if(!night)
 	//{
 	//	mLights[0].diffuse.r += 0.1*dt;
@@ -440,6 +514,7 @@ void ColoredCubeApp::updateScene(float dt)
 	
 	if(playing)
 	{	
+#pragma region PATHFINDING
 		//waypoints
 		for(int i=0; i<100; i++)for(int j=0; j<100; j++)if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
 		//find path
@@ -466,7 +541,6 @@ void ColoredCubeApp::updateScene(float dt)
 
 				if(current == dest) 
 					break;
-
 				//for neighbors of current
 				for(int i=0; i<current->getNeighbors().size(); i++)
 				{
@@ -514,8 +588,8 @@ void ColoredCubeApp::updateScene(float dt)
 			}
 			found = true;
 		}
-
-
+#pragma endregion
+		menu.update(dt);
 		//General Update
 		D3DApp::updateScene(dt);
 		updateOrigin(dt);
@@ -531,21 +605,25 @@ void ColoredCubeApp::updateScene(float dt)
 		handlePickupCollisions(dt);
 	}
 
-	else if (startScreen) if(input->anyKeyPressed()) startScreen = false;
+	else if (startScreen) 
+	{
+		//if(input->anyKeyPressed()) startScreen = false;
+		
+	}
 	else doEndScreen();
+
 	// The spotlight takes on the camera position and is aimed in the
 	// same direction the camera is looking.  In this way, it looks
 	// like we are holding a flashlight.
 	mLights[2].pos = D3DXVECTOR3(0, 10, 0);
 	D3DXVec3Normalize(&mLights[2].dir, &D3DXVECTOR3(0, -1, 0));
-
+	
 	// The point light circles the scene as a function of time, 
 	// staying 7 units above the land's or water's surface.
 	mLights[1].pos.x = 50.0f*cosf( mTimer.getGameTime() );
 	mLights[1].pos.z = 50.0f*sinf( mTimer.getGameTime() );
 	mLights[1].pos.y = 7.0f;
-
-
+	
 	// The spotlight takes on the camera position and is aimed in the
 	// same direction the camera is looking.  In this way, it looks
 	// like we are holding a flashlight.
@@ -765,7 +843,19 @@ void ColoredCubeApp::drawScene()
 		mTech->GetDesc( &techDesc );
 		for(UINT p = 0; p < techDesc.Passes; ++p)
 		{
+			
 			mWallMesh.draw();
+		}
+
+		Matrix mWVP = menu.getWorld() * (mVP);
+		mfxWVPVar->SetMatrix((float*)&mWVP);
+		mfxWorldVar->SetMatrix((float*)&menu.getWorld());
+		//D3D10_TECHNIQUE_DESC techDesc;
+		mTech->GetDesc( &techDesc );
+		for(UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			mTech->GetPassByIndex( p )->Apply(0);
+			menu.draw();
 		}
 
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
@@ -773,7 +863,15 @@ void ColoredCubeApp::drawScene()
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
 	}
 	else if(startScreen)
+	{
+		D3D10_TECHNIQUE_DESC techDesc;
+		mTech->GetDesc( &techDesc );
+		for(UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			menu.draw();
+		}
 		printText(sText);
+	}
 	else { // End Screen 
 		printText(eText);
 		printText("Score: ", 300, 350, 0, 0, score);
@@ -860,6 +958,7 @@ void ColoredCubeApp::buildFX()
 	mfxDiffuseMapVar = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
 	mfxSpecMapVar    = mFX->GetVariableByName("gSpecMap")->AsShaderResource();
 	mfxTexMtxVar     = mFX->GetVariableByName("gTexMtx")->AsMatrix();
+	mfxLightNum	= mFX->GetVariableByName("gLightNum")->AsScalar();
 }
 
 void ColoredCubeApp::buildVertexLayouts()
@@ -901,12 +1000,13 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
 
 	// Set per frame constants.
 	mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
-	mfxLightVar->SetRawValue(&mLights[mLightType], 0, sizeof(Light));
+	mfxLightVar->SetRawValue(&mLights, 0, mLightNum*sizeof(Light));
 	mfxLightType->SetInt(mLightType);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
 	mfxWorldVar->SetMatrix((float*)&mCompCubeWorld);
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
 	mfxSpecMapVar->SetResource(mSpecMapRV);
+	mfxLightNum->SetInt(mLightNum);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)

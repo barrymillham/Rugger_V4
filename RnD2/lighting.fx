@@ -8,9 +8,10 @@
  
 cbuffer cbPerFrame
 {
-	Light gLight;
+	Light gLight[7];
 	int gLightType; 
 	float3 gEyePosW;
+	int gLightNum;
 	
 };
 
@@ -79,19 +80,16 @@ float4 PS(VS_OUT pIn) : SV_Target
    
     SurfaceInfo v = {pIn.posW, pIn.normalW, pIn.diffuse, pIn.spec};
     
-    float3 litColor;
-    if( gLightType == 0 ) // Parallel
-    {
-		litColor = ParallelLight(v, gLight, gEyePosW);
-    }
-    else if( gLightType == 1 ) // Point
-    {
-		litColor = PointLight(v, gLight, gEyePosW);
-	}
-	else // Spot
-	{
-		litColor = Spotlight(v, gLight, gEyePosW);
-	}
+    float3 litColor = {0.0f, 0.0f, 0.0f};
+    
+	litColor += PointLight(v, gLight[0], gEyePosW);
+	litColor += PointLight(v, gLight[1], gEyePosW);
+	litColor += Spotlight(v, gLight[2], gEyePosW);
+	litColor += PointLight(v, gLight[3], gEyePosW);
+	litColor += PointLight(v, gLight[4], gEyePosW);
+	litColor += PointLight(v, gLight[5], gEyePosW);
+	litColor += PointLight(v, gLight[6], gEyePosW);
+	//litColor += PointLight(v, gLight[7], gEyePosW);
 	   
     return float4(litColor, pIn.diffuse.a);
 }

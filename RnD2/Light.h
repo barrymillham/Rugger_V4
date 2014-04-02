@@ -24,6 +24,7 @@ struct Light
 	D3DXVECTOR3 att;
 	float spotPow;
 	float range;
+	D3DXVECTOR3 pad3;
 };
 
 #endif // LIGHT_H

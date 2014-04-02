@@ -15,6 +15,7 @@ struct Light
 	float3 att; //attenuation
 	float  spotPower;
 	float  range;
+	float3 pad;
 };
 
 struct SurfaceInfo
