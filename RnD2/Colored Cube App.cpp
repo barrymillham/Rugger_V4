@@ -46,6 +46,8 @@ namespace gameNS {
 	const int NUM_BULLETS = 5;
 	const int NUM_PICKUPS = 4;
 	const int NUM_LIGHTS = 11;
+	const float DAYLEN = 120;
+	const float TRANSITIONTIME = 30;
 }
 
 class ColoredCubeApp : public D3DApp
@@ -180,6 +182,7 @@ private:
 	DebugText sText, eText;
 
 	float timect;
+	string timeOfDay;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -199,6 +202,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	night = false;
 	found = false;
 	timect = 0.0f;
+	timeOfDay = "Day";
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -531,10 +535,7 @@ void ColoredCubeApp::updateScene(float dt)
 	firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
 	D3DXMATRIX sunRot;
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
-	if(timect >= 1.0f)
-	{
-		timect = 0;
-	}
+	
 	
 	//if(!night)
 	//{
@@ -553,6 +554,35 @@ void ColoredCubeApp::updateScene(float dt)
 	
 	if(playing)
 	{	
+		if(timect >= gameNS::DAYLEN)
+		{
+			timect = 0;
+			night = !night;
+			if(night)
+			{
+				timeOfDay = "Night";
+				mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
+			}
+			else
+			{
+				timeOfDay = "Day";
+				mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+		}
+		if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
+		{
+			//mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
+			if(night) 
+			{
+				timeOfDay = "Dawn";
+				mLights[0].diffuse += D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			}
+			else 
+			{
+				timeOfDay = "Evening";
+				mLights[0].diffuse -= D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			}
+		}
 #pragma region PATHFINDING
 		//waypoints
 		for(int i=0; i<100; i++)for(int j=0; j<100; j++)if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
@@ -898,8 +928,9 @@ void ColoredCubeApp::drawScene()
 		}
 
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-
+		
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
+		printText(timeOfDay, 5, 30, 0, 0);
 	}
 	else if(startScreen)
 	{
