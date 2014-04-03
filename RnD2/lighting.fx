@@ -28,8 +28,8 @@ Texture2D gSpecMap;
 SamplerState gTriLinearSam
 {
 	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = MIRROR;
-	AddressV = MIRROR;
+	AddressU = CLAMP;
+	AddressV = CLAMP;
 };
 
 struct VS_IN
@@ -38,7 +38,7 @@ struct VS_IN
 	float3 normalL : NORMAL;
 	float4 diffuse : DIFFUSE;
 	float4 spec    : SPECULAR;
-	float2  uv	   : TEXCOORD;
+	float2  texC   : TEXCOORD;
 };
 
 struct VS_OUT
@@ -48,7 +48,7 @@ struct VS_OUT
     float3 normalW : NORMAL;
     float4 diffuse : DIFFUSE;
     float4 spec    : SPECULAR;
-	float2  uv	   : TEXCOORD;
+	float2  texC   : TEXCOORD;
 };
 
 VS_OUT VS(VS_IN vIn)
@@ -65,7 +65,7 @@ VS_OUT VS(VS_IN vIn)
 	// Output vertex attributes for interpolation across triangle.
 	vOut.diffuse = vIn.diffuse;
 	vOut.spec    = vIn.spec;
-	vOut.uv      = mul(float4(vIn.uv, 0.0f, 1.0f), gTexMtx);
+	vOut.texC    = mul(float4(vIn.texC, 0.0f, 1.0f), gTexMtx);
 
 	return vOut;
 }
@@ -75,15 +75,21 @@ float4 PS(VS_OUT pIn) : SV_Target
 	// Interpolating normal can make it not be of unit length so normalize it.
     pIn.normalW = normalize(pIn.normalW);
    
-	float4 diffuse = gDiffuseMap.Sample( gTriLinearSam, pIn.uv );
-	float4 spec    = gSpecMap.Sample( gTriLinearSam, pIn.uv );
+	pIn.diffuse += gDiffuseMap.Sample( gTriLinearSam, pIn.texC );
+	pIn.spec    += gSpecMap.Sample( gTriLinearSam, pIn.texC );
    
+	//pIn.spec.a *= 256.0f;
+
+	float3 nNormalW = normalize(pIn.normalW);
     SurfaceInfo v = {pIn.posW, pIn.normalW, pIn.diffuse, pIn.spec};
     
-    float3 litColor = {0.0f, 0.0f, 0.0f};
+    float3 litColor = {0.1f, 0.1f, 0.1f};
     
+	//directed light for scene (sun)
 	litColor += ParallelLight(v, gLight[0], gEyePosW);
+	//
 	litColor += PointLight(v, gLight[1], gEyePosW);
+	//rotating light
 	litColor += Spotlight(v, gLight[2], gEyePosW);
 	for(int i = 3; i < gLightNum; i++)
 	{
