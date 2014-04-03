@@ -47,7 +47,7 @@ namespace gameNS {
 	const int NUM_LIGHTS = 11;
 	const float DAYLEN = 12;
 	const float TRANSITIONTIME = 3;
-	const int WAYPT_SIZE = 100;
+	const int WAYPT_SIZE = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.098f, 0.098f, 0.439f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 }
@@ -842,11 +842,28 @@ void ColoredCubeApp::updateOrigin(float dt) {
 vector<Waypoint*> ColoredCubeApp::pathfindAStar(Waypoint* src, Waypoint* dest)
 {
 	//waypoints
-	
+	while(!openWay.empty())
+	{
+		openWay.pop();
+	}
+	closedWay.clear();
+	for(int i=0; i<gameNS::WAYPT_SIZE; i++)
+	{
+		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
+		{
+			waypoints[i][j]->setContainer(NONE);
+			waypoints[i][j]->setFCost(0);
+			waypoints[i][j]->setGCost(0);
+			waypoints[i][j]->setParent(0);
+			wayLine[i][j].setBox(&inactiveLine);
+		}
+	}
 	//find path
 	wayLine[0][0].setBox(&activeLine);
 	wayLine[(int)dest->getPosition().x][(int)dest->getPosition().z].setBox(&activeLine);
 		
+	
+
 	src = waypoints[0][0];
 	src->setFCost(heuristic(src, dest));
 		
@@ -965,7 +982,7 @@ void ColoredCubeApp::drawScene()
 	if(playing) {		
 		mVP = mView*mProj;
 
-		for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
