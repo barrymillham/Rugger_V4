@@ -17,6 +17,7 @@
 #include <d3dx9math.h>
 #include "LineObject.h"
 #include "Wall.h"
+#include "Building.h"
 #include "gameError.h"
 #include "Player.h"
 #include "Bullet.h"
@@ -40,7 +41,8 @@ void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>&
 float heuristic(Waypoint* x, Waypoint* y);
 
 namespace gameNS {
-	const int NUM_WALLS = 28;
+	const int NUM_WALLS = 16;
+	const int NUM_BUILDINGS = 12;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 5;
 	const int NUM_PICKUPS = 4;
@@ -66,6 +68,7 @@ public:
 	void initTextStrings();
 	void initBasicVariables();
 	void initWallPositions();
+	void initBuildingPositions();
 	void initUniqueObjects();
 	void initLights();
 	void initWaypoints();
@@ -74,6 +77,7 @@ public:
 	void updatePickups(float dt);
 	void updateOrigin(float dt);
 	void updateWalls(float dt);
+	void updateBuildings(float dt);
 	void updateUniqueObjects(float dt);
 	void updatePlayer(float dt);
 	void updateCamera();
@@ -87,6 +91,7 @@ public:
 	void drawOrigin();
 	void drawPickups();
 	void drawWalls();
+	void drawBuildings();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
@@ -105,6 +110,7 @@ private:
  
 private:
 	Box mWallMesh;
+	Box mBuildingMesh;
 
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
@@ -113,6 +119,7 @@ private:
 	vector<Bullet*> pBullets;
 	LineObject xLine, yLine, zLine;
 	Wall walls[gameNS::NUM_WALLS];
+	Building buildings[gameNS::NUM_BUILDINGS];
 	Wall floor;
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
@@ -154,6 +161,8 @@ private:
 	ID3D10EffectScalarVariable* mfxLightType;
 	ID3D10ShaderResourceView* mDiffuseMapRV;
 	ID3D10ShaderResourceView* mSpecMapRV;
+	ID3D10ShaderResourceView* mDiffuseMapRVBuilding;
+	ID3D10ShaderResourceView* mSpecMapRVBuilding;
 	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
@@ -242,6 +251,7 @@ void ColoredCubeApp::initApp()
 	initBullets();
 	initPickups();
 	initWallPositions();
+	initBuildingPositions();
 	initLights();
 	initWaypoints();
 
@@ -260,12 +270,16 @@ void ColoredCubeApp::initApp()
 	buildVertexLayouts();
 
 	mWallMesh.init(md3dDevice, 1.0f);
+	mBuildingMesh.init(md3dDevice, 1.0f);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"Companion Cube.jpg", 0, 0, &mDiffuseMapRV, 0 ));
-
+		L"bricks.jpg", 0, 0, &mDiffuseMapRV, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"skyscraper.jpg", 0, 0, &mDiffuseMapRVBuilding, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
 
 	//pls no more
 	//audio->playCue(MUSIC);
@@ -319,6 +333,25 @@ void ColoredCubeApp::initBasicVariables() {
 	shotTimer = 0;
 }
 
+void ColoredCubeApp::initBuildingPositions() {
+//					geom,  rad,  position,				sc,	w,		h,	d
+	buildings[0].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
+	buildings[1].init(&brick, 2.0f, Vector3(150, 0, 0),	1,	20,		50,  20);
+	buildings[2].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
+
+	buildings[3].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
+	buildings[4].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
+	buildings[5].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
+
+	buildings[6].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		50,  20);// Back right corner buildings
+	buildings[7].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
+	buildings[8].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
+
+	buildings[9].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
+	buildings[10].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
+	buildings[11].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
+}
+
 void ColoredCubeApp::initWallPositions() {
 	
 //				   geom,  rad,  position,				sc,	w,		h,	d
@@ -341,22 +374,6 @@ void ColoredCubeApp::initWallPositions() {
 	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		2.5,	1);//	Right/Front inner wall
 	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		2.5,	20);//	Front/Right inner wall
 	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
-
-	walls[16].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
-	walls[17].init(&brick, 2.0f, Vector3(150, 0, 0),	1,	20,		50,  20);
-	walls[18].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
-
-	walls[19].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
-	walls[20].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
-	walls[21].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
-
-	walls[22].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		50,  20);// Back right corner buildings
-	walls[23].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
-	walls[24].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
-
-	walls[25].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
-	walls[26].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
-	walls[27].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
 
 }
 
@@ -610,6 +627,7 @@ void ColoredCubeApp::updateScene(float dt)
 		updatePlayer(dt);
 		updatePickups(dt);
 		updateWalls(dt);
+		updateBuildings(dt);
 		updateUniqueObjects(dt); //Like floor
 
 
@@ -787,6 +805,11 @@ void ColoredCubeApp::updateUniqueObjects(float dt) {
 void ColoredCubeApp::updateWalls(float dt) {
 	for(int i=0; i<gameNS::NUM_WALLS; i++)
 		walls[i].update(dt);
+}
+
+void ColoredCubeApp::updateBuildings(float dt) {
+	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+		buildings[i].update(dt);
 }
 
 void ColoredCubeApp::updatePlayer(float dt) {
@@ -986,6 +1009,7 @@ void ColoredCubeApp::drawScene()
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
+		drawBuildings();
 		drawPickups();
 
 		D3D10_TECHNIQUE_DESC techDesc;
@@ -1036,8 +1060,18 @@ void ColoredCubeApp::drawScene()
 }
 
 void ColoredCubeApp::drawWalls() {
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
+	mfxSpecMapVar->SetResource(mSpecMapRV);
 	for(int i=0; i<gameNS::NUM_WALLS; i++)
 		walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+}
+
+void ColoredCubeApp::drawBuildings() {
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding);
+	mfxSpecMapVar->SetResource(mSpecMapRVBuilding);
+	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+		buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 }
 
 void ColoredCubeApp::printText(DebugText text) {
@@ -1154,8 +1188,7 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
 	mfxLightType->SetInt(mLightType);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
 	mfxWorldVar->SetMatrix((float*)&mCompCubeWorld);
-	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
-	mfxSpecMapVar->SetResource(mSpecMapRV);
+
 	mfxLightNum->SetInt(mLightNum);
 	D3DXMATRIX tm;
 	Identity(&tm);
@@ -1216,7 +1249,7 @@ bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare
 		Waypoint* comp = pq.top();
 		pq.pop();
 		hold.push(comp);
-		if(comp == w) 
+		if(comp == w)
 		{
 			f = true;
 		}
