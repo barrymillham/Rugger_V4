@@ -574,12 +574,13 @@ void ColoredCubeApp::updateScene(float dt)
 	D3DXMATRIX sunRot;
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
 
-	updateCamera();
-
+	
 	updateMusic();
 	
 	if(playing)
 	{	
+		updateCamera();
+
 		updateDebugMode();
 		updateDayNight();
 
@@ -835,7 +836,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 	for(int i=0; i<gameNS::NUM_WALLS; i++)
 	{
 		if(player.collided(&walls[i]))
-			player.setPosition(pos);
+				mEyePos = pos;
 
 		for (int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&walls[i])) {
@@ -852,7 +853,7 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
 	{
 		if(player.collided(&buildings[i]))
-			player.setPosition(pos);
+			mEyePos = pos;
 
 		for (int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&buildings[i])) {
