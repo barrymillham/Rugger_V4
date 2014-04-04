@@ -295,7 +295,7 @@ void ColoredCubeApp::initBullets() {
 		pBullets.push_back(new Bullet());
 		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1);
 	}
-	enemy.init(&blueBox, 2.0f, Vector3(0,0,0), 1.0f, 1, 1, 1, 0, 0, 0);
+	
 }
 
 void ColoredCubeApp::initBasicGeometry() {
@@ -376,6 +376,7 @@ void ColoredCubeApp::initWallPositions() {
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
+	enemy.init(&mBox, 2.0f, Vector3(2,0,2));
 }
 
 void ColoredCubeApp::initOrigin() {
@@ -546,7 +547,6 @@ void ColoredCubeApp::updateScene(float dt)
 	
 	if(playing)
 	{	
-		enemy.update(dt, &player, gameNS::WAYPT_SIZE);
 		if(timect >= gameNS::DAYLEN)
 		{
 			timect = 0;
@@ -589,6 +589,7 @@ void ColoredCubeApp::updateScene(float dt)
 		//	wayLine[(int)path[i]->getPosition().x][(int)path[i]->getPosition().z].setBox(&activeLine);
 		//}
 
+		enemy.update(dt, &player, gameNS::WAYPT_SIZE);
 
 		menu.update(dt);
 		//General Update
@@ -601,6 +602,7 @@ void ColoredCubeApp::updateScene(float dt)
 		updateBuildings(dt);
 		updateUniqueObjects(dt); //Like floor
 
+		
 
 		//Handle Collisions
 		handleWallCollisions(oldPos);
@@ -873,7 +875,7 @@ void ColoredCubeApp::drawScene()
 
 	if(playing) {		
 		mVP = mView*mProj;
-
+		enemy.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
@@ -885,7 +887,6 @@ void ColoredCubeApp::drawScene()
 		mTech->GetDesc( &techDesc );
 		for(UINT p = 0; p < techDesc.Passes; ++p)
 		{
-			
 			mWallMesh.draw();
 		}
 

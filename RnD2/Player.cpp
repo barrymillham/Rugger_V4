@@ -45,7 +45,6 @@ void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVaria
 		for (int i = 0; i < bullets.size(); i++) 
 			if(bullets[i]->getActiveState())bullets[i]->draw(mfxWVPVar, mTech, mVP);
     }
-
 }
 
 void Player::update(float dt, D3DXVECTOR3 moveAxis)

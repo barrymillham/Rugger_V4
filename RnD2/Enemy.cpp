@@ -19,8 +19,9 @@ Enemy::Enemy()
 	rotX = 0.0f;
 	rotY = 0.0f;
 	rotZ = 0.0f;
-	speed = 10;
+	speed = 5;
 	target = 0;
+	velocity = Vector3(0,0,0);
 }
 
 Enemy::~Enemy()
@@ -77,7 +78,8 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 {
 	Identity(&world);
 	
-	if(D3DXVec3Length(&(position - p->getPosition())) >= 0) //if the enemy is far enough away from the player, pathfind
+	//if(D3DXVec3Length(&(position - p->getPosition())) >= 0) //if the enemy is far enough away from the player, pathfind
+	if(true)
 	{
 		//calculate the path from the nearest waypoint to the nearest waypoint to the player
 		Waypoint* src = waypoints[0][0];
@@ -93,13 +95,13 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 				target = nav.front();
 				nav.pop_front();
 			}
-			if(position != target->getPosition())
+			if(D3DXVec3Length(&(position - target->getPosition())) > 2)
 			{
 				D3DXVECTOR3 tar;
 				D3DXVec3Normalize(&tar, &(target->getPosition() - position));
 				velocity = tar * speed;
 				float t = 0;
-				//calculate time when our position is the same as the target
+				//calculate the time when our position is the same as the target
 				D3DXVECTOR3 a = target->getPosition() - position;
 				t = (-(D3DXVec3Dot(&a, &a)) - sqrt(pow(D3DXVec3Dot(&a, &velocity), 2) - (D3DXVec3Dot(&velocity, &velocity)*D3DXVec3Dot(&a, &a))))/(D3DXVec3Dot(&velocity, &velocity));
 
@@ -112,15 +114,13 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 			}
 		}
 	}
-	//Otherwise, just to vector tracking for movement
+	//Otherwise, just do vector tracking for movement
 	else
 	{
 
 	}
-
-	D3DXMatrixScaling(&mScale, width, height, depth);
-	D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
-	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
+	position = position + velocity * dt;
+	update(dt);
 }
 
 list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest, const int& WAYPT_SIZE)
@@ -237,7 +237,7 @@ void Enemy::initWaypoints()
 	for(int i=0; i<10; i++){
 		for(int j=0; j<10; j++)
 		{
-			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i, 0, j));
+			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i*10, 0, j*10));
 			waypoints[i][j]->setContainer(NONE);
 			//wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
 		}
