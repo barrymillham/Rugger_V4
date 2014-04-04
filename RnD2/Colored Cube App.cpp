@@ -43,11 +43,12 @@ namespace gameNS {
 	const int NUM_BULLETS = 50;
 	const int NUM_PICKUPS = 4;
 	const int NUM_LIGHTS = 11;
-	const float DAYLEN = 12;
-	const float TRANSITIONTIME = 3;
+	const float DAYLEN = 40;
+	const float TRANSITIONTIME = 10;
 	const int WAYPT_SIZE = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.098f, 0.098f, 0.439f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
+	bool PLAY_MUSIC = true;
 }
 
 
@@ -82,6 +83,7 @@ public:
 	void updateDayNight();
 	void updateLamps(float dt);
 	void updateDebugMode();
+	void updateMusic();
 
 	void handleUserInput();
 	void handleBuildingCollisions(Vector3 pos);
@@ -152,6 +154,8 @@ private:
 	
 	bool found;
 	bool debugMode;
+	bool hasntPlayedYet;
+	bool nightDayTrans;
 
 	float spinAmount;
 	int shotTimer;
@@ -296,8 +300,6 @@ void ColoredCubeApp::initApp()
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
 
-	//pls no more
-	//audio->playCue(MUSIC);
 }
 
 void ColoredCubeApp::initLamps() {
@@ -365,6 +367,8 @@ void ColoredCubeApp::initTextStrings() {
 void ColoredCubeApp::initBasicVariables() {
 	startScreen = false;
 	shotTimer = 0;
+	hasntPlayedYet = true;
+	nightDayTrans = false;
 }
 
 void ColoredCubeApp::initBuildingPositions() {
@@ -570,6 +574,8 @@ void ColoredCubeApp::updateScene(float dt)
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
 
 	updateCamera();
+
+	updateMusic();
 	
 	if(playing)
 	{	
@@ -618,6 +624,14 @@ void ColoredCubeApp::updateScene(float dt)
 
 }
 
+void ColoredCubeApp::updateMusic() {
+	if (hasntPlayedYet || nightDayTrans) {
+		hasntPlayedYet = false;
+		nightDayTrans = false;
+		if (gameNS::PLAY_MUSIC) audio->playCue(MUSIC);
+	}
+}
+
 void ColoredCubeApp::updateDebugMode() {
 	if(input->wasKeyPressed(KEY_K)) {
 		debugMode = true;
@@ -627,6 +641,10 @@ void ColoredCubeApp::updateDebugMode() {
 		mEyePos = D3DXVECTOR3(mEyePos.x, 5, mEyePos.z);
 		debugMode = false;
 		input->clear(KEY_L);
+	}
+	if (input->wasKeyPressed(KEY_M)) {
+		gameNS::PLAY_MUSIC = false;
+		audio->stopCue(MUSIC);
 	}
 }
 
@@ -892,6 +910,7 @@ void ColoredCubeApp::updateDayNight() {
 			}
 			else
 			{
+				if (timeOfDay == "Dawn") nightDayTrans = true;
 				timeOfDay = "Day";
 				mClearColor = gameNS::DAY_SKY_COLOR;
 				mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);

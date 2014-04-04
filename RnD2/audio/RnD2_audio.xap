@@ -16,8 +16,8 @@ Global Settings
     Header File = C:\Users\lehmanad1\Documents\GitHub\RuggerV3\RnD2\audio\RnD2_audio.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 3097073446;
-    Last Modified High = 30356331;
+    Last Modified Low = 3494276110;
+    Last Modified High = 30363730;
 
     Category
     {
@@ -227,40 +227,17 @@ Wave Bank
     Compression Preset Name = <none>;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 3097193515;
-    PC Bank Last Modified High = 30356331;
-    Bank Last Revised Low = 2957844838;
-    Bank Last Revised High = 30356331;
+    PC Bank Last Modified Low = 3767894714;
+    PC Bank Last Modified High = 30363730;
+    Bank Last Revised Low = 450404095;
+    Bank Last Revised High = 30363730;
 
     Wave
     {
-        Name = oomph;
-        File = oomph.wav;
-        Build Settings Last Modified Low = 918229699;
-        Build Settings Last Modified High = 30355888;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 94;
-            Play Region Length = 37056;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2198800698;
-            Last Modified High = 30355893;
-        }
-    }
-
-    Wave
-    {
-        Name = Woop Woop;
-        File = Woop Woop.wav;
-        Build Settings Last Modified Low = 2116906168;
-        Build Settings Last Modified High = 30355944;
+        Name = die;
+        File = die.wav;
+        Build Settings Last Modified Low = 915760107;
+        Build Settings Last Modified High = 30363713;
 
         Cache
         {
@@ -269,21 +246,21 @@ Wave Bank
             Sampling Rate = 44100;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 261008;
+            Play Region Length = 1327240;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2503202633;
-            Last Modified High = 30356323;
+            Last Modified Low = 1474659775;
+            Last Modified High = 30363594;
         }
     }
 
     Wave
     {
-        Name = Alien Death Ray;
-        File = Alien Death Ray.wav;
-        Build Settings Last Modified Low = 2275369059;
-        Build Settings Last Modified High = 30355944;
+        Name = night_music;
+        File = night_music.wav;
+        Build Settings Last Modified Low = 915770123;
+        Build Settings Last Modified High = 30363713;
 
         Cache
         {
@@ -292,44 +269,21 @@ Wave Bank
             Sampling Rate = 44100;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 882000;
+            Play Region Length = 10423712;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 4251787043;
-            Last Modified High = 30355947;
+            Last Modified Low = 3570509343;
+            Last Modified High = 30363593;
         }
     }
 
     Wave
     {
-        Name = 57239_newgrounds_space_;
-        File = 57239_newgrounds_space_.wav;
-        Build Settings Last Modified Low = 653367217;
-        Build Settings Last Modified High = 30356321;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 182;
-            Play Region Length = 29237760;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2495883703;
-            Last Modified High = 30356323;
-        }
-    }
-
-    Wave
-    {
-        Name = Male Grunt-SoundBible.com-68178715;
-        File = Male Grunt-SoundBible.com-68178715.wav;
-        Build Settings Last Modified Low = 896720995;
-        Build Settings Last Modified High = 30356325;
+        Name = nightTime;
+        File = nightTime.wav;
+        Build Settings Last Modified Low = 915770123;
+        Build Settings Last Modified High = 30363713;
 
         Cache
         {
@@ -338,21 +292,21 @@ Wave Bank
             Sampling Rate = 44100;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 718848;
+            Play Region Length = 1468020;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 4078512042;
-            Last Modified High = 30356325;
+            Last Modified Low = 2548160027;
+            Last Modified High = 30363591;
         }
     }
 
     Wave
     {
-        Name = Hl2_Rebel-Ragdoll;
-        File = Hl2_Rebel-Ragdoll.wav;
-        Build Settings Last Modified Low = 3079987750;
-        Build Settings Last Modified High = 30356325;
+        Name = seeEnemy;
+        File = seeEnemy.wav;
+        Build Settings Last Modified Low = 915770123;
+        Build Settings Last Modified High = 30363713;
 
         Cache
         {
@@ -361,44 +315,21 @@ Wave Bank
             Sampling Rate = 44100;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 495768;
+            Play Region Length = 326508;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 4078441978;
-            Last Modified High = 30356325;
+            Last Modified Low = 15392231;
+            Last Modified High = 30363594;
         }
     }
 
     Wave
     {
-        Name = Cash Register Cha Ching;
-        File = Cash Register Cha Ching.wav;
-        Build Settings Last Modified Low = 3129291021;
-        Build Settings Last Modified High = 30356325;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 1;
-            Sampling Rate = 11025;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 15014;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 4078391946;
-            Last Modified High = 30356325;
-        }
-    }
-
-    Wave
-    {
-        Name = Sad;
-        File = Sad.wav;
-        Build Settings Last Modified Low = 2883857389;
-        Build Settings Last Modified High = 30356331;
+        Name = shootLight;
+        File = shootLight.wav;
+        Build Settings Last Modified Low = 915770123;
+        Build Settings Last Modified High = 30363713;
 
         Cache
         {
@@ -407,12 +338,81 @@ Wave Bank
             Sampling Rate = 44100;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 716476;
+            Play Region Length = 326508;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 1663032559;
-            Last Modified High = 30356331;
+            Last Modified Low = 3741690618;
+            Last Modified High = 30363594;
+        }
+    }
+
+    Wave
+    {
+        Name = bigBoss;
+        File = bigBoss.wav;
+        Build Settings Last Modified Low = 915780120;
+        Build Settings Last Modified High = 30363713;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 2422108;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1148348874;
+            Last Modified High = 30363594;
+        }
+    }
+
+    Wave
+    {
+        Name = day_music;
+        File = day_music.wav;
+        Build Settings Last Modified Low = 915780120;
+        Build Settings Last Modified High = 30363713;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 6514080;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2083422940;
+            Last Modified High = 30363598;
+        }
+    }
+
+    Wave
+    {
+        Name = fullMusic;
+        File = fullMusic.wav;
+        Build Settings Last Modified Low = 381128194;
+        Build Settings Last Modified High = 30363730;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 14378436;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3742998566;
+            Last Modified High = 30363730;
         }
     }
 }
@@ -424,14 +424,14 @@ Sound Bank
     Windows File = Win\Sound Bank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 3098514183;
-    Bank Last Modified High = 30356331;
+    Bank Last Modified Low = 3495006591;
+    Bank Last Modified High = 30363730;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
     Sound
     {
-        Name = oomph;
+        Name = day_music;
         Volume = -1200;
         Pitch = 0;
         Priority = 0;
@@ -467,291 +467,7 @@ Sound Bank
                 {
                     Bank Name = Wave Bank;
                     Bank Index = 0;
-                    Entry Name = oomph;
-                    Entry Index = 0;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = Alien Death Ray;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = Alien Death Ray;
-                    Entry Index = 2;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = Woop Woop;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Loop Count = 255;
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = Woop Woop;
-                    Entry Index = 1;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = 57239_newgrounds_space_;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Loop Count = 255;
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = 57239_newgrounds_space_;
-                    Entry Index = 3;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = Male Grunt-SoundBible.com-68178715;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = Male Grunt-SoundBible.com-68178715;
-                    Entry Index = 4;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = Hl2_Rebel-Ragdoll;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = Hl2_Rebel-Ragdoll;
-                    Entry Index = 5;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = Cash Register Cha Ching;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = Cash Register Cha Ching;
+                    Entry Name = day_music;
                     Entry Index = 6;
                     Weight = 255;
                     Weight Min = 0;
@@ -762,7 +478,7 @@ Sound Bank
 
     Sound
     {
-        Name = Sad;
+        Name = seeEnemy;
         Volume = -1200;
         Pitch = 0;
         Priority = 0;
@@ -798,7 +514,289 @@ Sound Bank
                 {
                     Bank Name = Wave Bank;
                     Bank Index = 0;
-                    Entry Name = Sad;
+                    Entry Name = seeEnemy;
+                    Entry Index = 3;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = shootLight;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = shootLight;
+                    Entry Index = 4;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = bigBoss;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = bigBoss;
+                    Entry Index = 5;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = nightTime;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = nightTime;
+                    Entry Index = 2;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = night_music;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = night_music;
+                    Entry Index = 1;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = die;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = die;
+                    Entry Index = 0;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = fullMusic;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = fullMusic;
                     Entry Index = 7;
                     Weight = 255;
                     Weight Min = 0;
@@ -809,7 +807,7 @@ Sound Bank
 
     Cue
     {
-        Name = oomph;
+        Name = day_music;
 
         Variation
         {
@@ -820,7 +818,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = oomph;
+            Name = day_music;
             Index = 0;
             Weight Min = 0;
             Weight Max = 255;
@@ -829,7 +827,7 @@ Sound Bank
 
     Cue
     {
-        Name = Alien Death Ray;
+        Name = seeEnemy;
 
         Variation
         {
@@ -840,7 +838,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = Alien Death Ray;
+            Name = seeEnemy;
             Index = 1;
             Weight Min = 0;
             Weight Max = 255;
@@ -849,7 +847,7 @@ Sound Bank
 
     Cue
     {
-        Name = Woop Woop;
+        Name = shootLight;
 
         Variation
         {
@@ -860,7 +858,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = Woop Woop;
+            Name = shootLight;
             Index = 2;
             Weight Min = 0;
             Weight Max = 255;
@@ -869,7 +867,7 @@ Sound Bank
 
     Cue
     {
-        Name = 57239_newgrounds_space_;
+        Name = bigBoss;
 
         Variation
         {
@@ -880,7 +878,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = 57239_newgrounds_space_;
+            Name = bigBoss;
             Index = 3;
             Weight Min = 0;
             Weight Max = 255;
@@ -889,7 +887,7 @@ Sound Bank
 
     Cue
     {
-        Name = Male Grunt-SoundBible.com-68178715;
+        Name = nightTime;
 
         Variation
         {
@@ -900,7 +898,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = Male Grunt-SoundBible.com-68178715;
+            Name = nightTime;
             Index = 4;
             Weight Min = 0;
             Weight Max = 255;
@@ -909,7 +907,7 @@ Sound Bank
 
     Cue
     {
-        Name = Hl2_Rebel-Ragdoll;
+        Name = night_music;
 
         Variation
         {
@@ -920,7 +918,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = Hl2_Rebel-Ragdoll;
+            Name = night_music;
             Index = 5;
             Weight Min = 0;
             Weight Max = 255;
@@ -929,7 +927,7 @@ Sound Bank
 
     Cue
     {
-        Name = Cash Register Cha Ching;
+        Name = die;
 
         Variation
         {
@@ -940,7 +938,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = Cash Register Cha Ching;
+            Name = die;
             Index = 6;
             Weight Min = 0;
             Weight Max = 255;
@@ -949,7 +947,7 @@ Sound Bank
 
     Cue
     {
-        Name = Sad;
+        Name = fullMusic;
 
         Variation
         {
@@ -960,7 +958,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = Sad;
+            Name = fullMusic;
             Index = 7;
             Weight Min = 0;
             Weight Max = 255;

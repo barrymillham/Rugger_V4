@@ -22,10 +22,11 @@ class Audio
     void* mapWaveBank;          // call UnmapViewOfFile() to release file
     void* soundBankData;
     bool coInitialized;         // set true if coInitialize is successful
-
   public:
     // Constructor
     Audio();
+	
+	IXACT3Engine* getEngine() {return xactEngine;}
 
     // Destructor
     virtual ~Audio();
@@ -44,7 +45,7 @@ class Audio
 
     // Stop a playing sound specified by cue from sound bank.
     // If cue does not exist no error occurs.
-    void stopCue(const char cue[]);
+    void stopCue(const char cue[], int time = 1);
 };
 
 #endif

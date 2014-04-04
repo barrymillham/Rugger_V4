@@ -151,10 +151,11 @@ void Audio::playCue(const char cue[])
 // stop a playing sound specified by cue from sound bank
 // if cue does not exist no error occurs
 //=============================================================================
-void Audio::stopCue(const char cue[])
+void Audio::stopCue(const char cue[], int time)
 {
     if (soundBank == NULL)
         return;
+
     cueI = soundBank->GetCueIndex( cue );        // get cue index from sound bank
-    soundBank->Stop( cueI, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
+	soundBank->Stop( cueI, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
 }
