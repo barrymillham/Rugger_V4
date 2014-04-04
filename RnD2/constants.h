@@ -33,6 +33,7 @@ const UCHAR KEY_W	= 'W';
 const UCHAR KEY_S   = 'S';
 const UCHAR KEY_L	= 'L';
 const UCHAR KEY_K	= 'K';
+const UCHAR KEY_M	= 'M';
 
 #define COLOR_ARGB DWORD
 #define SETCOLOR_ARGB(a,r,g,b) \
@@ -52,14 +53,14 @@ wchar_t const WAVE_BANK[]  = L"audio\\Win\\Wave Bank.xwb";
 wchar_t const SOUND_BANK[] = L"audio\\Win\\Sound Bank.xsb";
 
 //audio cues
-const char PLAYER_FIRE[] = "oomph";
-const char HIT[] = "Alien Death Ray";
-const char WOOP_WOOP[] = "Woop Woop";
-const char MUSIC[] = "57239_newgrounds_space_";
-const char OUCH1[] = "Male Grunt-SoundBible.com-68178715";
-const char OUCH2[] = "Hl2_Rebel-Ragdoll";
-const char CASH[] = "Cash Register Cha Ching";
-const char SAD[] = "Sad";
+const char BIG_BOSS[] = "bigBoss";
+const char DAY_MUSIC[] = "day_music";
+const char DIE[] = "die";
+const char NIGHT_MUSIC[] = "night_music";
+const char NIGHT_ENTRANCE[] = "nightTime";
+const char ENEMY_SPOTTED[] = "seeEnemy";
+const char SHOOT_LIGHT[] = "shootLight";
+const char MUSIC[] = "fullMusic";
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.
 // The functions defined by these templates may be called using a normal
