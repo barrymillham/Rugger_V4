@@ -96,6 +96,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="LampPost.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="LineObject.cpp" />
     <ClCompile Include="Origin.cpp" />
@@ -118,6 +119,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="LampPost.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="LineObject.h" />

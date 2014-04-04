@@ -12,7 +12,7 @@ cbuffer cbPerFrame
 	int gLightType; 
 	float3 gEyePosW;
 	int gLightNum;
-	
+	int gGlow;
 };
 
 cbuffer cbPerObject
@@ -72,6 +72,7 @@ VS_OUT VS(VS_IN vIn)
  
 float4 PS(VS_OUT pIn) : SV_Target
 {
+
 	// Interpolating normal can make it not be of unit length so normalize it.
     pIn.normalW = normalize(pIn.normalW);
    
@@ -84,11 +85,12 @@ float4 PS(VS_OUT pIn) : SV_Target
     SurfaceInfo v = {pIn.posW, pIn.normalW, pIn.diffuse, pIn.spec};
     
     float3 litColor = {0.1f, 0.1f, 0.1f};
-    
+	if (gGlow == 2) return float4(float3(1.0f,1.0f,1.0f), pIn.diffuse.a);    
+	
 	//directed light for scene (sun)
 	litColor += ParallelLight(v, gLight[0], gEyePosW);
 	//
-	litColor += PointLight(v, gLight[1], gEyePosW);
+	//litColor += PointLight(v, gLight[1], gEyePosW);
 	//rotating light
 	litColor += Spotlight(v, gLight[2], gEyePosW);
 	for(int i = 3; i < gLightNum; i++)
@@ -96,6 +98,7 @@ float4 PS(VS_OUT pIn) : SV_Target
 		litColor += PointLight(v, gLight[i], gEyePosW);
 	}
 
+	
     return float4(litColor, pIn.diffuse.a);
 }
 

@@ -27,6 +27,7 @@
 #include <ctime>
 using std::time;
 #include "Light.h"
+#include "LampPost.h"
 #include "Enemy.h"
 
 #include "Waypoint.h"
@@ -68,6 +69,7 @@ public:
 	void initWallPositions();
 	void initUniqueObjects();
 	void initLights();
+	void initLamps();
 	void initWaypoints();
 
 	void updateScene(float dt);
@@ -77,9 +79,12 @@ public:
 	void updateUniqueObjects(float dt);
 	void updatePlayer(float dt);
 	void updateCamera();
-	
+	void updateDayNight();
+	void updateLamps(float dt);
+
 	void handleUserInput();
 	void handleWallCollisions(Vector3 pos);
+	void handleLampCollisions(Vector3 pos);
 	void handlePickupCollisions(float dt);
 
 	void drawScene(); 
@@ -87,6 +92,7 @@ public:
 	void drawOrigin();
 	void drawPickups();
 	void drawWalls();
+	void drawLamps();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
@@ -114,6 +120,7 @@ private:
 	LineObject xLine, yLine, zLine;
 	Wall walls[gameNS::NUM_WALLS];
 	Wall floor;
+	vector<LampPost> lamps;
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
 	Quad menu;
@@ -158,6 +165,8 @@ private:
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
 	D3DXMATRIX mCompCubeWorld;
+	ID3D10EffectScalarVariable* mfxGlow;
+
 	bool night;
 	//my addition
 	ID3D10EffectVariable* mfxFLIPVar;
@@ -190,7 +199,7 @@ private:
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 : D3DApp(hInstance), mFX(0), mTech(0), mVertexLayout(0),
   mfxWVPVar(0), mTheta(0.0f), mPhi(0.0f), mfxWorldVar(0), 
-  mfxEyePosVar(0), mfxLightVar(0), mfxLightType(0)
+  mfxEyePosVar(0), mfxLightVar(0), mfxLightType(0), mfxGlow(0)
 {
 	srand(time(0));
 	D3DXMatrixIdentity(&mView);
@@ -230,6 +239,8 @@ ColoredCubeApp::~ColoredCubeApp()
 void ColoredCubeApp::initApp()
 {
 	D3DApp::initApp();
+	buildFX();
+	buildVertexLayouts();
 	//pos will eventually be player.x, player.height, player.z)
 	startScreen = true;
 	mEyePos = D3DXVECTOR3(0, 5, 0);
@@ -243,6 +254,7 @@ void ColoredCubeApp::initApp()
 	initPickups();
 	initWallPositions();
 	initLights();
+	initLamps();
 	initWaypoints();
 
 	menu.init(md3dDevice, 1.0f, WHITE);
@@ -256,8 +268,7 @@ void ColoredCubeApp::initApp()
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1);
-	buildFX();
-	buildVertexLayouts();
+	
 
 	mWallMesh.init(md3dDevice, 1.0f);
 
@@ -269,6 +280,22 @@ void ColoredCubeApp::initApp()
 
 	//pls no more
 	//audio->playCue(MUSIC);
+}
+
+void ColoredCubeApp::initLamps() {
+	for (int i = 0; i < 4; i++)
+		lamps.push_back(LampPost());
+	
+	lamps[0].init(&brick, Vector3(58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
+	lamps[1].init(&brick, Vector3(-58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
+	lamps[2].init(&brick, Vector3(58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
+	lamps[3].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+		
+	for (int i = 0; i < lamps.size(); i++) 
+		lamps[i].giveGlowVar(mfxGlow);
+	
+
+
 }
 
 void ColoredCubeApp::initPickups() {
@@ -288,9 +315,10 @@ void ColoredCubeApp::initBullets() {
 	}
 }
 
-void ColoredCubeApp::initBasicGeometry() {
+void ColoredCubeApp::initBasicGeometry() {	
 	mBox.init(md3dDevice, 2.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
+	redBox.init(md3dDevice, 1.0f, colorNS::RED);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
 	bulletBox.init(md3dDevice, 0.5f, BEACH_SAND);
 	eBulletBox.init(md3dDevice, 0.5f, RED);
@@ -429,7 +457,7 @@ void ColoredCubeApp::initLights()
 	mLights[3].att.z    = 0.0f;
 	mLights[3].range    = 50.0f;
 	mLights[3].pos = D3DXVECTOR3(45, 10, 45);
-
+	
 	mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[4].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 	mLights[4].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
@@ -536,64 +564,14 @@ void ColoredCubeApp::updateScene(float dt)
 	Vector3 oldPos = player.getPosition();
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
-	//Going to need to do this to invalidate some of the waypoints
-	firstPassCleanup(); //I don't think we will need this, since money isn't being randomly placed. Or is it?
+	firstPassCleanup(); 
 	D3DXMATRIX sunRot;
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
 	
-	
-	//if(!night)
-	//{
-	//	mLights[0].diffuse.r += 0.1*dt;
-	//	mLights[0].diffuse.g += 0.1*dt;
-	//	mLights[0].diffuse.b += 0.1*dt;
-	//	if(mLights[0].diffuse.r >= 1 || mLights[0].diffuse.g >= 1 || mLights[0].diffuse.b >= 1) night = true;
-	//}
-	//else if (night)
-	//{
-	//	mLights[0].diffuse.r -= 0.1f * dt;
-	//	mLights[0].diffuse.g -= 0.1f * dt;
-	//	mLights[0].diffuse.b -= 0.1f * dt;
-	//	if(mLights[0].diffuse.r <= 1 || mLights[0].diffuse.g <= 1 || mLights[0].diffuse.b <= 1) night = false;
-	//}
-	
 	if(playing)
 	{	
-		if(timect >= gameNS::DAYLEN)
-		{
-			timect = 0;
-			night = !night;
-			if(night)
-			{
-				timeOfDay = "Night";
-				mClearColor = gameNS::NIGHT_SKY_COLOR;
-				mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
-			}
-			else
-			{
-				timeOfDay = "Day";
-				mClearColor = gameNS::DAY_SKY_COLOR;
-				mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			}
-		}
-		if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
-		{
-			//mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
-			if(night) 
-			{
-				timeOfDay = "Dawn";
-				mClearColor += D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
-				//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-				mLights[0].diffuse += D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			}
-			else 
-			{
-				timeOfDay = "Evening";
-				mClearColor -= D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
-				//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-				mLights[0].diffuse -= D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			}
-		}
+		updateDayNight();
+
 		vector<Waypoint*> path;
 		path = pathfindAStar(src, dest);
 		for(int i=0; i<path.size(); i++)
@@ -609,9 +587,9 @@ void ColoredCubeApp::updateScene(float dt)
 		handleUserInput();
 		updatePlayer(dt);
 		updatePickups(dt);
+		updateLamps(dt);
 		updateWalls(dt);
 		updateUniqueObjects(dt); //Like floor
-
 
 		//Handle Collisions
 		handleWallCollisions(oldPos);
@@ -789,6 +767,12 @@ void ColoredCubeApp::updateWalls(float dt) {
 		walls[i].update(dt);
 }
 
+void ColoredCubeApp::updateLamps(float dt) {
+	for (int i = 0; i < lamps.size(); i++) {
+		lamps[i].update(dt);
+	}
+}
+
 void ColoredCubeApp::updatePlayer(float dt) {
 	player.setVelocity(moveRuggerDirection() * player.getSpeed());
 	player.update(dt);
@@ -819,6 +803,24 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 	}
 }
 
+void ColoredCubeApp::handleLampCollisions(Vector3 pos) {
+		for(int i=0; i<gameNS::NUM_WALLS; i++)
+	{
+		if(player.collided(&lamps[i]))
+			player.setPosition(pos);
+
+		for (int j = 0; j < pBullets.size(); j++) {
+			if (pBullets[j]->collided(&lamps[i])) {
+				pBullets[j]->setInActive();
+				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
+				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
+				shotTimer = 0;
+				player.fired = false;
+			}		
+		}
+	}
+}
+
 void ColoredCubeApp::handlePickupCollisions(float dt) {
 	
 }
@@ -833,10 +835,50 @@ void ColoredCubeApp::updatePickups(float dt) {
 	}
 }
 
+
+
 void ColoredCubeApp::updateOrigin(float dt) {
 	xLine.update(dt);
 	yLine.update(dt);
 	zLine.update(dt);
+}
+
+void ColoredCubeApp::updateDayNight() {
+	if(timect >= gameNS::DAYLEN)
+		{
+			timect = 0;
+			night = !night;
+			if(night)
+			{
+				timeOfDay = "Night";
+				mClearColor = gameNS::NIGHT_SKY_COLOR;
+				mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
+			}
+			else
+			{
+				timeOfDay = "Day";
+				mClearColor = gameNS::DAY_SKY_COLOR;
+				mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+		}
+		if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
+		{
+			//mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
+			if(night) 
+			{
+				timeOfDay = "Dawn";
+				mClearColor += D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
+				//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
+				mLights[0].diffuse += D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			}
+			else 
+			{
+				timeOfDay = "Evening";
+				mClearColor -= D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
+				//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
+				mLights[0].diffuse -= D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			}
+		}
 }
 
 vector<Waypoint*> ColoredCubeApp::pathfindAStar(Waypoint* src, Waypoint* dest)
@@ -987,12 +1029,12 @@ void ColoredCubeApp::drawScene()
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
 		drawPickups();
+		drawLamps();
 
 		D3D10_TECHNIQUE_DESC techDesc;
 		mTech->GetDesc( &techDesc );
 		for(UINT p = 0; p < techDesc.Passes; ++p)
 		{
-			
 			mWallMesh.draw();
 		}
 
@@ -1105,10 +1147,11 @@ void ColoredCubeApp::buildFX()
 	mfxEyePosVar = mFX->GetVariableByName("gEyePosW");
 	mfxLightVar  = mFX->GetVariableByName("gLight");
 	mfxLightType = mFX->GetVariableByName("gLightType")->AsScalar();
-	mfxDiffuseMapVar = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
-	mfxSpecMapVar    = mFX->GetVariableByName("gSpecMap")->AsShaderResource();
-	mfxTexMtxVar     = mFX->GetVariableByName("gTexMtx")->AsMatrix();
-	mfxLightNum	= mFX->GetVariableByName("gLightNum")->AsScalar();
+	mfxDiffuseMapVar= mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
+	mfxSpecMapVar   = mFX->GetVariableByName("gSpecMap")->AsShaderResource();
+	mfxTexMtxVar    = mFX->GetVariableByName("gTexMtx")->AsMatrix();
+	mfxLightNum		= mFX->GetVariableByName("gLightNum")->AsScalar();
+	mfxGlow			= mFX->GetVariableByName("gGlow")->AsScalar();
 }
 
 void ColoredCubeApp::buildVertexLayouts()
@@ -1152,6 +1195,7 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
 	mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
 	mfxLightVar->SetRawValue(&mLights, 0, mLightNum*sizeof(Light));
 	mfxLightType->SetInt(mLightType);
+	mfxGlow->SetInt(0);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
 	mfxWorldVar->SetMatrix((float*)&mCompCubeWorld);
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
@@ -1196,9 +1240,14 @@ void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
 	
 	for (int i = 0; i < pickups.size(); i++)
-	pickups[i].draw(mfxWVPVar, mTech, &mVP);
+		pickups[i].draw(mfxWVPVar, mTech, &mVP);
+
 }
 
+void ColoredCubeApp::drawLamps() {
+	for (int i = 0; i < lamps.size(); i++)
+		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+}
 
 
 

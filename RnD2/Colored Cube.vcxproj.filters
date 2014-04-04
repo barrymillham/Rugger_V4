@@ -55,6 +55,9 @@
     <ClCompile Include="Waypoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LampPost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h">
@@ -127,6 +130,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Waypoint.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="LampPost.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
