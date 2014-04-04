@@ -44,7 +44,7 @@ namespace gameNS {
 	const int NUM_WALLS = 16;
 	const int NUM_BUILDINGS = 12;
 	const int PERIMETER = 4;
-	const int NUM_BULLETS = 5;
+	const int NUM_BULLETS = 50;
 	const int NUM_PICKUPS = 4;
 	const int NUM_LIGHTS = 11;
 	const float DAYLEN = 12;
@@ -83,6 +83,7 @@ public:
 	void updateCamera();
 	
 	void handleUserInput();
+	void handleBuildingCollisions(Vector3 pos);
 	void handleWallCollisions(Vector3 pos);
 	void handlePickupCollisions(float dt);
 
@@ -633,6 +634,7 @@ void ColoredCubeApp::updateScene(float dt)
 
 		//Handle Collisions
 		handleWallCollisions(oldPos);
+		handleBuildingCollisions(oldPos);
 		handlePickupCollisions(dt);
 	}
 
@@ -747,7 +749,15 @@ void ColoredCubeApp::updateCamera() {
 
 	if(input->getMouseLButton())
 	{
-		player.fired = true;
+		if(!player.firedLastFrame){
+			player.fired = true;
+		}
+		player.firedLastFrame = true; 
+	}
+	else
+	{
+		player.firedLastFrame = false;
+		player.fired = false;
 	}
 	if(input->getMouseRButton())
 	{
@@ -814,7 +824,7 @@ void ColoredCubeApp::updateBuildings(float dt) {
 
 void ColoredCubeApp::updatePlayer(float dt) {
 	player.setVelocity(moveRuggerDirection() * player.getSpeed());
-	player.update(dt);
+	player.update(dt, moveAxis);
 }
 
 void ColoredCubeApp::handleUserInput() {
@@ -836,7 +846,23 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
 				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
 				shotTimer = 0;
-				player.fired = false;
+			}		
+		}
+	}
+}
+
+void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
+	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+	{
+		if(player.collided(&buildings[i]))
+			player.setPosition(pos);
+
+		for (int j = 0; j < pBullets.size(); j++) {
+			if (pBullets[j]->collided(&buildings[i])) {
+				pBullets[j]->setInActive();
+				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
+				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
+				shotTimer = 0;
 			}		
 		}
 	}
