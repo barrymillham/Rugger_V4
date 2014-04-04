@@ -660,12 +660,12 @@ void ColoredCubeApp::updateCamera() {
 	if(dx < 0)
 	//if(input->isKeyDown(KEY_A))
 	{
-		mPhi -= 4.0f*dt;
+		mPhi -= 6.0f*dt;
 	}
 	if(dx > 0)
 	//if(input->isKeyDown(KEY_D))
 	{
-		mPhi += 4.0f*dt;
+		mPhi += 6.0f*dt;
 	}
 	if(dy < 0)
 	//if(input->isKeyDown(KEY_W))
@@ -759,8 +759,6 @@ void ColoredCubeApp::updateCamera() {
 	//Assign it into a Vec3 and we should be good to go
 	target = D3DXVECTOR3(t4.x, t4.y, t4.z);
 	//D3DXVec3Normalize(&target, &target);
-
-	
 
 	D3DXMatrixLookAtLH(&mView, &mEyePos, &target, &up);
 }
