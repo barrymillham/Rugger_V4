@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="Box.cpp" />
+    <ClCompile Include="Building.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Colored Cube App.cpp" />
     <ClCompile Include="d3dApp.cpp" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <ClInclude Include="audio.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="Building.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="d3dApp.h" />

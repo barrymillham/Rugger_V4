@@ -47,8 +47,8 @@ public:
 	void setBox(Box* b){box = b;}
 
 private:
-	
 	float speed;
+	
 	
 	
 protected:
@@ -63,6 +63,7 @@ protected:
 	Vector3 velocity;
 	float width, height, depth;
 	Matrix mTranslate, mRotate, mScale;
+	
 };
 
 

@@ -25,7 +25,7 @@ void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vect
 	width = s;
 	height = s;
 	depth = s;
-	timeSinceLastShot = 500;
+	timeSinceLastShot = 0;
 
 }
 
@@ -45,10 +45,9 @@ void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVaria
 		for (int i = 0; i < bullets.size(); i++) 
 			if(bullets[i]->getActiveState())bullets[i]->draw(mfxWVPVar, mTech, mVP);
     }
-
 }
 
-void Player::update(float dt)
+void Player::update(float dt, D3DXVECTOR3 moveAxis)
 {
 	position += velocity*dt;
 	Identity(&world);
@@ -61,7 +60,7 @@ void Player::update(float dt)
 	
 	if(fired == true)
 	{
-		shoot(UP);
+		shoot(moveAxis);
 	}
 
 	timeSinceLastShot+=dt;
@@ -70,7 +69,7 @@ void Player::update(float dt)
 void Player::charge() {
 }
 
-void Player::shoot(int direction)
+void Player::shoot(D3DXVECTOR3 moveAxis)
 {
 	//If the player's got an active bullet on the level, he doesn't get to shoot
 	int index = -1;
@@ -80,12 +79,19 @@ void Player::shoot(int direction)
 			i = bullets.size();
 		}
 	}
-	if (index == -1) return;
 
+	if(timeSinceLastShot > 3){
+		for(int i = 0; i < bullets.size(); i++){
+			bullets[i]->setInActive();
+		}
+		timeSinceLastShot = 0;
+	}
+
+	if (index == -1) return;
 	bullets[index]->setPosition(position);
 	bullets[index]->setSpeed(bulletNS::SPEED);
 	
-	Vector3 nDir;
+	/*Vector3 nDir;
 	float multiplier = 1;
 	if (direction == UP) {
 		nDir = Vector3(1,0,0);
@@ -114,10 +120,12 @@ void Player::shoot(int direction)
 		if (this->getVelocity().x < 0) nDir.x = -1;
 		nDir.z *= bulletNS::SPEED;
 		nDir.x *= this->getSpeed()*multiplier;
-	}
+	}*/
 
-	bullets[index]->setVelocity(nDir);
+	bullets[index]->setVelocity(moveAxis);
 	bullets[index]->setActive();
+	timeSinceLastShot = 0;
+	fired = false;
 }
 
 void Player::rotateTargeting(int s)

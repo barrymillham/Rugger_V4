@@ -17,6 +17,7 @@
 #include <d3dx9math.h>
 #include "LineObject.h"
 #include "Wall.h"
+#include "Building.h"
 #include "gameError.h"
 #include "Player.h"
 #include "Bullet.h"
@@ -30,20 +31,16 @@ using std::time;
 #include "LampPost.h"
 #include "Enemy.h"
 
-#include "Waypoint.h"
-
 #include <queue>
 using std::priority_queue;
 
 bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w);
-void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w);
-
-float heuristic(Waypoint* x, Waypoint* y);
 
 namespace gameNS {
-	const int NUM_WALLS = 28;
+	const int NUM_WALLS = 16;
+	const int NUM_BUILDINGS = 12;
 	const int PERIMETER = 4;
-	const int NUM_BULLETS = 5;
+	const int NUM_BULLETS = 50;
 	const int NUM_PICKUPS = 4;
 	const int NUM_LIGHTS = 11;
 	const float DAYLEN = 12;
@@ -52,6 +49,7 @@ namespace gameNS {
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.098f, 0.098f, 0.439f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 }
+
 
 class ColoredCubeApp : public D3DApp
 {
@@ -67,6 +65,7 @@ public:
 	void initTextStrings();
 	void initBasicVariables();
 	void initWallPositions();
+	void initBuildingPositions();
 	void initUniqueObjects();
 	void initLights();
 	void initLamps();
@@ -76,6 +75,7 @@ public:
 	void updatePickups(float dt);
 	void updateOrigin(float dt);
 	void updateWalls(float dt);
+	void updateBuildings(float dt);
 	void updateUniqueObjects(float dt);
 	void updatePlayer(float dt);
 	void updateCamera();
@@ -83,6 +83,7 @@ public:
 	void updateLamps(float dt);
 
 	void handleUserInput();
+	void handleBuildingCollisions(Vector3 pos);
 	void handleWallCollisions(Vector3 pos);
 	void handleLampCollisions(Vector3 pos);
 	void handlePickupCollisions(float dt);
@@ -93,6 +94,7 @@ public:
 	void drawPickups();
 	void drawWalls();
 	void drawLamps();
+	void drawBuildings();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
@@ -101,9 +103,6 @@ public:
 	void setDeviceAndShaderInformation();
 	void doEndScreen();
 	void firstPassCleanup();
-
-	//This will need to be relocated into the enemies, so they will individually calculate their paths per frame
-	vector<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
 	
 private:
 	void buildFX();
@@ -111,6 +110,7 @@ private:
  
 private:
 	Box mWallMesh;
+	Box mBuildingMesh;
 
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
@@ -119,6 +119,7 @@ private:
 	vector<Bullet*> pBullets;
 	LineObject xLine, yLine, zLine;
 	Wall walls[gameNS::NUM_WALLS];
+	Building buildings[gameNS::NUM_BUILDINGS];
 	Wall floor;
 	vector<LampPost> lamps;
 	vector<Pickup> pickups;
@@ -141,12 +142,12 @@ private:
 	Box activeLine;
 	//GameObject wayLine[100][100];
 	GameObject** wayLine;
-	Waypoint* waypoints[gameNS::WAYPT_SIZE][gameNS::WAYPT_SIZE];
-	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> openWay;
-	vector<Waypoint*> closedWay;
+	
+	
+	
 	Waypoint* dest;
 	Waypoint* src;
-	list<Waypoint*> path;
+	
 	bool found;
 
 	float spinAmount;
@@ -161,6 +162,8 @@ private:
 	ID3D10EffectScalarVariable* mfxLightType;
 	ID3D10ShaderResourceView* mDiffuseMapRV;
 	ID3D10ShaderResourceView* mSpecMapRV;
+	ID3D10ShaderResourceView* mDiffuseMapRVBuilding;
+	ID3D10ShaderResourceView* mSpecMapRVBuilding;
 	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
@@ -194,6 +197,7 @@ private:
 
 	float timect;
 	string timeOfDay;
+	Enemy enemy;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -214,6 +218,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	found = false;
 	timect = 0.0f;
 	timeOfDay = "Day";
+	srand(time(0));
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -223,7 +228,7 @@ ColoredCubeApp::~ColoredCubeApp()
 
 	for(int i=0; i<4; i++)
 	{
-		delete [] wayLine[i];
+		//delete [] wayLine[i];
 	}
 
 	ReleaseCOM(mFX);
@@ -253,6 +258,7 @@ void ColoredCubeApp::initApp()
 	initBullets();
 	initPickups();
 	initWallPositions();
+	initBuildingPositions();
 	initLights();
 	initLamps();
 	initWaypoints();
@@ -271,12 +277,16 @@ void ColoredCubeApp::initApp()
 	
 
 	mWallMesh.init(md3dDevice, 1.0f);
+	mBuildingMesh.init(md3dDevice, 1.0f);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"Companion Cube.jpg", 0, 0, &mDiffuseMapRV, 0 ));
-
+		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"skyscraper.jpg", 0, 0, &mDiffuseMapRVBuilding, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
 
 	//pls no more
 	//audio->playCue(MUSIC);
@@ -313,6 +323,7 @@ void ColoredCubeApp::initBullets() {
 		pBullets.push_back(new Bullet());
 		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1);
 	}
+	
 }
 
 void ColoredCubeApp::initBasicGeometry() {	
@@ -347,6 +358,25 @@ void ColoredCubeApp::initBasicVariables() {
 	shotTimer = 0;
 }
 
+void ColoredCubeApp::initBuildingPositions() {
+//					geom,  rad,  position,					sc,	w,		h,	d
+	buildings[0].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
+	buildings[1].init(&brick, 2.0f, Vector3(150, 0, -50),		1,	20,		50,  20);
+	buildings[2].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
+
+	buildings[3].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
+	buildings[4].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
+	buildings[5].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
+
+	buildings[6].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		50,  20);// Back right corner buildings
+	buildings[7].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
+	buildings[8].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
+
+	buildings[9].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
+	buildings[10].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
+	buildings[11].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
+}
+
 void ColoredCubeApp::initWallPositions() {
 	
 //				   geom,  rad,  position,				sc,	w,		h,	d
@@ -360,37 +390,22 @@ void ColoredCubeApp::initWallPositions() {
 	walls[6].init(&brick, 2.0f, Vector3(250, 0, -155),	1,	10,		10, 95);//	Front/Right wall
 	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 155),	1,	10,		10, 95);//	Back/Left wall
 
-	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		2.5,	1);//	Left/Front inner wall 
-	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		2.5,	1);//	Right/Back inner wall
-	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	1,	1,		2.5,	20);//	Front/Left inner wall
-	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	1,	1,		2.5,	20);//	Back/Right inner wall
+	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		5,	1);//	Left/Front inner wall 
+	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		5,	1);//	Right/Back inner wall
+	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	1,	1,		5,	20);//	Front/Left inner wall
+	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	1,	1,		5,	20);//	Back/Right inner wall
 
-	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	1,	20,		2.5,	1);//	Left/Back inner wall 
-	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		2.5,	1);//	Right/Front inner wall
-	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		2.5,	20);//	Front/Right inner wall
-	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
-
-	walls[16].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
-	walls[17].init(&brick, 2.0f, Vector3(150, 0, 0),	1,	20,		50,  20);
-	walls[18].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
-
-	walls[19].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
-	walls[20].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
-	walls[21].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
-
-	walls[22].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		50,  20);// Back right corner buildings
-	walls[23].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
-	walls[24].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
-
-	walls[25].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
-	walls[26].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
-	walls[27].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
+	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	1,	20,		5,	1);//	Left/Back inner wall 
+	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		5,	1);//	Right/Front inner wall
+	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		5,	20);//	Front/Right inner wall
+	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		5,	20);//	Back/Left inner wall
 
 }
 
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
+	enemy.init(&mBox, 2.0f, Vector3(2,0,2));
 }
 
 void ColoredCubeApp::initOrigin() {
@@ -525,33 +540,7 @@ void ColoredCubeApp::initLights()
 
 void ColoredCubeApp::initWaypoints()
 {
-	//Pathfinding testing
-	inactiveLine.init(md3dDevice, 1.0f, WHITE);
-	activeLine.init(md3dDevice, 1.0f, RED);
-	wayLine = new GameObject*[gameNS::WAYPT_SIZE];
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++) wayLine[i] = new GameObject[gameNS::WAYPT_SIZE];
-
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++){
-		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-		{
-			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i, 0, j));
-			waypoints[i][j]->setContainer(NONE);
-			wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
-		}
-	}
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++)
-	{
-		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-		{
-			//Currently just waypoints in the cardinal directions
-			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
-			if(i+1 < gameNS::WAYPT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
-			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
-			if(j+1 < gameNS::WAYPT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
-		}
-	}
-	dest = waypoints[gameNS::WAYPT_SIZE-1][gameNS::WAYPT_SIZE-1];
-	int x = 0;
+	
 }
 
 
@@ -572,13 +561,7 @@ void ColoredCubeApp::updateScene(float dt)
 	{	
 		updateDayNight();
 
-		vector<Waypoint*> path;
-		path = pathfindAStar(src, dest);
-		for(int i=0; i<path.size(); i++)
-		{
-			wayLine[(int)path[i]->getPosition().x][(int)path[i]->getPosition().z].setBox(&activeLine);
-		}
-
+		enemy.update(dt, &player, gameNS::WAYPT_SIZE);
 
 		menu.update(dt);
 		//General Update
@@ -589,10 +572,12 @@ void ColoredCubeApp::updateScene(float dt)
 		updatePickups(dt);
 		updateLamps(dt);
 		updateWalls(dt);
+		updateBuildings(dt);
 		updateUniqueObjects(dt); //Like floor
 
 		//Handle Collisions
 		handleWallCollisions(oldPos);
+		handleBuildingCollisions(oldPos);
 		handlePickupCollisions(dt);
 	}
 
@@ -625,26 +610,26 @@ void ColoredCubeApp::updateScene(float dt)
 }
 
 void ColoredCubeApp::firstPassCleanup() {
-	//For the first update pass, we want to remove any money that is colliding with cameras or walls
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++)for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
+	////For the first update pass, we want to remove any money that is colliding with cameras or walls
+	//for(int i=0; i<gameNS::WAYPT_SIZE; i++)for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
 
-	if(firstpass)
-	{
-		firstpass = false;
-		for(int i=0; i<gameNS::NUM_WALLS; i++)
-		{
-			for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-			{
-				for(int k=0; k<gameNS::WAYPT_SIZE; k++)
-				{
-					//if(walls[i].collided(&wayLine[j][k])) waypoints[j][k]->setActive(false);
-					if(wayLine[j][k].collided(&walls[i])) 
-						waypoints[j][k]->setActive(false);
-					
-				}
-			}
-		}
-	}
+	//if(firstpass)
+	//{
+	//	firstpass = false;
+	//	for(int i=0; i<gameNS::NUM_WALLS; i++)
+	//	{
+	//		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
+	//		{
+	//			for(int k=0; k<gameNS::WAYPT_SIZE; k++)
+	//			{
+	//				//if(walls[i].collided(&wayLine[j][k])) waypoints[j][k]->setActive(false);
+	//				if(wayLine[j][k].collided(&walls[i])) 
+	//					waypoints[j][k]->setActive(false);
+	//				
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void ColoredCubeApp::updateCamera() {
@@ -707,7 +692,15 @@ void ColoredCubeApp::updateCamera() {
 
 	if(input->getMouseLButton())
 	{
-		player.fired = true;
+		if(!player.firedLastFrame){
+			player.fired = true;
+		}
+		player.firedLastFrame = true; 
+	}
+	else
+	{
+		player.firedLastFrame = false;
+		player.fired = false;
 	}
 	if(input->getMouseRButton())
 	{
@@ -767,15 +760,20 @@ void ColoredCubeApp::updateWalls(float dt) {
 		walls[i].update(dt);
 }
 
+
 void ColoredCubeApp::updateLamps(float dt) {
 	for (int i = 0; i < lamps.size(); i++) {
 		lamps[i].update(dt);
 	}
 }
+void ColoredCubeApp::updateBuildings(float dt) {
+	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+		buildings[i].update(dt);
+}
 
 void ColoredCubeApp::updatePlayer(float dt) {
 	player.setVelocity(moveRuggerDirection() * player.getSpeed());
-	player.update(dt);
+	player.update(dt, moveAxis);
 }
 
 void ColoredCubeApp::handleUserInput() {
@@ -797,7 +795,23 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
 				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
 				shotTimer = 0;
-				player.fired = false;
+			}		
+		}
+	}
+}
+
+void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
+	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+	{
+		if(player.collided(&buildings[i]))
+			player.setPosition(pos);
+
+		for (int j = 0; j < pBullets.size(); j++) {
+			if (pBullets[j]->collided(&buildings[i])) {
+				pBullets[j]->setInActive();
+				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
+				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
+				shotTimer = 0;
 			}		
 		}
 	}
@@ -843,6 +857,7 @@ void ColoredCubeApp::updateOrigin(float dt) {
 	zLine.update(dt);
 }
 
+
 void ColoredCubeApp::updateDayNight() {
 	if(timect >= gameNS::DAYLEN)
 		{
@@ -881,137 +896,6 @@ void ColoredCubeApp::updateDayNight() {
 		}
 }
 
-vector<Waypoint*> ColoredCubeApp::pathfindAStar(Waypoint* src, Waypoint* dest)
-{
-	//waypoints
-	while(!openWay.empty())
-	{
-		openWay.pop();
-	}
-	closedWay.clear();
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++)
-	{
-		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-		{
-			waypoints[i][j]->setContainer(NONE);
-			waypoints[i][j]->setFCost(0);
-			waypoints[i][j]->setGCost(0);
-			waypoints[i][j]->setParent(0);
-			wayLine[i][j].setBox(&inactiveLine);
-		}
-	}
-	//find path
-	wayLine[0][0].setBox(&activeLine);
-	wayLine[(int)dest->getPosition().x][(int)dest->getPosition().z].setBox(&activeLine);
-		
-	
-
-	src = waypoints[0][0];
-	src->setFCost(heuristic(src, dest));
-		
-	//OPEN = priority queue containing START
-	//CLOSED = empty set
-	//while lowest rank in OPEN is not the GOAL:
-	//found = true;
-	//while(!openWay.empty())
-	//{
-	//	openWay.pop();
-	//}
-	//closedWay.clear();
-
-	int nodesConsidered = 0;
-	if(!found)
-	{
-		src->setContainer(OPEN);
-		openWay.push(src);
-
-		while(!openWay.empty())
-		{
-			nodesConsidered++;
-			//current = remove lowest rank item from OPEN
-			Waypoint* current = openWay.top();
-			openWay.pop();
-			current->setContainer(NONE);
-
-			if(current == dest) 
-				break;
-			//for neighbors of current
-			for(int i=0; i<current->getNeighbors().size(); i++)
-			{
-				Waypoint* n = current->getNeighbors()[i];
-				if(n->isActive())
-				{
-					//cost to get to n from current
-					float gCost = current->getGCost() + 1;
-
-					//Cost to get from n to target
-					float hCost = heuristic(dest, n);
-
-					//total cost through waypoint n
-					float cost = gCost + hCost;
-
-					//if neighbor in OPEN and cost less than g(neighbor):
-					//and this solution is better than what we've seen
-					if(n->getContainer() == OPEN && gCost < n->getGCost())
-					{
-						//remove neighbor from OPEN, because new path is better
-						queue_remove(openWay, n);
-						//n->setParent(0);
-						n->setContainer(NONE);
-					}
-					//if neighbor in CLOSED and cost less than g(neighbor):
-					//and this solution is better than what we've seen
-					if(n->getContainer() == CLOSED && gCost < n->getGCost())
-					{
-						//remove neighbor from CLOSED
-						for(int i=0; i<closedWay.size(); i++)
-						{
-							if(closedWay[i] == n)
-							{
-								closedWay[i] = closedWay[closedWay.size()-1];
-								closedWay.pop_back();
-							}
-						}
-						//n->setParent(0);
-						n->setContainer(NONE);
-					}
-					//if neighbor not in OPEN and neighbor not in CLOSED:
-					if(n->getContainer() == NONE && n->getFCost() <= current->getFCost())
-					{
-						//set g(neighbor) to cost
-						n->setFCost(cost);
-						n->setGCost(gCost);
-						//set neighbor's parent to current
-						n->setParent(current);
-						//add neighbor to OPEN
-						n->setContainer(OPEN);
-						openWay.push(n);
-						//set priority queue rank to g(neighbor) + h(neighbor)
-					}
-				}
-				else
-				{
-				}
-			}
-			//add current to CLOSED
-			current->setContainer(CLOSED);
-			closedWay.push_back(current);
-		}
-		//found = true;
-	}
-
-	vector<Waypoint*> stuff;
-	Waypoint* c = dest;
-	while(c->getParent() != 0)
-	{
-		stuff.push_back(c);
-		c = c->getParent();
-	}
-	return stuff;
-}
-
-
-
 void ColoredCubeApp::drawScene()
 {
 	D3DApp::drawScene();
@@ -1023,11 +907,12 @@ void ColoredCubeApp::drawScene()
 
 	if(playing) {		
 		mVP = mView*mProj;
-
+		enemy.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
+		drawBuildings();
 		drawPickups();
 		drawLamps();
 
@@ -1078,8 +963,18 @@ void ColoredCubeApp::drawScene()
 }
 
 void ColoredCubeApp::drawWalls() {
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
+	mfxSpecMapVar->SetResource(mSpecMapRV);
 	for(int i=0; i<gameNS::NUM_WALLS; i++)
 		walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+}
+
+void ColoredCubeApp::drawBuildings() {
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding);
+	mfxSpecMapVar->SetResource(mSpecMapRVBuilding);
+	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+		buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 }
 
 void ColoredCubeApp::printText(DebugText text) {
@@ -1198,8 +1093,7 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
 	mfxGlow->SetInt(0);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
 	mfxWorldVar->SetMatrix((float*)&mCompCubeWorld);
-	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
-	mfxSpecMapVar->SetResource(mSpecMapRV);
+
 	mfxLightNum->SetInt(mLightNum);
 	D3DXMATRIX tm;
 	Identity(&tm);
@@ -1247,50 +1141,4 @@ void ColoredCubeApp::drawPickups() {
 void ColoredCubeApp::drawLamps() {
 	for (int i = 0; i < lamps.size(); i++)
 		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-}
-
-
-
-
-
-//Probably the worst thing I have ever done
-//Please forgive my transgressions
-bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w)
-{
-	bool f = false;
-	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> hold;
-	
-	while(!pq.empty())
-	{
-		Waypoint* comp = pq.top();
-		pq.pop();
-		hold.push(comp);
-		if(comp == w) 
-		{
-			f = true;
-		}
-	}
-	
-	pq = hold;
-	return f;
-}
-void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w)
-{
-	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> hold;
-	int limit = pq.size();
-	for(int i=0; i<limit; i++)
-	{
-		if(pq.top() == w) pq.pop();//don't copy it over
-		else
-		{
-			hold.push(pq.top());
-			pq.pop();
-		}
-	}
-	pq = hold;
-}
-
-float heuristic(Waypoint* x, Waypoint* y)
-{
-	return abs(x->getPosition().x - y->getPosition().x) + abs(x->getPosition().z - y->getPosition().z);
 }

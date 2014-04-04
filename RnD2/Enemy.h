@@ -1,6 +1,19 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 #include "GameObject.h"
+#include "Waypoint.h"
+#include <vector>
+using std::vector;
+#include <list>
+using std::list;
+#include "Player.h"
+
+//enum STATE {};
+
+
+namespace enemyNS {
+	const float SPEED = 20.0f;
+}
 
 class Enemy : public GameObject
 {
@@ -12,20 +25,14 @@ public:
 	virtual void init(Box *b, float r, Vector3 pos, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
 	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void update(float dt);
+	//void init(Box *b, float r, Vector3 pos, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
+	void update(float dt, Player* p, const int& WAYPT_SIZE);
+	void ai();
 
-	//void setPosition (Vector3 pos) {position = pos;}
-	//Vector3 getPosition() {return position;}
-	//void setRadius(float r) {radius = r; radiusSquared = (scale*r)*(scale*r);}
-	//float getRadiusSquare() {return radiusSquared;}
-	//float getRadius() {return radius;}
-	//Matrix getWorldMatrix() {return world;}
-	//void setWorld(Matrix w){world = w;}
-	//void setScale(float s) {scale = s; radiusSquared = (s*radius)*(s*radius);}
-	//float getScale() {return scale;}
-	//void setActive() {active = true;}
-	//void setInActive() {active = false;}
-	//bool getActiveState() {return active;}
-	//bool collided(GameObject *gameObject);
+	void setDestination(D3DXVECTOR3& d) {destination = d;}
+	D3DXVECTOR3 getDestination(){return destination;}
+
+	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target, const int& WAYPT_SIZE);
 
 	float getWidth(){
 		return width;
@@ -36,10 +43,20 @@ public:
 	float getDepth(){
 		return depth;
 	}
-
+	//
 private:
 	float radius;
 	float radiusSquared;
+	D3DXVECTOR3 destination;
+
+	list<Waypoint*> nav;
+	//Waypoint* waypoints;
+	float speed;
+
+	Waypoint* waypoints[10][10];
+	void initWaypoints();
+	Waypoint* target;
 };
+
 
 #endif
