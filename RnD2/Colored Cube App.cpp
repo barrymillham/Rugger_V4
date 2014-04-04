@@ -268,7 +268,7 @@ void ColoredCubeApp::initApp()
 	mBuildingMesh.init(md3dDevice, 1.0f);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"bricks.jpg", 0, 0, &mDiffuseMapRV, 0 ));
+		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
