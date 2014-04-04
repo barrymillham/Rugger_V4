@@ -3,6 +3,7 @@
 
 Player::Player(void) : GameObject()
 {
+	health = 100;
 }
 
 

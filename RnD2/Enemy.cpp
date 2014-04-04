@@ -7,7 +7,7 @@ float heuristic(Waypoint* x, Waypoint* y);
 
 Enemy::Enemy()
 {
-	radius = 0;
+	radius = 0.0f;
 	active = true;
 	Identity(&world);
 	Identity(&mTranslate);
@@ -19,9 +19,10 @@ Enemy::Enemy()
 	rotX = 0.0f;
 	rotY = 0.0f;
 	rotZ = 0.0f;
-	speed = 5;
+	speed = 5.0f;
 	target = 0;
-	velocity = Vector3(0,0,0);
+	velocity = Vector3(0.0f, 0.0f, 0.0f);
+	lastAttacked = 0.5f;
 }
 
 Enemy::~Enemy()
@@ -77,16 +78,33 @@ void Enemy::update(float dt)
 void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 {
 	Identity(&world);
+	lastAttacked += dt;
+	float dist = D3DXVec3Length(&(position - p->getPosition()));
 	
-	if(D3DXVec3LengthSq(&(position - p->getPosition())) >= 0) //if the enemy is far enough away from the player, pathfind
-	//if(true)
+	if(dist <= 15)
+	{
+		velocity = D3DXVECTOR3(0,0,0);
+		attack(p);
+	}
+	else if (dist <= 50)
+	{
+		nav.clear();
+		D3DXVECTOR3 tar;
+		D3DXVec3Normalize(&tar, &(p->getPosition() - position));
+		tar.y = 0;
+		velocity = tar * speed;
+	}
+	else
 	{
 		//calculate the path from the nearest waypoint to the nearest waypoint to the player
 		
 		if(nav.empty())
 		{
+			//find nearest waypoint
 			Waypoint* src = waypoints[rand()%10][rand()%10];
+			//find waypoint nearest to player
 			Waypoint* dest = waypoints[rand()%10][rand()%10];
+			//calculate path from nearest waypoint to the player's nearest waypoint
 			nav = pathfindAStar(src, dest, WAYPT_SIZE);
 		}
 		else
@@ -101,12 +119,12 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 				D3DXVECTOR3 tar;
 				D3DXVec3Normalize(&tar, &(target->getPosition() - position));
 				velocity = tar * speed;
-				float t = 0;
+				//float t = 0;
 				//calculate the time when our position is the same as the target
-				D3DXVECTOR3 a = target->getPosition() - position;
-				t = (-(D3DXVec3Dot(&a, &a)) - sqrt(pow(D3DXVec3Dot(&a, &velocity), 2) - (D3DXVec3Dot(&velocity, &velocity)*D3DXVec3Dot(&a, &a))))/(D3DXVec3Dot(&velocity, &velocity));
+				//D3DXVECTOR3 a = target->getPosition() - position;
+				//t = (-(D3DXVec3Dot(&a, &a)) - sqrt(pow(D3DXVec3Dot(&a, &velocity), 2) - (D3DXVec3Dot(&velocity, &velocity)*D3DXVec3Dot(&a, &a))))/(D3DXVec3Dot(&velocity, &velocity));
 
-				int x = 0;
+				//int x = 0;
 			}
 			else
 			{
@@ -115,13 +133,17 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 			}
 		}
 	}
-	//Otherwise, just do vector tracking for movement
-	else
-	{
 
-	}
 	position = position + velocity * dt;
 	update(dt);
+}
+
+void Enemy::attack(Player* p)
+{
+	if(lastAttacked >= 0.5f){
+		lastAttacked = 0;
+		p->damage(5);
+	}
 }
 
 list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest, const int& WAYPT_SIZE)

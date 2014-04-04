@@ -13,6 +13,8 @@ using std::list;
 
 namespace enemyNS {
 	const float SPEED = 20.0f;
+	const float NIGHT_SPEED = 50.0f;
+	const float DAY_SPEED = 10.0f;
 }
 
 class Enemy : public GameObject
@@ -43,6 +45,8 @@ public:
 	float getDepth(){
 		return depth;
 	}
+
+	void attack(Player* p);
 	//
 private:
 	float radius;
@@ -56,6 +60,8 @@ private:
 	Waypoint* waypoints[10][10];
 	void initWaypoints();
 	Waypoint* target;
+
+	float lastAttacked;
 };
 
 

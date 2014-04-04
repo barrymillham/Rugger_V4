@@ -48,6 +48,7 @@ namespace gameNS {
 	const int WAYPT_SIZE = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.098f, 0.098f, 0.439f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
+	const int NUM_ENEMIES = 5;
 }
 
 
@@ -200,7 +201,7 @@ private:
 
 	float timect;
 	string timeOfDay;
-	Enemy enemy;
+	Enemy enemy[gameNS::NUM_ENEMIES];
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -399,22 +400,22 @@ void ColoredCubeApp::initWallPositions() {
 	walls[6].init(&brick, 2.0f, Vector3(250, 0, -155),	1,	10,		10, 95);//	Front/Right wall
 	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 155),	1,	10,		10, 95);//	Back/Left wall
 
-	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		5,	1);//	Left/Front inner wall 
-	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		5,	1);//	Right/Back inner wall
-	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	1,	1,		5,	20);//	Front/Left inner wall
-	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	1,	1,		5,	20);//	Back/Right inner wall
+	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		2.5,	1);//	Left/Front inner wall 
+	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		2.5,	1);//	Right/Back inner wall
+	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	1,	1,		2.5,	20);//	Front/Left inner wall
+	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	1,	1,		2.5,	20);//	Back/Right inner wall
 
-	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	1,	20,		5,	1);//	Left/Back inner wall 
-	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		5,	1);//	Right/Front inner wall
-	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		5,	20);//	Front/Right inner wall
-	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		5,	20);//	Back/Left inner wall
+	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	1,	20,		2.5,	1);//	Left/Back inner wall 
+	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		2.5,	1);//	Right/Front inner wall
+	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		2.5,	20);//	Front/Right inner wall
+	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
 
 }
 
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
-	enemy.init(&mBox, 2.0f, Vector3(2,0,2));
+	for(int i=0; i<gameNS::NUM_ENEMIES; i++)enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
 	cameraCollider.init(&clearBox, 1.0, Vector3(0,0,0), Vector3(0,0,0), 1, 1);
 }
 
@@ -575,8 +576,6 @@ void ColoredCubeApp::updateScene(float dt)
 	{	
 		updateDebugMode();
 		updateDayNight();
-
-		enemy.update(dt, &player, gameNS::WAYPT_SIZE);
 
 		menu.update(dt);
 		//General Update
@@ -798,6 +797,13 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	//player.setVelocity(moveRuggerDirection() * player.getSpeed());
 	player.setPosition(Vector3(mEyePos.x, mEyePos.y-1, mEyePos.z));
 	player.update(dt, moveAxis);
+
+	for(int i=0; i<gameNS::NUM_ENEMIES; i++)
+	{
+		if(night) enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
+		else enemy[i].setSpeed(enemyNS::DAY_SPEED);
+		enemy[i].update(dt, &player, gameNS::WAYPT_SIZE);
+	}
 }
 
 void ColoredCubeApp::handleUserInput() {
@@ -881,41 +887,42 @@ void ColoredCubeApp::updateOrigin(float dt) {
 
 void ColoredCubeApp::updateDayNight() {
 	if(timect >= gameNS::DAYLEN)
+	{
+		timect = 0;
+		night = !night;
+		if(night)
 		{
-			timect = 0;
-			night = !night;
-			if(night)
-			{
-				timeOfDay = "Night";
-				mClearColor = gameNS::NIGHT_SKY_COLOR;
-				mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
-			}
-			else
-			{
-				timeOfDay = "Day";
-				mClearColor = gameNS::DAY_SKY_COLOR;
-				mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			}
+			timeOfDay = "Night";
+			mClearColor = gameNS::NIGHT_SKY_COLOR;
+			mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
 		}
-		if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
+		else
 		{
-			//mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
-			if(night) 
-			{
-				timeOfDay = "Dawn";
-				mClearColor += D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
-				//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-				mLights[0].diffuse += D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			}
-			else 
-			{
-				timeOfDay = "Evening";
-				mClearColor -= D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
-				//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-				mLights[0].diffuse -= D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			}
+			timeOfDay = "Day";
+			mClearColor = gameNS::DAY_SKY_COLOR;
+			mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		}
+	}
+	if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
+	{
+		//mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
+		if(night) 
+		{
+			timeOfDay = "Dawn";
+			mClearColor += D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
+			//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
+			mLights[0].diffuse += D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+		}
+		else 
+		{
+			timeOfDay = "Evening";
+			mClearColor -= D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
+			//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
+			mLights[0].diffuse -= D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+		}
+	}
 }
+
 
 
 void ColoredCubeApp::drawScene()
@@ -929,7 +936,7 @@ void ColoredCubeApp::drawScene()
 
 	if(playing) {		
 		mVP = mView*mProj;
-		enemy.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		for(int i=0; i<gameNS::NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
@@ -961,6 +968,7 @@ void ColoredCubeApp::drawScene()
 		
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
 		printText(timeOfDay, 5, 30, 0, 0);
+		printText("Health: ", 5, 55, 0, 0, player.getHealth());
 	}
 	else if(startScreen)
 	{

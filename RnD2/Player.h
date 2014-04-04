@@ -22,11 +22,15 @@ public:
 	void charge();
 	bool fired;
 	bool firedLastFrame;
+	void damage(int d){health -= d;}
+	int getHealth(){return health;}
+	void setHealth(int h){health = h;}
 
 private:
 	float speed;
 	float radius;
 	double timeSinceLastShot;
 	vector<Bullet*> bullets;
+	int health;
 };
 
