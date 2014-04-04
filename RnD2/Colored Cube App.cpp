@@ -814,7 +814,7 @@ void ColoredCubeApp::updateBuildings(float dt) {
 
 void ColoredCubeApp::updatePlayer(float dt) {
 	//player.setVelocity(moveRuggerDirection() * player.getSpeed());
-	player.setPosition(Vector3(mEyePos.x, mEyePos.y-1, mEyePos.z));
+	player.setPosition(Vector3(mEyePos.x, mEyePos.y-2, mEyePos.z));
 	player.update(dt, moveAxis);
 
 	for(int i=0; i<gameNS::NUM_ENEMIES; i++)
