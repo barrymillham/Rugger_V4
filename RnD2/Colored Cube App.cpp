@@ -29,15 +29,10 @@ using std::time;
 #include "Light.h"
 #include "Enemy.h"
 
-#include "Waypoint.h"
-
 #include <queue>
 using std::priority_queue;
 
 bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w);
-void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w);
-
-float heuristic(Waypoint* x, Waypoint* y);
 
 namespace gameNS {
 	const int NUM_WALLS = 28;
@@ -51,6 +46,7 @@ namespace gameNS {
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.098f, 0.098f, 0.439f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 }
+
 
 class ColoredCubeApp : public D3DApp
 {
@@ -95,9 +91,6 @@ public:
 	void setDeviceAndShaderInformation();
 	void doEndScreen();
 	void firstPassCleanup();
-
-	//This will need to be relocated into the enemies, so they will individually calculate their paths per frame
-	vector<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
 	
 private:
 	void buildFX();
@@ -134,12 +127,12 @@ private:
 	Box activeLine;
 	//GameObject wayLine[100][100];
 	GameObject** wayLine;
-	Waypoint* waypoints[gameNS::WAYPT_SIZE][gameNS::WAYPT_SIZE];
-	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> openWay;
-	vector<Waypoint*> closedWay;
+	
+	
+	
 	Waypoint* dest;
 	Waypoint* src;
-	list<Waypoint*> path;
+	
 	bool found;
 
 	float spinAmount;
@@ -185,6 +178,7 @@ private:
 
 	float timect;
 	string timeOfDay;
+	Enemy enemy;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -214,7 +208,7 @@ ColoredCubeApp::~ColoredCubeApp()
 
 	for(int i=0; i<4; i++)
 	{
-		delete [] wayLine[i];
+		//delete [] wayLine[i];
 	}
 
 	ReleaseCOM(mFX);
@@ -286,6 +280,7 @@ void ColoredCubeApp::initBullets() {
 		pBullets.push_back(new Bullet());
 		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1);
 	}
+	enemy.init(&blueBox, 2.0f, Vector3(0,0,0), 1.0f, 1, 1, 1, 0, 0, 0);
 }
 
 void ColoredCubeApp::initBasicGeometry() {
@@ -497,33 +492,7 @@ void ColoredCubeApp::initLights()
 
 void ColoredCubeApp::initWaypoints()
 {
-	//Pathfinding testing
-	inactiveLine.init(md3dDevice, 1.0f, WHITE);
-	activeLine.init(md3dDevice, 1.0f, RED);
-	wayLine = new GameObject*[gameNS::WAYPT_SIZE];
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++) wayLine[i] = new GameObject[gameNS::WAYPT_SIZE];
-
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++){
-		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-		{
-			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i, 0, j));
-			waypoints[i][j]->setContainer(NONE);
-			wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
-		}
-	}
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++)
-	{
-		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-		{
-			//Currently just waypoints in the cardinal directions
-			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
-			if(i+1 < gameNS::WAYPT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
-			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
-			if(j+1 < gameNS::WAYPT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
-		}
-	}
-	dest = waypoints[gameNS::WAYPT_SIZE-1][gameNS::WAYPT_SIZE-1];
-	int x = 0;
+	
 }
 
 
@@ -559,6 +528,7 @@ void ColoredCubeApp::updateScene(float dt)
 	
 	if(playing)
 	{	
+		enemy.update(dt, &player, gameNS::WAYPT_SIZE);
 		if(timect >= gameNS::DAYLEN)
 		{
 			timect = 0;
@@ -594,12 +564,12 @@ void ColoredCubeApp::updateScene(float dt)
 				mLights[0].diffuse -= D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
 			}
 		}
-		vector<Waypoint*> path;
-		path = pathfindAStar(src, dest);
-		for(int i=0; i<path.size(); i++)
-		{
-			wayLine[(int)path[i]->getPosition().x][(int)path[i]->getPosition().z].setBox(&activeLine);
-		}
+		//vector<Waypoint*> path;
+		//path = pathfindAStar(src, dest);
+		//for(int i=0; i<path.size(); i++)
+		//{
+		//	wayLine[(int)path[i]->getPosition().x][(int)path[i]->getPosition().z].setBox(&activeLine);
+		//}
 
 
 		menu.update(dt);
@@ -647,26 +617,26 @@ void ColoredCubeApp::updateScene(float dt)
 }
 
 void ColoredCubeApp::firstPassCleanup() {
-	//For the first update pass, we want to remove any money that is colliding with cameras or walls
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++)for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
+	////For the first update pass, we want to remove any money that is colliding with cameras or walls
+	//for(int i=0; i<gameNS::WAYPT_SIZE; i++)for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
 
-	if(firstpass)
-	{
-		firstpass = false;
-		for(int i=0; i<gameNS::NUM_WALLS; i++)
-		{
-			for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-			{
-				for(int k=0; k<gameNS::WAYPT_SIZE; k++)
-				{
-					//if(walls[i].collided(&wayLine[j][k])) waypoints[j][k]->setActive(false);
-					if(wayLine[j][k].collided(&walls[i])) 
-						waypoints[j][k]->setActive(false);
-					
-				}
-			}
-		}
-	}
+	//if(firstpass)
+	//{
+	//	firstpass = false;
+	//	for(int i=0; i<gameNS::NUM_WALLS; i++)
+	//	{
+	//		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
+	//		{
+	//			for(int k=0; k<gameNS::WAYPT_SIZE; k++)
+	//			{
+	//				//if(walls[i].collided(&wayLine[j][k])) waypoints[j][k]->setActive(false);
+	//				if(wayLine[j][k].collided(&walls[i])) 
+	//					waypoints[j][k]->setActive(false);
+	//				
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void ColoredCubeApp::updateCamera() {
@@ -839,134 +809,7 @@ void ColoredCubeApp::updateOrigin(float dt) {
 	zLine.update(dt);
 }
 
-vector<Waypoint*> ColoredCubeApp::pathfindAStar(Waypoint* src, Waypoint* dest)
-{
-	//waypoints
-	while(!openWay.empty())
-	{
-		openWay.pop();
-	}
-	closedWay.clear();
-	for(int i=0; i<gameNS::WAYPT_SIZE; i++)
-	{
-		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-		{
-			waypoints[i][j]->setContainer(NONE);
-			waypoints[i][j]->setFCost(0);
-			waypoints[i][j]->setGCost(0);
-			waypoints[i][j]->setParent(0);
-			wayLine[i][j].setBox(&inactiveLine);
-		}
-	}
-	//find path
-	wayLine[0][0].setBox(&activeLine);
-	wayLine[(int)dest->getPosition().x][(int)dest->getPosition().z].setBox(&activeLine);
-		
-	
 
-	src = waypoints[0][0];
-	src->setFCost(heuristic(src, dest));
-		
-	//OPEN = priority queue containing START
-	//CLOSED = empty set
-	//while lowest rank in OPEN is not the GOAL:
-	//found = true;
-	//while(!openWay.empty())
-	//{
-	//	openWay.pop();
-	//}
-	//closedWay.clear();
-
-	int nodesConsidered = 0;
-	if(!found)
-	{
-		src->setContainer(OPEN);
-		openWay.push(src);
-
-		while(!openWay.empty())
-		{
-			nodesConsidered++;
-			//current = remove lowest rank item from OPEN
-			Waypoint* current = openWay.top();
-			openWay.pop();
-			current->setContainer(NONE);
-
-			if(current == dest) 
-				break;
-			//for neighbors of current
-			for(int i=0; i<current->getNeighbors().size(); i++)
-			{
-				Waypoint* n = current->getNeighbors()[i];
-				if(n->isActive())
-				{
-					//cost to get to n from current
-					float gCost = current->getGCost() + 1;
-
-					//Cost to get from n to target
-					float hCost = heuristic(dest, n);
-
-					//total cost through waypoint n
-					float cost = gCost + hCost;
-
-					//if neighbor in OPEN and cost less than g(neighbor):
-					//and this solution is better than what we've seen
-					if(n->getContainer() == OPEN && gCost < n->getGCost())
-					{
-						//remove neighbor from OPEN, because new path is better
-						queue_remove(openWay, n);
-						//n->setParent(0);
-						n->setContainer(NONE);
-					}
-					//if neighbor in CLOSED and cost less than g(neighbor):
-					//and this solution is better than what we've seen
-					if(n->getContainer() == CLOSED && gCost < n->getGCost())
-					{
-						//remove neighbor from CLOSED
-						for(int i=0; i<closedWay.size(); i++)
-						{
-							if(closedWay[i] == n)
-							{
-								closedWay[i] = closedWay[closedWay.size()-1];
-								closedWay.pop_back();
-							}
-						}
-						//n->setParent(0);
-						n->setContainer(NONE);
-					}
-					//if neighbor not in OPEN and neighbor not in CLOSED:
-					if(n->getContainer() == NONE && n->getFCost() <= current->getFCost())
-					{
-						//set g(neighbor) to cost
-						n->setFCost(cost);
-						n->setGCost(gCost);
-						//set neighbor's parent to current
-						n->setParent(current);
-						//add neighbor to OPEN
-						n->setContainer(OPEN);
-						openWay.push(n);
-						//set priority queue rank to g(neighbor) + h(neighbor)
-					}
-				}
-				else
-				{
-				}
-			}
-			//add current to CLOSED
-			current->setContainer(CLOSED);
-			closedWay.push_back(current);
-		}
-		//found = true;
-	}
-
-	vector<Waypoint*> stuff;
-	Waypoint* c = dest;
-	while(c->getParent() != 0)
-	{
-		stuff.push_back(c);
-		c = c->getParent();
-	}
-	return stuff;
-}
 
 
 
@@ -1201,47 +1044,5 @@ void ColoredCubeApp::drawPickups() {
 
 
 
-
-
-
 //Probably the worst thing I have ever done
 //Please forgive my transgressions
-bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w)
-{
-	bool f = false;
-	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> hold;
-	
-	while(!pq.empty())
-	{
-		Waypoint* comp = pq.top();
-		pq.pop();
-		hold.push(comp);
-		if(comp == w) 
-		{
-			f = true;
-		}
-	}
-	
-	pq = hold;
-	return f;
-}
-void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w)
-{
-	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> hold;
-	int limit = pq.size();
-	for(int i=0; i<limit; i++)
-	{
-		if(pq.top() == w) pq.pop();//don't copy it over
-		else
-		{
-			hold.push(pq.top());
-			pq.pop();
-		}
-	}
-	pq = hold;
-}
-
-float heuristic(Waypoint* x, Waypoint* y)
-{
-	return abs(x->getPosition().x - y->getPosition().x) + abs(x->getPosition().z - y->getPosition().z);
-}

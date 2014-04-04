@@ -83,7 +83,7 @@ float4 PS(VS_OUT pIn) : SV_Target
 	float3 nNormalW = normalize(pIn.normalW);
     SurfaceInfo v = {pIn.posW, pIn.normalW, pIn.diffuse, pIn.spec};
     
-    float3 litColor = {0.1f, 0.1f, 0.1f};
+    float3 litColor = {0.0f, 0.0f, 0.0f};
     
 	//directed light for scene (sun)
 	litColor += ParallelLight(v, gLight[0], gEyePosW);
