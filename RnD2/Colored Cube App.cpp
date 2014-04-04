@@ -81,6 +81,7 @@ public:
 	void updateCamera();
 	void updateDayNight();
 	void updateLamps(float dt);
+	void updateDebugMode();
 
 	void handleUserInput();
 	void handleBuildingCollisions(Vector3 pos);
@@ -113,7 +114,7 @@ private:
 	Box mBuildingMesh;
 
 	Line rLine, bLine, gLine;
-	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox;
+	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox;
 	Box testBox;
 	Player player;
 	vector<Bullet*> pBullets;
@@ -124,6 +125,7 @@ private:
 	vector<LampPost> lamps;
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
+	GameObject cameraCollider;
 	Quad menu;
 
 	//Lighting and Camera-specific declarations
@@ -149,6 +151,7 @@ private:
 	Waypoint* src;
 	
 	bool found;
+	bool debugMode;
 
 	float spinAmount;
 	int shotTimer;
@@ -219,6 +222,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	timect = 0.0f;
 	timeOfDay = "Day";
 	srand(time(0));
+	debugMode = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -246,6 +250,10 @@ void ColoredCubeApp::initApp()
 	D3DApp::initApp();
 	buildFX();
 	buildVertexLayouts();
+
+	SetCursorPos(0,0);
+	ShowCursor(false);
+
 	//pos will eventually be player.x, player.height, player.z)
 	startScreen = true;
 	mEyePos = D3DXVECTOR3(0, 5, 0);
@@ -329,6 +337,7 @@ void ColoredCubeApp::initBullets() {
 void ColoredCubeApp::initBasicGeometry() {	
 	mBox.init(md3dDevice, 2.0f, WHITE);
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
+	clearBox.init(md3dDevice, 1.0f, D3DXCOLOR(0,0,0,0));
 	redBox.init(md3dDevice, 1.0f, colorNS::RED);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
 	bulletBox.init(md3dDevice, 0.5f, BEACH_SAND);
@@ -406,6 +415,7 @@ void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
 	enemy.init(&mBox, 2.0f, Vector3(2,0,2));
+	cameraCollider.init(&clearBox, 1.0, Vector3(0,0,0), Vector3(0,0,0), 1, 1);
 }
 
 void ColoredCubeApp::initOrigin() {
@@ -547,18 +557,23 @@ void ColoredCubeApp::initWaypoints()
 
 void ColoredCubeApp::updateScene(float dt)
 {
+	
 	timect += dt;
 	ColoredCubeApp::dt = dt;
 	bool playing = (!endScreen && !startScreen);
-	Vector3 oldPos = player.getPosition();
+	Vector3 oldPos = mEyePos;
+	
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
 	firstPassCleanup(); 
 	D3DXMATRIX sunRot;
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
+
+	updateCamera();
 	
 	if(playing)
 	{	
+		updateDebugMode();
 		updateDayNight();
 
 		enemy.update(dt, &player, gameNS::WAYPT_SIZE);
@@ -587,12 +602,6 @@ void ColoredCubeApp::updateScene(float dt)
 		
 	}
 	else doEndScreen();
-
-	// The spotlight takes on the camera position and is aimed in the
-	// same direction the camera is looking.  In this way, it looks
-	// like we are holding a flashlight.
-	mLights[2].pos = D3DXVECTOR3(0, 10, 0);
-	D3DXVec3Normalize(&mLights[2].dir, &D3DXVECTOR3(0, -1, 0));
 	
 	// The point light circles the scene as a function of time, 
 	// staying 7 units above the land's or water's surface.
@@ -606,7 +615,19 @@ void ColoredCubeApp::updateScene(float dt)
 	mLights[2].pos = mEyePos;
 	D3DXVec3Normalize(&mLights[2].dir, &(target-mEyePos));
 
-	updateCamera();
+
+}
+
+void ColoredCubeApp::updateDebugMode() {
+	if(input->wasKeyPressed(KEY_K)) {
+		debugMode = true;
+		input->clear(KEY_K);
+	} 
+	if (input->wasKeyPressed(KEY_L)) {
+		mEyePos = D3DXVECTOR3(mEyePos.x, 5, mEyePos.z);
+		debugMode = false;
+		input->clear(KEY_L);
+	}
 }
 
 void ColoredCubeApp::firstPassCleanup() {
@@ -681,10 +702,13 @@ void ColoredCubeApp::updateCamera() {
 	{
 		mEyePos += perpAxis * dt * 20;
 	}
+	
+	if (debugMode) 
 	if(input->isKeyDown(VK_SPACE))
 	{
 		mEyePos.y += 20 * dt;
 	}
+	if (debugMode) 
 	if(input->isKeyDown(VK_SHIFT))
 	{
 		mEyePos.y -= 20 * dt;
@@ -752,6 +776,7 @@ void ColoredCubeApp::doEndScreen() {
 
 void ColoredCubeApp::updateUniqueObjects(float dt) {
 	floor.update(dt);
+	cameraCollider.update(dt);
 	//big floor update must also be added here for it to show.
 }
 
@@ -914,6 +939,7 @@ void ColoredCubeApp::drawScene()
 		drawBuildings();
 		drawPickups();
 		drawLamps();
+		//cameraCollider.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 		D3D10_TECHNIQUE_DESC techDesc;
 		mTech->GetDesc( &techDesc );
