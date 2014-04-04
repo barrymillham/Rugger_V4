@@ -209,6 +209,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	found = false;
 	timect = 0.0f;
 	timeOfDay = "Day";
+	srand(time(0));
 }
 
 ColoredCubeApp::~ColoredCubeApp()

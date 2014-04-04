@@ -78,14 +78,15 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 {
 	Identity(&world);
 	
-	//if(D3DXVec3Length(&(position - p->getPosition())) >= 0) //if the enemy is far enough away from the player, pathfind
-	if(true)
+	if(D3DXVec3LengthSq(&(position - p->getPosition())) >= 0) //if the enemy is far enough away from the player, pathfind
+	//if(true)
 	{
 		//calculate the path from the nearest waypoint to the nearest waypoint to the player
-		Waypoint* src = waypoints[0][0];
-		Waypoint* dest = waypoints[WAYPT_SIZE-1][WAYPT_SIZE-1];
+		
 		if(nav.empty())
 		{
+			Waypoint* src = waypoints[rand()%10][rand()%10];
+			Waypoint* dest = waypoints[rand()%10][rand()%10];
 			nav = pathfindAStar(src, dest, WAYPT_SIZE);
 		}
 		else
