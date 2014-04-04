@@ -660,7 +660,7 @@ void ColoredCubeApp::updateCamera() {
 	RECT restrict = {639, 399, 640, 400};
 	ClipCursor(&restrict);
 
-		if(input->isKeyDown(KEY_W))
+	if(input->isKeyDown(KEY_W))
 	{
 		moveAxis.y = 0;
 		D3DXVec3Normalize(&moveAxis, &moveAxis);
@@ -760,19 +760,20 @@ void ColoredCubeApp::updateWalls(float dt) {
 		walls[i].update(dt);
 }
 
-
 void ColoredCubeApp::updateLamps(float dt) {
 	for (int i = 0; i < lamps.size(); i++) {
 		lamps[i].update(dt);
 	}
 }
+
 void ColoredCubeApp::updateBuildings(float dt) {
 	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
 		buildings[i].update(dt);
 }
 
 void ColoredCubeApp::updatePlayer(float dt) {
-	player.setVelocity(moveRuggerDirection() * player.getSpeed());
+	//player.setVelocity(moveRuggerDirection() * player.getSpeed());
+	player.setPosition(Vector3(mEyePos.x, mEyePos.y-1, mEyePos.z));
 	player.update(dt, moveAxis);
 }
 
@@ -849,14 +850,11 @@ void ColoredCubeApp::updatePickups(float dt) {
 	}
 }
 
-
-
 void ColoredCubeApp::updateOrigin(float dt) {
 	xLine.update(dt);
 	yLine.update(dt);
 	zLine.update(dt);
 }
-
 
 void ColoredCubeApp::updateDayNight() {
 	if(timect >= gameNS::DAYLEN)
@@ -896,6 +894,7 @@ void ColoredCubeApp::updateDayNight() {
 		}
 }
 
+
 void ColoredCubeApp::drawScene()
 {
 	D3DApp::drawScene();
@@ -931,7 +930,7 @@ void ColoredCubeApp::drawScene()
 		for(UINT p = 0; p < techDesc.Passes; ++p)
 		{
 			mTech->GetPassByIndex( p )->Apply(0);
-			menu.draw();
+			//menu.draw();
 		}
 
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
