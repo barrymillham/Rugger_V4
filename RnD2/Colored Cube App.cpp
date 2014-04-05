@@ -116,6 +116,8 @@ private:
 	Box mWallMesh;
 	Box mBuildingMesh;
 	Box mEnemyMesh;
+	Box mPoleMesh;
+	Box mStreetMesh;
 
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox;
@@ -175,6 +177,10 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVBuilding;
 	ID3D10ShaderResourceView* mDiffuseMapRVEnemy;
 	ID3D10ShaderResourceView* mSpecMapRVEnemy;
+	ID3D10ShaderResourceView* mDiffuseMapRVPole;
+	ID3D10ShaderResourceView* mSpecMapRVPole;
+	ID3D10ShaderResourceView* mDiffuseMapRVStreet;
+	ID3D10ShaderResourceView* mSpecMapRVStreet;
 	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
@@ -295,6 +301,8 @@ void ColoredCubeApp::initApp()
 	mWallMesh.init(md3dDevice, 1.0f);
 	mBuildingMesh.init(md3dDevice, 1.0f);
 	mEnemyMesh.init(md3dDevice, 1.0f);
+	mPoleMesh.init(md3dDevice, 1.0f);
+	mStreetMesh.init(md3dDevice, 1.0f);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
@@ -308,6 +316,14 @@ void ColoredCubeApp::initApp()
 		L"Robot.png", 0, 0, &mDiffuseMapRVEnemy, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRVEnemy, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"pole.png", 0, 0, &mDiffuseMapRVPole, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVPole, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
 
 }
 
@@ -346,7 +362,7 @@ void ColoredCubeApp::initBullets() {
 }
 
 void ColoredCubeApp::initBasicGeometry() {	
-	mBox.init(md3dDevice, 2.0f, WHITE);
+	mBox.init(md3dDevice, 2.0f, D3DXCOLOR(0,0,0,0));
 	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
 	clearBox.init(md3dDevice, 1.0f, D3DXCOLOR(0,0,0,0));
 	redBox.init(md3dDevice, 1.0f, colorNS::RED);
@@ -355,7 +371,7 @@ void ColoredCubeApp::initBasicGeometry() {
 	eBulletBox.init(md3dDevice, 0.5f, RED);
 	maroonBox.init(md3dDevice, 10000, colorNS::MAROON);
 	//redBox.init(md3dDevice, 0.00001f, RED);
-	yellowGreenBox.init(md3dDevice, 1.f, LIGHT_YELLOW_GREEN);
+	yellowGreenBox.init(md3dDevice, 1.f,D3DXCOLOR(0,0,0,0));
 	goldBox.init(md3dDevice, 1.0f, YELLOW);
 	blueBox.init(md3dDevice, 2.0f, BLUE);
 	rLine.init(md3dDevice, 10.0f, RED);
@@ -971,6 +987,8 @@ void ColoredCubeApp::drawScene()
 
 		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
+		mfxSpecMapVar->SetResource(mSpecMapRVStreet);
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		drawWalls();
 		drawBuildings();
@@ -1202,6 +1220,8 @@ void ColoredCubeApp::drawPickups() {
 }
 
 void ColoredCubeApp::drawLamps() {
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRVPole);
+	mfxSpecMapVar->SetResource(mSpecMapRVPole);
 	for (int i = 0; i < lamps.size(); i++)
 		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
