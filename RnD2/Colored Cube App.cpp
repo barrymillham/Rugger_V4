@@ -115,6 +115,7 @@ private:
 private:
 	Box mWallMesh;
 	Box mBuildingMesh;
+	Box mEnemyMesh;
 
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox;
@@ -172,6 +173,8 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRV;
 	ID3D10ShaderResourceView* mDiffuseMapRVBuilding;
 	ID3D10ShaderResourceView* mSpecMapRVBuilding;
+	ID3D10ShaderResourceView* mDiffuseMapRVEnemy;
+	ID3D10ShaderResourceView* mSpecMapRVEnemy;
 	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
@@ -291,6 +294,7 @@ void ColoredCubeApp::initApp()
 
 	mWallMesh.init(md3dDevice, 1.0f);
 	mBuildingMesh.init(md3dDevice, 1.0f);
+	mEnemyMesh.init(md3dDevice, 1.0f);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
@@ -300,6 +304,10 @@ void ColoredCubeApp::initApp()
 		L"skyscraper.jpg", 0, 0, &mDiffuseMapRVBuilding, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"Robot.png", 0, 0, &mDiffuseMapRVEnemy, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVEnemy, 0 ));
 
 }
 
@@ -956,7 +964,11 @@ void ColoredCubeApp::drawScene()
 
 	if(playing) {		
 		mVP = mView*mProj;
+
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
+		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
 		for(int i=0; i<gameNS::NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
