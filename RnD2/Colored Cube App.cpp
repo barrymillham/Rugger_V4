@@ -118,6 +118,7 @@ private:
 	Box mEnemyMesh;
 	Box mPoleMesh;
 	Box mStreetMesh;
+	Box mBulletMesh;
 
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox;
@@ -181,6 +182,8 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVPole;
 	ID3D10ShaderResourceView* mDiffuseMapRVStreet;
 	ID3D10ShaderResourceView* mSpecMapRVStreet;
+	ID3D10ShaderResourceView* mDiffuseMapRVBullet;
+	ID3D10ShaderResourceView* mSpecMapRVBullet;
 	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
@@ -303,6 +306,7 @@ void ColoredCubeApp::initApp()
 	mEnemyMesh.init(md3dDevice, 1.0f);
 	mPoleMesh.init(md3dDevice, 1.0f);
 	mStreetMesh.init(md3dDevice, 1.0f);
+	mBulletMesh.init(md3dDevice, 1.0f);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
@@ -324,6 +328,10 @@ void ColoredCubeApp::initApp()
 		L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
 
 }
 
@@ -367,7 +375,7 @@ void ColoredCubeApp::initBasicGeometry() {
 	clearBox.init(md3dDevice, 1.0f, D3DXCOLOR(0,0,0,0));
 	redBox.init(md3dDevice, 1.0f, colorNS::RED);
 	brick.init(md3dDevice, 1.0f, DARKBROWN);
-	bulletBox.init(md3dDevice, 0.5f, BEACH_SAND);
+	bulletBox.init(md3dDevice, 0.25f, D3DXCOLOR(0,0,0,0));
 	eBulletBox.init(md3dDevice, 0.5f, RED);
 	maroonBox.init(md3dDevice, 10000, colorNS::MAROON);
 	//redBox.init(md3dDevice, 0.00001f, RED);
@@ -1014,6 +1022,8 @@ void ColoredCubeApp::drawScene()
 			//menu.draw();
 		}
 
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
+		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		
 		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
