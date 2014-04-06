@@ -739,6 +739,7 @@ void ColoredCubeApp::updateCamera() {
 	{
 		if(!player.firedLastFrame){
 			player.fired = true;
+			audio->playCue(FIRE);
 		}
 		player.firedLastFrame = true; 
 	}

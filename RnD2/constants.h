@@ -64,6 +64,8 @@ const char NIGHT_ENTRANCE[] = "nightTime";
 const char ENEMY_SPOTTED[] = "seeEnemy";
 const char SHOOT_LIGHT[] = "shootLight";
 const char MUSIC[] = "fullMusic";
+const char FIRE[] = "1911 Silenced";
+
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.
 // The functions defined by these templates may be called using a normal

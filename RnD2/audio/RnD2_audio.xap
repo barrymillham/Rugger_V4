@@ -16,8 +16,8 @@ Global Settings
     Header File = C:\Users\lehmanad1\Documents\GitHub\RuggerV3\RnD2\audio\RnD2_audio.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 3494276110;
-    Last Modified High = 30363730;
+    Last Modified Low = 3522178684;
+    Last Modified High = 30364106;
 
     Category
     {
@@ -227,40 +227,40 @@ Wave Bank
     Compression Preset Name = <none>;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 3767894714;
-    PC Bank Last Modified High = 30363730;
-    Bank Last Revised Low = 450404095;
-    Bank Last Revised High = 30363730;
+    PC Bank Last Modified Low = 3522258738;
+    PC Bank Last Modified High = 30364106;
+    Bank Last Revised Low = 3328158869;
+    Bank Last Revised High = 30364106;
 
     Wave
     {
-        Name = die;
-        File = die.wav;
-        Build Settings Last Modified Low = 915760107;
-        Build Settings Last Modified High = 30363713;
+        Name = 1911 Silenced;
+        File = ..\..\..\..\..\Desktop\1911 Silenced.wav;
+        Build Settings Last Modified Low = 3066896853;
+        Build Settings Last Modified High = 30364106;
 
         Cache
         {
             Format Tag = 0;
             Channels = 2;
-            Sampling Rate = 44100;
+            Sampling Rate = 96000;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 1327240;
+            Play Region Length = 289988;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 1474659775;
-            Last Modified High = 30363594;
+            Last Modified Low = 600202638;
+            Last Modified High = 30364106;
         }
     }
 
     Wave
     {
-        Name = night_music;
-        File = night_music.wav;
-        Build Settings Last Modified Low = 915770123;
-        Build Settings Last Modified High = 30363713;
+        Name = 14;
+        File = 14.wav;
+        Build Settings Last Modified Low = 3245834748;
+        Build Settings Last Modified High = 30364106;
 
         Cache
         {
@@ -268,82 +268,13 @@ Wave Bank
             Channels = 2;
             Sampling Rate = 44100;
             Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 10423712;
+            Play Region Offset = 74;
+            Play Region Length = 92772;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3570509343;
-            Last Modified High = 30363593;
-        }
-    }
-
-    Wave
-    {
-        Name = nightTime;
-        File = nightTime.wav;
-        Build Settings Last Modified Low = 915770123;
-        Build Settings Last Modified High = 30363713;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 1468020;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2548160027;
-            Last Modified High = 30363591;
-        }
-    }
-
-    Wave
-    {
-        Name = seeEnemy;
-        File = seeEnemy.wav;
-        Build Settings Last Modified Low = 915770123;
-        Build Settings Last Modified High = 30363713;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 326508;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 15392231;
-            Last Modified High = 30363594;
-        }
-    }
-
-    Wave
-    {
-        Name = shootLight;
-        File = shootLight.wav;
-        Build Settings Last Modified Low = 915770123;
-        Build Settings Last Modified High = 30363713;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 326508;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 3741690618;
-            Last Modified High = 30363594;
+            Last Modified Low = 3538384508;
+            Last Modified High = 30363514;
         }
     }
 
@@ -351,8 +282,8 @@ Wave Bank
     {
         Name = bigBoss;
         File = bigBoss.wav;
-        Build Settings Last Modified Low = 915780120;
-        Build Settings Last Modified High = 30363713;
+        Build Settings Last Modified Low = 3245844757;
+        Build Settings Last Modified High = 30364106;
 
         Cache
         {
@@ -365,8 +296,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 1148348874;
-            Last Modified High = 30363594;
+            Last Modified Low = 1916878262;
+            Last Modified High = 30363989;
         }
     }
 
@@ -374,8 +305,8 @@ Wave Bank
     {
         Name = day_music;
         File = day_music.wav;
-        Build Settings Last Modified Low = 915780120;
-        Build Settings Last Modified High = 30363713;
+        Build Settings Last Modified Low = 3245844757;
+        Build Settings Last Modified High = 30364106;
 
         Cache
         {
@@ -388,8 +319,31 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2083422940;
-            Last Modified High = 30363598;
+            Last Modified Low = 1917818893;
+            Last Modified High = 30363989;
+        }
+    }
+
+    Wave
+    {
+        Name = die;
+        File = die.wav;
+        Build Settings Last Modified Low = 3245844757;
+        Build Settings Last Modified High = 30364106;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 1327240;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1918039047;
+            Last Modified High = 30363989;
         }
     }
 
@@ -397,8 +351,8 @@ Wave Bank
     {
         Name = fullMusic;
         File = fullMusic.wav;
-        Build Settings Last Modified Low = 381128194;
-        Build Settings Last Modified High = 30363730;
+        Build Settings Last Modified Low = 3245844757;
+        Build Settings Last Modified High = 30364106;
 
         Cache
         {
@@ -411,8 +365,100 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3742998566;
-            Last Modified High = 30363730;
+            Last Modified Low = 1919710163;
+            Last Modified High = 30363989;
+        }
+    }
+
+    Wave
+    {
+        Name = night_music;
+        File = night_music.wav;
+        Build Settings Last Modified Low = 3245844757;
+        Build Settings Last Modified High = 30364106;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 10423712;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1921121201;
+            Last Modified High = 30363989;
+        }
+    }
+
+    Wave
+    {
+        Name = nightTime;
+        File = nightTime.wav;
+        Build Settings Last Modified Low = 3245854761;
+        Build Settings Last Modified High = 30364106;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 1468020;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1919920297;
+            Last Modified High = 30363989;
+        }
+    }
+
+    Wave
+    {
+        Name = seeEnemy;
+        File = seeEnemy.wav;
+        Build Settings Last Modified Low = 3245854761;
+        Build Settings Last Modified High = 30364106;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 326508;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1921171141;
+            Last Modified High = 30363989;
+        }
+    }
+
+    Wave
+    {
+        Name = shootLight;
+        File = shootLight.wav;
+        Build Settings Last Modified Low = 3245854761;
+        Build Settings Last Modified High = 30364106;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 326508;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1921231181;
+            Last Modified High = 30363989;
         }
     }
 }
@@ -424,14 +470,14 @@ Sound Bank
     Windows File = Win\Sound Bank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 3495006591;
-    Bank Last Modified High = 30363730;
+    Bank Last Modified Low = 3522779088;
+    Bank Last Modified High = 30364106;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
     Sound
     {
-        Name = day_music;
+        Name = 1911 Silenced;
         Volume = -1200;
         Pitch = 0;
         Priority = 0;
@@ -467,8 +513,8 @@ Sound Bank
                 {
                     Bank Name = Wave Bank;
                     Bank Index = 0;
-                    Entry Name = day_music;
-                    Entry Index = 6;
+                    Entry Name = 1911 Silenced;
+                    Entry Index = 0;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -478,7 +524,7 @@ Sound Bank
 
     Sound
     {
-        Name = seeEnemy;
+        Name = 14;
         Volume = -1200;
         Pitch = 0;
         Priority = 0;
@@ -514,55 +560,8 @@ Sound Bank
                 {
                     Bank Name = Wave Bank;
                     Bank Index = 0;
-                    Entry Name = seeEnemy;
-                    Entry Index = 3;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = shootLight;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = shootLight;
-                    Entry Index = 4;
+                    Entry Name = 14;
+                    Entry Index = 1;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -609,53 +608,6 @@ Sound Bank
                     Bank Name = Wave Bank;
                     Bank Index = 0;
                     Entry Name = bigBoss;
-                    Entry Index = 5;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = nightTime;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = nightTime;
                     Entry Index = 2;
                     Weight = 255;
                     Weight Min = 0;
@@ -666,7 +618,7 @@ Sound Bank
 
     Sound
     {
-        Name = night_music;
+        Name = day_music;
         Volume = -1200;
         Pitch = 0;
         Priority = 0;
@@ -702,8 +654,8 @@ Sound Bank
                 {
                     Bank Name = Wave Bank;
                     Bank Index = 0;
-                    Entry Name = night_music;
-                    Entry Index = 1;
+                    Entry Name = day_music;
+                    Entry Index = 3;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -750,7 +702,7 @@ Sound Bank
                     Bank Name = Wave Bank;
                     Bank Index = 0;
                     Entry Name = die;
-                    Entry Index = 0;
+                    Entry Index = 4;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -797,7 +749,195 @@ Sound Bank
                     Bank Name = Wave Bank;
                     Bank Index = 0;
                     Entry Name = fullMusic;
+                    Entry Index = 5;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = night_music;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = night_music;
+                    Entry Index = 6;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = nightTime;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = nightTime;
                     Entry Index = 7;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = seeEnemy;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = seeEnemy;
+                    Entry Index = 8;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = shootLight;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = shootLight;
+                    Entry Index = 9;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -807,7 +947,7 @@ Sound Bank
 
     Cue
     {
-        Name = day_music;
+        Name = 1911 Silenced;
 
         Variation
         {
@@ -818,7 +958,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = day_music;
+            Name = 1911 Silenced;
             Index = 0;
             Weight Min = 0;
             Weight Max = 255;
@@ -827,7 +967,7 @@ Sound Bank
 
     Cue
     {
-        Name = seeEnemy;
+        Name = 14;
 
         Variation
         {
@@ -838,28 +978,8 @@ Sound Bank
 
         Sound Entry
         {
-            Name = seeEnemy;
+            Name = 14;
             Index = 1;
-            Weight Min = 0;
-            Weight Max = 255;
-        }
-    }
-
-    Cue
-    {
-        Name = shootLight;
-
-        Variation
-        {
-            Variation Type = 3;
-            Variation Table Type = 1;
-            New Variation on Loop = 0;
-        }
-
-        Sound Entry
-        {
-            Name = shootLight;
-            Index = 2;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -879,47 +999,27 @@ Sound Bank
         Sound Entry
         {
             Name = bigBoss;
+            Index = 2;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = day_music;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = day_music;
             Index = 3;
-            Weight Min = 0;
-            Weight Max = 255;
-        }
-    }
-
-    Cue
-    {
-        Name = nightTime;
-
-        Variation
-        {
-            Variation Type = 3;
-            Variation Table Type = 1;
-            New Variation on Loop = 0;
-        }
-
-        Sound Entry
-        {
-            Name = nightTime;
-            Index = 4;
-            Weight Min = 0;
-            Weight Max = 255;
-        }
-    }
-
-    Cue
-    {
-        Name = night_music;
-
-        Variation
-        {
-            Variation Type = 3;
-            Variation Table Type = 1;
-            New Variation on Loop = 0;
-        }
-
-        Sound Entry
-        {
-            Name = night_music;
-            Index = 5;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -939,7 +1039,7 @@ Sound Bank
         Sound Entry
         {
             Name = die;
-            Index = 6;
+            Index = 4;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -959,7 +1059,87 @@ Sound Bank
         Sound Entry
         {
             Name = fullMusic;
+            Index = 5;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = night_music;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = night_music;
+            Index = 6;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = nightTime;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = nightTime;
             Index = 7;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = seeEnemy;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = seeEnemy;
+            Index = 8;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = shootLight;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = shootLight;
+            Index = 9;
             Weight Min = 0;
             Weight Max = 255;
         }
