@@ -42,7 +42,7 @@ namespace gameNS {
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
-	const int NUM_ENEMIES = 5;
+	const int MAX_NUM_ENEMIES = 20;
 	bool PLAY_MUSIC = true;
 }
 
@@ -74,6 +74,7 @@ public:
 	void updateBuildings(float dt);
 	void updateUniqueObjects(float dt);
 	void updatePlayer(float dt);
+	void updateEnemies(float dt);
 	void updateCamera();
 	void updateDayNight();
 	void updateLamps(float dt);
@@ -211,7 +212,8 @@ private:
 
 	float timect;
 	string timeOfDay;
-	Enemy enemy[gameNS::NUM_ENEMIES];
+	Enemy enemy[gameNS::MAX_NUM_ENEMIES];
+	int nightCount;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -234,6 +236,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	timeOfDay = "Day";
 	srand(time(0));
 	debugMode = false;
+	nightCount = 0;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -446,7 +449,7 @@ void ColoredCubeApp::initWallPositions() {
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
-	for(int i=0; i<gameNS::NUM_ENEMIES; i++)enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
+	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
 	cameraCollider.init(&clearBox, 1.0, Vector3(0,0,0), Vector3(0,0,0), 1, 1);
 }
 
@@ -619,6 +622,7 @@ void ColoredCubeApp::updateScene(float dt)
 		updateOrigin(dt);
 		handleUserInput();
 		updatePlayer(dt);
+		updateEnemies(dt);
 		updatePickups(dt);
 		updateLamps(dt);
 		updateWalls(dt);
@@ -820,12 +824,25 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	//player.setVelocity(moveRuggerDirection() * player.getSpeed());
 	player.setPosition(Vector3(mEyePos.x, mEyePos.y-2, mEyePos.z));
 	player.update(dt, moveAxis);
+}
 
-	for(int i=0; i<gameNS::NUM_ENEMIES; i++)
+void ColoredCubeApp::updateEnemies(float dt)
+{
+	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 	{
-		if(night) enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
-		else enemy[i].setSpeed(enemyNS::DAY_SPEED);
-		enemy[i].update(dt, &player);
+		if(enemy[i].getActiveState())
+		{
+			if(night)
+			{
+				if(D3DXVec3LengthSq(&(enemy[i].getPosition() - D3DXVECTOR3(0,0,0))) < 55*55)
+				{
+					enemy[i].setSpeed(enemyNS::DAY_SPEED);
+				}
+				else enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
+			}
+			else enemy[i].setSpeed(enemyNS::DAY_SPEED);
+			enemy[i].update(dt, &player);
+		}
 	}
 
 	vector<D3DXVECTOR3> wp = enemy[0].waypointPositions();
@@ -904,7 +921,7 @@ void ColoredCubeApp::handlePickupCollisions(float dt) {
 
 void ColoredCubeApp::handleEnemyCollisions(float dt)
 {
-	for(int i=0; i<gameNS::NUM_ENEMIES; i++)
+	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 	{
 		for(int j=0; j<pBullets.size(); j++)
 		{
@@ -959,6 +976,32 @@ void ColoredCubeApp::updateDayNight() {
 		night = !night;
 		if(night)
 		{
+			if(timeOfDay == "Evening")
+			{
+				nightCount++;
+				for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
+				{
+					if(!enemy[i].getActiveState())
+					{
+						enemy[i].setActive();
+						switch(rand()%4)
+						{
+						case 0:
+							enemy[i].setPosition(D3DXVECTOR3(0,0,200));
+							break;
+						case 1:
+							enemy[i].setPosition(D3DXVECTOR3(0,0,2200));
+							break;
+						case 2:
+							enemy[i].setPosition(D3DXVECTOR3(200,0,0));
+							break;
+						case 3:
+							enemy[i].setPosition(D3DXVECTOR3(-200,0,0));
+							break;
+						}
+					}
+				}
+			}
 			timeOfDay = "Night";
 			mClearColor = gameNS::NIGHT_SKY_COLOR;
 			mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
@@ -969,7 +1012,10 @@ void ColoredCubeApp::updateDayNight() {
 		}
 		else
 		{
-			if (timeOfDay == "Dawn") nightDayTrans = true;
+			if (timeOfDay == "Dawn")
+			{
+				nightDayTrans = true;
+			}
 			timeOfDay = "Day";
 			mClearColor = gameNS::DAY_SKY_COLOR;
 			mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1023,8 +1069,8 @@ void ColoredCubeApp::drawScene()
 
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
 		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
-		for(int i=0; i<gameNS::NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);

@@ -8,7 +8,7 @@ float heuristic(Waypoint* x, Waypoint* y);
 Enemy::Enemy()
 {
 	radius = 0.0f;
-	active = true;
+	active = false;
 	Identity(&world);
 	Identity(&mTranslate);
 	Identity(&mRotate);
@@ -78,6 +78,8 @@ void Enemy::update(float dt)
 
 void Enemy::update(float dt, Player* p)
 {
+	if(!active) return;
+
 	if(health <= 0)
 	{
 		active = false;
@@ -101,7 +103,7 @@ void Enemy::update(float dt, Player* p)
 		D3DXVECTOR3 tar;
 		D3DXVec3Normalize(&tar, &(p->getPosition() - position));
 		tar.y = 0;
-		velocity = tar * enemyNS::NIGHT_SPEED;
+		velocity = tar * speed;
 	}
 	else
 	{
@@ -112,8 +114,8 @@ void Enemy::update(float dt, Player* p)
 			//find nearest waypoint
 			Waypoint* src = findNearestWaypoint(position);
 			//find waypoint nearest to player
-			//Waypoint* dest = findNearestWaypoint(p->getPosition());
-			Waypoint* dest = waypoints[rand()%WAYPOINT_SIZE][rand()%WAYPOINT_SIZE];
+			Waypoint* dest = findNearestWaypoint(p->getPosition());
+			//Waypoint* dest = waypoints[rand()%WAYPOINT_SIZE][rand()%WAYPOINT_SIZE];
 
 			//calculate path from nearest waypoint to the player's nearest waypoint
 			nav = pathfindAStar(src, dest);
@@ -129,7 +131,7 @@ void Enemy::update(float dt, Player* p)
 			{
 				D3DXVECTOR3 tar;
 				D3DXVec3Normalize(&tar, &(target->getPosition() - position));
-				velocity = tar * enemyNS::NIGHT_SPEED;
+				velocity = tar * speed;
 				//float t = 0;
 				//calculate the time when our position is the same as the target
 				//D3DXVECTOR3 a = target->getPosition() - position;

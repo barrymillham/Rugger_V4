@@ -36,6 +36,8 @@ public:
 	void setDestination(D3DXVECTOR3& d) {destination = d;}
 	D3DXVECTOR3 getDestination(){return destination;}
 	D3DXVECTOR3 getOldPos(){return oldPos;}
+	float getSpeed(){return speed;}
+	void setSpeed(float s){speed = s;}
 
 	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
 	Waypoint* findNearestWaypoint(D3DXVECTOR3&);
