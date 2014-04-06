@@ -23,6 +23,7 @@ Enemy::Enemy()
 	target = 0;
 	velocity = Vector3(0.0f, 0.0f, 0.0f);
 	lastAttacked = 0.5f;
+	health = 100;
 }
 
 Enemy::~Enemy()
@@ -75,14 +76,22 @@ void Enemy::update(float dt)
 	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
 }
 
-void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
+void Enemy::update(float dt, Player* p)
 {
+	if(health <= 0)
+	{
+		active = false;
+		return;
+	}
+	oldPos = position;
+
 	Identity(&world);
 	lastAttacked += dt;
 	float dist = D3DXVec3Length(&(position - p->getPosition()));
 	
 	if(dist <= 15)
 	{
+		nav.clear();
 		velocity = D3DXVECTOR3(0,0,0);
 		attack(p);
 	}
@@ -92,7 +101,7 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 		D3DXVECTOR3 tar;
 		D3DXVec3Normalize(&tar, &(p->getPosition() - position));
 		tar.y = 0;
-		velocity = tar * speed;
+		velocity = tar * enemyNS::NIGHT_SPEED;
 	}
 	else
 	{
@@ -101,11 +110,13 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 		if(nav.empty())
 		{
 			//find nearest waypoint
-			Waypoint* src = waypoints[rand()%10][rand()%10];
+			Waypoint* src = findNearestWaypoint(position);
 			//find waypoint nearest to player
-			Waypoint* dest = waypoints[rand()%10][rand()%10];
+			//Waypoint* dest = findNearestWaypoint(p->getPosition());
+			Waypoint* dest = waypoints[rand()%WAYPOINT_SIZE][rand()%WAYPOINT_SIZE];
+
 			//calculate path from nearest waypoint to the player's nearest waypoint
-			nav = pathfindAStar(src, dest, WAYPT_SIZE);
+			nav = pathfindAStar(src, dest);
 		}
 		else
 		{
@@ -118,7 +129,7 @@ void Enemy::update(float dt, Player* p, const int& WAYPT_SIZE)
 			{
 				D3DXVECTOR3 tar;
 				D3DXVec3Normalize(&tar, &(target->getPosition() - position));
-				velocity = tar * speed;
+				velocity = tar * enemyNS::NIGHT_SPEED;
 				//float t = 0;
 				//calculate the time when our position is the same as the target
 				//D3DXVECTOR3 a = target->getPosition() - position;
@@ -146,15 +157,15 @@ void Enemy::attack(Player* p)
 	}
 }
 
-list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest, const int& WAYPT_SIZE)
+list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest)
 {
 	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> openWay;
 	vector<Waypoint*> closedWay;
 	list<Waypoint*> path;
 
-	for(int i=0; i<WAYPT_SIZE; i++)
+	for(int i=0; i<WAYPOINT_SIZE; i++)
 	{
-		for(int j=0; j<WAYPT_SIZE; j++)
+		for(int j=0; j<WAYPOINT_SIZE; j++)
 		{
 			waypoints[i][j]->setContainer(NONE);
 			waypoints[i][j]->setFCost(0);
@@ -165,7 +176,7 @@ list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest, const int& W
 	}
 
 	//find path
-	src = waypoints[0][0];
+	//src = waypoints[0][0];
 	src->setFCost(heuristic(src, dest));
 	
 	int nodesConsidered = 0;
@@ -255,25 +266,40 @@ list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest, const int& W
 	return path;
 }
 
+Waypoint* Enemy::findNearestWaypoint(D3DXVECTOR3& p)
+{
+	Waypoint* nearest = waypoints[0][0];
+	for(int i=0; i<WAYPOINT_SIZE; i++)
+	{
+		for(int j=0; j<WAYPOINT_SIZE; j++)
+		{
+			if(D3DXVec3LengthSq(&(nearest->getPosition() - p)) > D3DXVec3LengthSq(&(waypoints[i][j]->getPosition() - p))) 
+				nearest = waypoints[i][j];
+		}
+	}
+	return nearest;
+}
+
 void Enemy::initWaypoints()
 {
-	for(int i=0; i<10; i++){
-		for(int j=0; j<10; j++)
+	for(int i=0; i<WAYPOINT_SIZE; i++){
+		for(int j=0; j<WAYPOINT_SIZE; j++)
 		{
-			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i*10, 0, j*10));
+			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i*100 - 200, 0, j*100 - 200));
 			waypoints[i][j]->setContainer(NONE);
 			//wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
 		}
 	}
-	for(int i=0; i<10; i++)
+
+	for(int i=0; i<WAYPOINT_SIZE; i++)
 	{
-		for(int j=0; j<10; j++)
+		for(int j=0; j<WAYPOINT_SIZE; j++)
 		{
 			//Currently just waypoints in the cardinal directions
 			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
-			if(i+1 < 10) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+			if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
 			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
-			if(j+1 < 10) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
 		}
 	}
 }
@@ -297,4 +323,17 @@ void queue_remove(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>&
 float heuristic(Waypoint* x, Waypoint* y)
 {
 	return abs(x->getPosition().x - y->getPosition().x) + abs(x->getPosition().z - y->getPosition().z);
+}
+
+vector<D3DXVECTOR3> Enemy::waypointPositions()
+{
+	vector<D3DXVECTOR3> wp;
+	for(int i=0; i<WAYPOINT_SIZE; i++)
+	{
+		for(int j=0; j<WAYPOINT_SIZE; j++)
+		{
+			wp.push_back(waypoints[i][j]->getPosition());
+		}
+	}
+	return wp;
 }

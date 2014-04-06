@@ -84,7 +84,7 @@ float4 PS(VS_OUT pIn) : SV_Target
 	float3 nNormalW = normalize(pIn.normalW);
     SurfaceInfo v = {pIn.posW, pIn.normalW, pIn.diffuse, pIn.spec};
     
-    float3 litColor = {0.1f, 0.1f, 0.1f};
+    float3 litColor = {0.05f, 0.05f, 0.05f};
 	if (gGlow == 2) return float4(float3(1.0f,1.0f,1.0f), pIn.diffuse.a);    
 	
 	//directed light for scene (sun)

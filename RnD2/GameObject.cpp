@@ -59,7 +59,7 @@ void GameObject::update(float dt)
 //Note that this collision only works for axis-aligned cubes
 bool GameObject::collided(GameObject *gameObject)
 {
-	if (!gameObject->getActiveState()) return false;
+	if (!gameObject->getActiveState() || !active) return false;
 	if( position.x - getWidth() <= gameObject->getPosition().x + gameObject->getWidth() && 
 		position.x + getWidth() >= gameObject->getPosition().x - gameObject->getWidth() &&
 		position.y - getHeight() <= gameObject->getPosition().y + gameObject->getHeight() &&

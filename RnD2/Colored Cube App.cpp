@@ -26,15 +26,10 @@
 #include "namespaces.h"
 #include "pickup.h"
 #include <ctime>
-using std::time;
 #include "Light.h"
 #include "LampPost.h"
 #include "Enemy.h"
-
-#include <queue>
-using std::priority_queue;
-
-bool queue_contains(priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare>& pq, Waypoint* w);
+using std::time;
 
 namespace gameNS {
 	const int NUM_WALLS = 16;
@@ -45,8 +40,7 @@ namespace gameNS {
 	const int NUM_LIGHTS = 11;
 	const float DAYLEN = 40;
 	const float TRANSITIONTIME = 10;
-	const int WAYPT_SIZE = 10;
-	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.098f, 0.098f, 0.439f, 1.0f);
+	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	const int NUM_ENEMIES = 5;
 	bool PLAY_MUSIC = true;
@@ -91,6 +85,7 @@ public:
 	void handleWallCollisions(Vector3 pos);
 	void handleLampCollisions(Vector3 pos);
 	void handlePickupCollisions(float dt);
+	void handleEnemyCollisions(float dt);
 
 	void drawScene(); 
 	void drawLine(LineObject*);
@@ -106,7 +101,6 @@ public:
 	void printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, int value = -1);
 	void setDeviceAndShaderInformation();
 	void doEndScreen();
-	void firstPassCleanup();
 	
 private:
 	void buildFX();
@@ -150,7 +144,7 @@ private:
 	Box inactiveLine;
 	Box activeLine;
 	//GameObject wayLine[100][100];
-	GameObject** wayLine;
+	GameObject wayLine[WAYPOINT_SIZE*WAYPOINT_SIZE];
 	
 	
 	
@@ -385,6 +379,7 @@ void ColoredCubeApp::initBasicGeometry() {
 	rLine.init(md3dDevice, 10.0f, RED);
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
+	activeLine.init(md3dDevice, 1.0f, RED);
 }
 
 void ColoredCubeApp::initTextStrings() {
@@ -517,7 +512,7 @@ void ColoredCubeApp::initLights()
 	mLights[3].att.x    = 0.0f;
 	mLights[3].att.y    = 0.55f;
 	mLights[3].att.z    = 0.0f;
-	mLights[3].range    = 50.0f;
+	mLights[3].range    = 75.0f;
 	mLights[3].pos = D3DXVECTOR3(45, 10, 45);
 	
 	mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -526,7 +521,7 @@ void ColoredCubeApp::initLights()
 	mLights[4].att.x    = 0.0f;
 	mLights[4].att.y    = 0.55f;
 	mLights[4].att.z    = 0.0f;
-	mLights[4].range    = 50.0f;
+	mLights[4].range    = 75.0f;
 	mLights[4].pos = D3DXVECTOR3(-45, 10, 45);
 
 	mLights[5].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -535,7 +530,7 @@ void ColoredCubeApp::initLights()
 	mLights[5].att.x    = 0.0f;
 	mLights[5].att.y    = 0.55f;
 	mLights[5].att.z    = 0.0f;
-	mLights[5].range    = 50.0f;
+	mLights[5].range    = 75.0f;
 	mLights[5].pos = D3DXVECTOR3(45, 10, -45);
 
 	mLights[6].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -544,7 +539,7 @@ void ColoredCubeApp::initLights()
 	mLights[6].att.x    = 0.0f;
 	mLights[6].att.y    = 0.55f;
 	mLights[6].att.z    = 0.0f;
-	mLights[6].range    = 50.0f;
+	mLights[6].range    = 75.0f;
 	mLights[6].pos = D3DXVECTOR3(-45, 10, -45);
 
 	//Enemy entry vectors
@@ -577,7 +572,7 @@ void ColoredCubeApp::initLights()
 
 	mLights[10].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[10].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-	mLights[10].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[10].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	mLights[10].att.x    = 0.0f;
 	mLights[10].att.y    = 0.55f;
 	mLights[10].att.z    = 0.0f;
@@ -594,7 +589,6 @@ void ColoredCubeApp::initWaypoints()
 
 void ColoredCubeApp::updateScene(float dt)
 {
-	
 	timect += dt;
 	ColoredCubeApp::dt = dt;
 	bool playing = (!endScreen && !startScreen);
@@ -602,7 +596,6 @@ void ColoredCubeApp::updateScene(float dt)
 	
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
-	firstPassCleanup(); 
 	D3DXMATRIX sunRot;
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
 
@@ -632,6 +625,7 @@ void ColoredCubeApp::updateScene(float dt)
 		handleWallCollisions(oldPos);
 		handleBuildingCollisions(oldPos);
 		handlePickupCollisions(dt);
+		handleEnemyCollisions(dt);
 	}
 
 	else if (startScreen) 
@@ -678,29 +672,6 @@ void ColoredCubeApp::updateDebugMode() {
 		gameNS::PLAY_MUSIC = false;
 		audio->stopCue(MUSIC);
 	}
-}
-
-void ColoredCubeApp::firstPassCleanup() {
-	////For the first update pass, we want to remove any money that is colliding with cameras or walls
-	//for(int i=0; i<gameNS::WAYPT_SIZE; i++)for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].update(dt);
-
-	//if(firstpass)
-	//{
-	//	firstpass = false;
-	//	for(int i=0; i<gameNS::NUM_WALLS; i++)
-	//	{
-	//		for(int j=0; j<gameNS::WAYPT_SIZE; j++)
-	//		{
-	//			for(int k=0; k<gameNS::WAYPT_SIZE; k++)
-	//			{
-	//				//if(walls[i].collided(&wayLine[j][k])) waypoints[j][k]->setActive(false);
-	//				if(wayLine[j][k].collided(&walls[i])) 
-	//					waypoints[j][k]->setActive(false);
-	//				
-	//			}
-	//		}
-	//	}
-	//}
 }
 
 void ColoredCubeApp::updateCamera() {
@@ -853,7 +824,15 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	{
 		if(night) enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
 		else enemy[i].setSpeed(enemyNS::DAY_SPEED);
-		enemy[i].update(dt, &player, gameNS::WAYPT_SIZE);
+		enemy[i].update(dt, &player);
+	}
+
+	vector<D3DXVECTOR3> wp = enemy[0].waypointPositions();
+	
+	for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++)
+	{
+		wayLine[i].init(&activeLine, 1.0f, wp[i], D3DXVECTOR3(0,0,0), 0.0f, 1.0f);
+		wayLine[i].update(dt);
 	}
 }
 
@@ -868,7 +847,9 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 	for(int i=0; i<gameNS::NUM_WALLS; i++)
 	{
 		if(player.collided(&walls[i]))
-				mEyePos = pos;
+		{
+			mEyePos = pos;
+		}
 
 		for (int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&walls[i])) {
@@ -920,6 +901,33 @@ void ColoredCubeApp::handlePickupCollisions(float dt) {
 	
 }
 
+void ColoredCubeApp::handleEnemyCollisions(float dt)
+{
+	for(int i=0; i<gameNS::NUM_ENEMIES; i++)
+	{
+		for(int j=0; j<pBullets.size(); j++)
+		{
+			if(pBullets[j]->collided(&enemy[i]))
+			{
+				pBullets[j]->setInActive();
+				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
+				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
+				shotTimer = 0;
+				enemy[i].damage(50);
+				//enemy[i].setInActive();
+			}
+		}
+		for(int j=0; j<gameNS::NUM_WALLS; j++)
+		{
+			if(enemy[i].collided(&walls[j])) enemy[i].setPosition(enemy[i].getOldPos());
+		}
+		for(int j=0; j<gameNS::NUM_BUILDINGS; j++)
+		{
+			if(enemy[i].collided(&buildings[j])) enemy[i].setPosition(enemy[i].getOldPos());
+		}
+	}
+}
+
 void ColoredCubeApp::updatePickups(float dt) {
 	for (int i = 0; i < pickups.size(); i++) {
 			if (player.collided(&pickups[i])) {
@@ -937,6 +945,13 @@ void ColoredCubeApp::updateOrigin(float dt) {
 }
 
 void ColoredCubeApp::updateDayNight() {
+	//mLights[0].dir;
+	//D3DXMATRIX rot;
+	//D3DXMatrixRotationZ(&rot, -(ToRadian(180)/gameNS::DAYLEN)*dt);
+	//D3DXVECTOR4 temp;
+	//D3DXVec3Transform(&temp, &mLights[0].dir, &rot);
+	//mLights[0].dir = D3DXVECTOR3(temp.x, temp.y, temp.z);
+
 	if(timect >= gameNS::DAYLEN)
 	{
 		timect = 0;
@@ -946,6 +961,10 @@ void ColoredCubeApp::updateDayNight() {
 			timeOfDay = "Night";
 			mClearColor = gameNS::NIGHT_SKY_COLOR;
 			mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
+			mLights[3].att.y    = 0.05f;
+			mLights[4].att.y    = 0.05f;
+			mLights[5].att.y    = 0.05f;
+			mLights[6].att.y    = 0.05f;
 		}
 		else
 		{
@@ -953,6 +972,10 @@ void ColoredCubeApp::updateDayNight() {
 			timeOfDay = "Day";
 			mClearColor = gameNS::DAY_SKY_COLOR;
 			mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			mLights[3].att.y    = 0.55f;
+			mLights[4].att.y    = 0.55f;
+			mLights[5].att.y    = 0.55f;
+			mLights[6].att.y    = 0.55f;
 		}
 	}
 	if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
@@ -961,16 +984,24 @@ void ColoredCubeApp::updateDayNight() {
 		if(night) 
 		{
 			timeOfDay = "Dawn";
-			mClearColor += D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
+			mClearColor += D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
 			//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-			mLights[0].diffuse += D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			mLights[0].diffuse += D3DXCOLOR(((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			mLights[3].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[4].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[5].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[6].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
 		}
 		else 
 		{
 			timeOfDay = "Evening";
-			mClearColor -= D3DXCOLOR(((0.529f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.808f-0.098f)/(gameNS::TRANSITIONTIME))*dt, ((0.98f-0.439f)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
+			mClearColor -= D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
 			//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-			mLights[0].diffuse -= D3DXCOLOR(((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 - 0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			mLights[0].diffuse -= D3DXCOLOR(((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			mLights[3].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[4].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[5].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[6].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
 		}
 	}
 }
@@ -992,7 +1023,7 @@ void ColoredCubeApp::drawScene()
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
 		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
 		for(int i=0; i<gameNS::NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-
+		for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		//drawOrigin();
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);

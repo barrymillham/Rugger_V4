@@ -27,14 +27,21 @@ public:
 	virtual void init(Box *b, float r, Vector3 pos, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
 	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void update(float dt);
-	//void init(Box *b, float r, Vector3 pos, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
-	void update(float dt, Player* p, const int& WAYPT_SIZE);
+
+	void update(float dt, Player* p);
 	void ai();
+	void attack(Player* p);
+	void damage(int d) {health -= d;}
 
 	void setDestination(D3DXVECTOR3& d) {destination = d;}
 	D3DXVECTOR3 getDestination(){return destination;}
+	D3DXVECTOR3 getOldPos(){return oldPos;}
 
-	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target, const int& WAYPT_SIZE);
+	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
+	Waypoint* findNearestWaypoint(D3DXVECTOR3&);
+
+	//For positioning waypoint indicators
+	vector<D3DXVECTOR3> waypointPositions();
 
 	float getWidth(){
 		return width;
@@ -46,8 +53,6 @@ public:
 		return depth;
 	}
 
-	void attack(Player* p);
-	//
 private:
 	float radius;
 	float radiusSquared;
@@ -57,11 +62,14 @@ private:
 	//Waypoint* waypoints;
 	float speed;
 
-	Waypoint* waypoints[10][10];
+	Waypoint* waypoints[WAYPOINT_SIZE][WAYPOINT_SIZE];
 	void initWaypoints();
+
 	Waypoint* target;
 
 	float lastAttacked;
+	int health;
+	D3DXVECTOR3 oldPos;
 };
 
 
