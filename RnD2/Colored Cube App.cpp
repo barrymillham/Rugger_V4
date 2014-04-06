@@ -393,7 +393,7 @@ void ColoredCubeApp::initTextStrings() {
 }
 
 void ColoredCubeApp::initBasicVariables() {
-	startScreen = false;
+	startScreen = true;
 	shotTimer = 0;
 	hasntPlayedYet = true;
 	nightDayTrans = false;
@@ -600,10 +600,14 @@ void ColoredCubeApp::updateScene(float dt)
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
 
 	
-	updateMusic();
-	
-	if(playing)
-	{	
+	if (startScreen){
+		if(input->anyKeyPressed()){
+			startScreen = false;
+			playing = true;
+		}
+	}
+	if(playing){	
+		updateMusic();
 		updateCamera();
 
 		updateDebugMode();
@@ -627,13 +631,9 @@ void ColoredCubeApp::updateScene(float dt)
 		handlePickupCollisions(dt);
 		handleEnemyCollisions(dt);
 	}
-
-	else if (startScreen) 
-	{
-		//if(input->anyKeyPressed()) startScreen = false;
-		
+	if(endScreen){
+		doEndScreen();
 	}
-	else doEndScreen();
 	
 	// The point light circles the scene as a function of time, 
 	// staying 7 units above the land's or water's surface.

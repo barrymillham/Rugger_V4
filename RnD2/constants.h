@@ -4,7 +4,7 @@
 
 // window
 const char CLASS_NAME[] = "RUGBOI";
-const char GAME_TITLE[] = "Rugger & Dunstan II: Rugger Resumes";
+const char GAME_TITLE[] = "Rugger & Dunstan III: Dunstan's Vindictive Counterinsurgency";
 const bool FULLSCREEN = false;              // windowed or fullscreen
 const UINT GAME_WIDTH =  1280;               // width of game in pixels
 const UINT GAME_HEIGHT = 720;               // height of game in pixels
