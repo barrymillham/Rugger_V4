@@ -37,7 +37,6 @@ namespace gameNS {
 	const int NUM_BUILDINGS = 12;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
-	const int NUM_PICKUPS = 4;
 	const int NUM_LIGHTS = 11;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
@@ -360,13 +359,15 @@ void ColoredCubeApp::initLamps() {
 }
 
 void ColoredCubeApp::initPickups() {
-	for (int i = 0; i < gameNS::NUM_PICKUPS; i++)
-		pickups.push_back(Pickup());
+	
+	//define the pickups
+	pickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, GRUNT1, audio));
 
-	pickups[0].init(&tealBox, Vector3(-35,0,95));
-	pickups[1].init(&tealBox, Vector3(-6,0,-80));
-	pickups[2].init(&tealBox, Vector3(-84,0,-56));
-	pickups[3].init(&tealBox, Vector3(10,0,80));
+	//place the pickups
+	pickups[0].init(Vector3(-35,0,95));
+	//pickups[1].init(Vector3(-6,0,-80));
+	//pickups[2].init(Vector3(-84,0,-56));
+	//pickups[3].init(Vector3(10,0,80));
 }
 
 void ColoredCubeApp::initBullets() {
@@ -997,8 +998,7 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 void ColoredCubeApp::updatePickups(float dt) {
 	for (int i = 0; i < pickups.size(); i++) {
 			if (player.collided(&pickups[i])) {
-				pickups[i].setInActive();
-				player.charge();
+				pickups[i].activate();
 			}
 			pickups[i].update(dt);
 	}

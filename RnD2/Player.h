@@ -21,7 +21,6 @@ public:
 
 	void shoot(D3DXVECTOR3 moveAxis);
 	void rotateTargeting(int s);
-	void charge();
 	bool fired;
 	bool firedLastFrame;
 	void damage(int d){health -= d;}
@@ -33,15 +32,17 @@ public:
 	void addScore(int s) {score += s;}
 	int getScore() {return score;}
 	void grunt();
-
-private:
+	
 	float speed;
-	float radius;
-	double timeSinceLastShot;
-	vector<Bullet*> bullets;
 	int health;
 	int ammo;
 	int score;
+
+private:
+	float radius;
+	double timeSinceLastShot;
+	vector<Bullet*> bullets;
+	
 	Audio* audio;
 };
 

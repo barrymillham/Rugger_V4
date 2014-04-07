@@ -49,6 +49,8 @@ const UCHAR KEY_SPACE = ' ';
 #define DOWN 2
 #define LEFT 3
 #define RIGHT 4
+#define INCREASE 1
+#define DECREASE 0
 
 //**********AUDIO**********//
 

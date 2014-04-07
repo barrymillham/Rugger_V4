@@ -1,18 +1,21 @@
 #ifndef PICKUP_H
 #define PICKUP_H
 #include "GameObject.h"
+#include "Audio.h"
+#include "constants.h"
 
 class Pickup : public GameObject
 {
 public:
-	Pickup();
+	Pickup(){}
+	Pickup(Box *b, int* value, bool MOD, int amount, const char* sound, Audio* a);
 	~Pickup();
 
 	//Width and height in integral number of boxes(bricks)
-	virtual void init(Box *b, Vector3 pos, float r = 2, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
+	virtual void init(Vector3 pos);
 	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void update(float dt);
-
+	void activate();
 	//void setPosition (Vector3 pos) {position = pos;}
 	//Vector3 getPosition() {return position;}
 	//void setRadius(float r) {radius = r; radiusSquared = (scale*r)*(scale*r);}
@@ -40,6 +43,11 @@ public:
 private:
 	float radius;
 	float radiusSquared;
+	int* value;
+	Audio* audio;
+	bool mod;
+	int amount;
+	char* SOUND;
 };
 
 #endif

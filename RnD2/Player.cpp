@@ -102,9 +102,6 @@ void Player::update(float dt, D3DXVECTOR3 moveAxis)
 	timeSinceLastShot+=dt;
 }
 
-void Player::charge() {
-}
-
 void Player::shoot(D3DXVECTOR3 moveAxis)
 {
 	if(ammo == 0) return;
