@@ -483,7 +483,7 @@ void ColoredCubeApp::initUniqueObjects() {
 
 void ColoredCubeApp::initEnemies() {
 	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++) {
-		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
+		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 1, 1, 2, 1);
 		//enemy[i].faceObject(Vector3(0,0,0)); //working overload!
 		enemy[i].faceObject(&player);
 	}

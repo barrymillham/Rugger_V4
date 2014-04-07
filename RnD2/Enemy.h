@@ -37,13 +37,6 @@ public:
 	D3DXVECTOR3 getOldPos(){return oldPos;}
 	float getSpeed(){return speed;}
 	void setSpeed(float s){speed = s;}
-
-	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
-	Waypoint* findNearestWaypoint(D3DXVECTOR3&);
-
-	//For positioning waypoint indicators
-	vector<D3DXVECTOR3> waypointPositions();
-
 	float getWidth(){
 		return width;
 	}
@@ -54,13 +47,24 @@ public:
 		return depth;
 	}
 
+
+	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
+	Waypoint* findNearestWaypoint(D3DXVECTOR3&);
+	//For positioning waypoint indicators
+	vector<D3DXVECTOR3> waypointPositions();
+	void calculatePath(Player*);
+
+	
+
 private:
 	float radius;
 	float radiusSquared;
 	D3DXVECTOR3 destination;
 
 	list<Waypoint*> nav;
-	//Waypoint* waypoints;
+	Waypoint* src;
+	Waypoint* dest;
+
 	float speed;
 
 	Waypoint* waypoints[WAYPOINT_SIZE][WAYPOINT_SIZE];

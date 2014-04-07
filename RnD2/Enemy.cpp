@@ -39,9 +39,9 @@ void Enemy::init(Box *b, float r, Vector3 pos, float s, int w, int h, int d, flo
 	position = pos;
 	scale = s;
 	radiusSquared = radius * radius;
-	width = w;
-	height = h;
-	depth = d;
+	width = w*s;
+	height = h*s;
+	depth = d*s;
 	rotX = rx;
 	rotY = ry;
 	rotZ = rz;
@@ -51,6 +51,7 @@ void Enemy::init(Box *b, float r, Vector3 pos, float s, int w, int h, int d, flo
 	initWaypoints();
 }
 
+//Call this after calculating collisions
 void Enemy::update(float dt)
 {
 	Identity(&world);
@@ -59,6 +60,7 @@ void Enemy::update(float dt)
 	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
 }
 
+//Call this to set appropriate velocity
 void Enemy::update(float dt, Player* p)
 {
 	if(!active) return;
@@ -97,16 +99,7 @@ void Enemy::update(float dt, Player* p)
 		facing = false;
 		if(nav.empty())
 		{
-			//find nearest waypoint
-			Waypoint* src = findNearestWaypoint(position);
-			//find waypoint nearest to player
-			Waypoint* dest = findNearestWaypoint(p->getPosition());
-			//Waypoint* dest = waypoints[rand()%WAYPOINT_SIZE][rand()%WAYPOINT_SIZE];
-
-			//calculate path from nearest waypoint to the player's nearest waypoint
-			//if(src != dest) nav = pathfindAStar(src, dest);
-			//else nav.push_front(src);
-			nav = pathfindAStar(src, dest);
+			calculatePath(p);
 		}
 		else
 		{
@@ -120,17 +113,13 @@ void Enemy::update(float dt, Player* p)
 				D3DXVECTOR3 tar;
 				D3DXVec3Normalize(&tar, &(target->getPosition() - position));
 				velocity = tar * speed;
-				//float t = 0;
-				//calculate the time when our position is the same as the target
-				//D3DXVECTOR3 a = target->getPosition() - position;
-				//t = (-(D3DXVec3Dot(&a, &a)) - sqrt(pow(D3DXVec3Dot(&a, &velocity), 2) - (D3DXVec3Dot(&velocity, &velocity)*D3DXVec3Dot(&a, &a))))/(D3DXVec3Dot(&velocity, &velocity));
-
-				//int x = 0;
 			}
+			//we are AT the destination (of this leg of the journey)
 			else
 			{
-				target = nav.front();
+				calculatePath(p);
 				nav.pop_front();
+				if(!nav.empty()) target = nav.front();
 			}
 		}
 	}
@@ -264,13 +253,25 @@ list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest)
 
 Waypoint* Enemy::findNearestWaypoint(D3DXVECTOR3& p)
 {
+	//Short-circuit the search by automatically targeting the center if they are in the square
+	if(D3DXVec3LengthSq(&(p - D3DXVECTOR3(0,0,0))) < 55*55)
+	{
+		return waypoints[2][2];
+	}
+
+	//Otherwise, make the nearest waypoint anything but the center of the square
 	Waypoint* nearest = waypoints[0][0];
 	for(int i=0; i<WAYPOINT_SIZE; i++)
 	{
 		for(int j=0; j<WAYPOINT_SIZE; j++)
 		{
-			if(D3DXVec3LengthSq(&(nearest->getPosition() - p)) > D3DXVec3LengthSq(&(waypoints[i][j]->getPosition() - p))) 
-				nearest = waypoints[i][j];
+			if(i ==2 && j == 2){}
+			else{
+				if(D3DXVec3LengthSq(&(nearest->getPosition() - p)) > D3DXVec3LengthSq(&(waypoints[i][j]->getPosition() - p))) 
+				{
+					nearest = waypoints[i][j];
+				}
+			}
 		}
 	}
 	return nearest;
@@ -332,4 +333,30 @@ vector<D3DXVECTOR3> Enemy::waypointPositions()
 		}
 	}
 	return wp;
+}
+
+void Enemy::calculatePath(Player* p)
+{
+	target = 0;
+	nav.clear();
+
+	//find nearest waypoint to the enemy
+	src = findNearestWaypoint(position);
+	//find waypoint nearest to player
+	dest = findNearestWaypoint(p->getPosition());
+	//Waypoint* dest = waypoints[rand()%WAYPOINT_SIZE][rand()%WAYPOINT_SIZE];
+
+	//calculate path from nearest waypoint to the player's nearest waypoint
+	//If the source is not the destination, calculate normally
+	if(src != dest)
+	{
+		nav = pathfindAStar(src, dest);
+	}
+	//however if the source and destination are the same, only use that waypoint and stay there
+	else 
+	{
+		nav.clear();
+		nav.push_front(src);
+	}
+	//nav = pathfindAStar(src, dest);
 }
