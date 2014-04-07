@@ -4,6 +4,7 @@
 Player::Player(void) : GameObject()
 {
 	health = 100;
+	ammo = 10;
 }
 
 
@@ -71,8 +72,9 @@ void Player::update(float dt, D3DXVECTOR3 moveAxis)
 void Player::charge() {
 }
 
-void Player::shoot(D3DXVECTOR3 moveAxis)
+bool Player::shoot(D3DXVECTOR3 moveAxis)
 {
+	if(ammo == 0) return false;
 	//If the player's got an active bullet on the level, he doesn't get to shoot
 	int index = -1;
 	for (int i = 0; i < bullets.size(); i++) {
@@ -89,7 +91,7 @@ void Player::shoot(D3DXVECTOR3 moveAxis)
 		timeSinceLastShot = 0;
 	}
 
-	if (index == -1) return;
+	if (index == -1) return false;
 	bullets[index]->setPosition(position);
 	bullets[index]->setSpeed(bulletNS::SPEED);
 	
@@ -126,8 +128,10 @@ void Player::shoot(D3DXVECTOR3 moveAxis)
 
 	bullets[index]->setVelocity(moveAxis);
 	bullets[index]->setActive();
+	ammo--;
 	timeSinceLastShot = 0;
 	fired = false;
+	return true;
 }
 
 void Player::rotateTargeting(int s)

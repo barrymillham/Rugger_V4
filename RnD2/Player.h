@@ -17,7 +17,7 @@ public:
 	void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	void update(float dt, D3DXVECTOR3 moveAxis);
 
-	void shoot(D3DXVECTOR3 moveAxis);
+	bool shoot(D3DXVECTOR3 moveAxis);
 	void rotateTargeting(int s);
 	void charge();
 	bool fired;
@@ -25,6 +25,9 @@ public:
 	void damage(int d){health -= d;}
 	int getHealth(){return health;}
 	void setHealth(int h){health = h;}
+	int getAmmo(){return ammo;}
+	void setAmmo(int a){ammo = a;}
+	void addAmmo(int a){ammo += a;}
 
 private:
 	float speed;
@@ -32,5 +35,6 @@ private:
 	double timeSinceLastShot;
 	vector<Bullet*> bullets;
 	int health;
+	int ammo;
 };
 
