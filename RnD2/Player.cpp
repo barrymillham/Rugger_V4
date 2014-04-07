@@ -90,40 +90,9 @@ void Player::shoot(D3DXVECTOR3 moveAxis)
 	}
 
 	if (index == -1) return;
+
 	bullets[index]->setPosition(position);
 	bullets[index]->setSpeed(bulletNS::SPEED);
-	
-	/*Vector3 nDir;
-	float multiplier = 1;
-	if (direction == UP) {
-		nDir = Vector3(1,0,0);
-		if (this->getVelocity().z > 0) nDir.z = 1;
-		if (this->getVelocity().z < 0) nDir.z = -1;
-		nDir.x *= bulletNS::SPEED;
-		nDir.z *= this->getSpeed()*multiplier;
-	}
-	else if (direction == DOWN) {
-		nDir = Vector3(-1, 0, 0);
-		if (this->getVelocity().z > 0) nDir.z = 1;
-		if (this->getVelocity().z < 0) nDir.z = -1;
-		nDir.x *= bulletNS::SPEED;
-		nDir.z *= this->getSpeed()*multiplier;
-	}
-	else if (direction == LEFT) {
-		nDir = Vector3(0,0,1);
-		if (this->getVelocity().x > 0) nDir.x = 1;
-		if (this->getVelocity().x < 0) nDir.x = -1;
-		nDir.z *= bulletNS::SPEED;
-		nDir.x *= this->getSpeed()*multiplier;
-	}
-	else if (direction == RIGHT) {
-		nDir = Vector3(0,0,-1);
-		if (this->getVelocity().x > 0) nDir.x = 1;
-		if (this->getVelocity().x < 0) nDir.x = -1;
-		nDir.z *= bulletNS::SPEED;
-		nDir.x *= this->getSpeed()*multiplier;
-	}*/
-
 	bullets[index]->setVelocity(moveAxis);
 	bullets[index]->setActive();
 	timeSinceLastShot = 0;

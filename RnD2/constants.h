@@ -37,6 +37,7 @@ const UCHAR KEY_S   = 'S';
 const UCHAR KEY_L	= 'L';
 const UCHAR KEY_K	= 'K';
 const UCHAR KEY_M	= 'M';
+const UCHAR KEY_F	= 'F';
 
 #define COLOR_ARGB DWORD
 #define SETCOLOR_ARGB(a,r,g,b) \
@@ -65,6 +66,10 @@ const char ENEMY_SPOTTED[] = "seeEnemy";
 const char SHOOT_LIGHT[] = "shootLight";
 const char MUSIC[] = "fullMusic";
 const char FIRE[] = "1911 Silenced";
+const char FOOTSTEP1[] = "footstep1";
+const char FOOTSTEP2[] = "footstep2";
+const char FOOTSTEP3[] = "footstep3_grass";
+const char FOOTSTEP4[] = "footstep4_grass";
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.

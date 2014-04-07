@@ -92,6 +92,7 @@ float4 PS(VS_OUT pIn) : SV_Target
 	//
 	//litColor += PointLight(v, gLight[1], gEyePosW);
 	//rotating light
+	
 	litColor += Spotlight(v, gLight[2], gEyePosW);
 	for(int i = 3; i < gLightNum; i++)
 	{

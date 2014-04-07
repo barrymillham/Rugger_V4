@@ -44,6 +44,9 @@ namespace gameNS {
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	const int MAX_NUM_ENEMIES = 20;
 	bool PLAY_MUSIC = true;
+	const float FOOTSTEP_GAP = 0.45;
+	const int GRASSY_AREA_WIDTH = 88;
+	const int FLASHLIGHT_NUM = 2;
 }
 
 
@@ -147,8 +150,6 @@ private:
 	//GameObject wayLine[100][100];
 	GameObject wayLine[WAYPOINT_SIZE*WAYPOINT_SIZE];
 	
-	
-	
 	Waypoint* dest;
 	Waypoint* src;
 	
@@ -214,6 +215,10 @@ private:
 	string timeOfDay;
 	Enemy enemy[gameNS::MAX_NUM_ENEMIES];
 	int nightCount;
+	float stepTime;
+	bool step1;
+	bool flashChanged, flashOn;
+	float flashChangeTime;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -237,6 +242,11 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	srand(time(0));
 	debugMode = false;
 	nightCount = 0;
+	stepTime = 0.0f;
+	step1 = true;
+	flashChanged = false;
+	flashChangeTime = 0.0f;
+	flashOn = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -506,7 +516,7 @@ void ColoredCubeApp::initLights()
 	mLights[2].att.y    = 0.0f;
 	mLights[2].att.z    = 0.0f;
 	mLights[2].spotPow  = 128.0f;
-	mLights[2].range    = 100.0f;
+	mLights[2].range    = 0.0f;
 
 	//Inner corner lights
 	mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -681,39 +691,30 @@ void ColoredCubeApp::updateDebugMode() {
 void ColoredCubeApp::updateCamera() {
 	int dx = input->getMouseRawX();
 	int dy = input->getMouseRawY();
-
+	D3DXVECTOR3 pos = player.getPosition();
 	if(dx < 0)
-	//if(input->isKeyDown(KEY_A))
-	{
 		mPhi -= 6.0f*dt;
-	}
 	if(dx > 0)
-	//if(input->isKeyDown(KEY_D))
-	{
 		mPhi += 6.0f*dt;
-	}
 	if(dy < 0)
-	//if(input->isKeyDown(KEY_W))
-	{
 		mTheta += 3.0f*dt;
-	}
 	if(dy > 0)
-	//if(input->isKeyDown(KEY_S))
-	{
 		mTheta -= 3.0f*dt;
-	}
+
 	//Restricting the mouse movement
 	RECT restrict = {639, 399, 640, 400};
 	ClipCursor(&restrict);
-
+	bool walking = false;
 	if(input->isKeyDown(KEY_W))
 	{
+		walking = true;
 		moveAxis.y = 0;
 		D3DXVec3Normalize(&moveAxis, &moveAxis);
 		mEyePos += moveAxis * dt * 20;
 	}
 	if(input->isKeyDown(KEY_S))
 	{
+		walking = true;
 		moveAxis.y = 0;
 		D3DXVec3Normalize(&moveAxis, &moveAxis);
 	
@@ -721,10 +722,12 @@ void ColoredCubeApp::updateCamera() {
 	}
 	if(input->isKeyDown(KEY_D))
 	{
+		walking = true;
 		mEyePos -= perpAxis * dt * 20;
 	}
 	if(input->isKeyDown(KEY_A))
 	{
+		walking = true;
 		mEyePos += perpAxis * dt * 20;
 	}
 	
@@ -755,6 +758,21 @@ void ColoredCubeApp::updateCamera() {
 	if(input->getMouseRButton())
 	{
 		//Do something
+	}
+
+	if (walking) {
+		stepTime += 1;
+		if (stepTime*dt > gameNS::FOOTSTEP_GAP) {
+			if (pos.x < gameNS::GRASSY_AREA_WIDTH/2.0f && pos.x > -gameNS::GRASSY_AREA_WIDTH/2.0f  && pos.z > -gameNS::GRASSY_AREA_WIDTH/2.0f && pos.z < gameNS::GRASSY_AREA_WIDTH/2.0f) { //in grassy area 
+				if (step1) audio->playCue(FOOTSTEP3);
+				else audio->playCue(FOOTSTEP4);
+			} else {
+				if (step1) audio->playCue(FOOTSTEP1);
+				else audio->playCue(FOOTSTEP2);
+			}
+			step1 = !step1;
+			stepTime = 0.0f;
+		}
 	}
 
 	// Restrict the angle mPhi and radius mRadius.
@@ -856,9 +874,22 @@ void ColoredCubeApp::updateEnemies(float dt)
 
 void ColoredCubeApp::handleUserInput() {
 
-	if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
-	else player.setSpeed(20);
+	if (flashChanged)
+		flashChangeTime++;
 
+	if (flashChangeTime*dt >= 0.30f) {
+		flashChangeTime = 0;
+		flashChanged = false;
+	}
+	
+	if (input->isKeyDown(KEY_F) && flashChanged == false) {
+		flashChanged = true;	
+		flashOn = !flashOn;
+		if (flashOn)
+			mLights[gameNS::FLASHLIGHT_NUM].range = 100;
+		else 
+			mLights[gameNS::FLASHLIGHT_NUM].range = 0;
+	}
 }
 
 void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
