@@ -12,8 +12,8 @@ Player::~Player(void)
 	box = 0;
 }
 
-void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vector3 vel, float sp, float s)
-{
+void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vector3 vel, float sp, float s, float w, float d, float h)
+{ 
 	box = b;
 	Player::bullets = theBullets;
 	radius = r;
@@ -23,11 +23,12 @@ void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vect
 	speed = sp;
 	scale = s;
 	radiusSquared = radius * radius;
-	width = s;
-	height = s;
-	depth = s;
+	width = s*w;
+	height = s*h;
+	depth = s*d;
 	timeSinceLastShot = 0;
-
+	score = 0;
+	health = 100;
 }
 
 void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
@@ -39,6 +40,7 @@ void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVaria
 	mfxWorldVar->SetMatrix((float*)&world);
     D3D10_TECHNIQUE_DESC techDesc;
     mTech->GetDesc( &techDesc );
+	D3DXMatrixScaling(&mScale, width, height, depth);
     for(UINT p = 0; p < techDesc.Passes; ++p)
     {
         mTech->GetPassByIndex( p )->Apply(0);

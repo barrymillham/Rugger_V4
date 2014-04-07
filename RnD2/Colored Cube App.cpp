@@ -32,20 +32,20 @@
 using std::time;
 
 namespace gameNS {
+	const float DAYLEN = 40;
 	const int NUM_WALLS = 16;
 	const int NUM_BUILDINGS = 12;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
 	const int NUM_PICKUPS = 4;
 	const int NUM_LIGHTS = 11;
-	const float DAYLEN = 40;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	const int MAX_NUM_ENEMIES = 20;
 	bool PLAY_MUSIC = true;
 	const float FOOTSTEP_GAP = 0.45;
-	const int GRASSY_AREA_WIDTH = 88;
+	const int GRASSY_AREA_WIDTH = 110;
 	const int FLASHLIGHT_NUM = 2;
 }
 
@@ -69,6 +69,7 @@ public:
 	void initLights();
 	void initLamps();
 	void initWaypoints();
+	void initEnemies();
 
 	void updateScene(float dt);
 	void updatePickups(float dt);
@@ -130,7 +131,6 @@ private:
 	vector<LampPost> lamps;
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
-	GameObject cameraCollider;
 	Quad menu;
 
 	//Lighting and Camera-specific declarations
@@ -293,6 +293,7 @@ void ColoredCubeApp::initApp()
 	initBuildingPositions();
 	initLights();
 	initLamps();
+	initEnemies();
 	initWaypoints();
 
 	menu.init(md3dDevice, 1.0f, WHITE);
@@ -305,8 +306,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1);
-	
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f);
 	mBuildingMesh.init(md3dDevice, 1.0f);
@@ -351,8 +351,9 @@ void ColoredCubeApp::initLamps() {
 	lamps[2].init(&brick, Vector3(58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
 	lamps[3].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
 		
-	for (int i = 0; i < lamps.size(); i++) 
+	for (int i = 0; i < lamps.size(); i++) {
 		lamps[i].giveGlowVar(mfxGlow);
+	}
 	
 
 
@@ -453,14 +454,19 @@ void ColoredCubeApp::initWallPositions() {
 	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		2.5,	1);//	Right/Front inner wall
 	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		2.5,	20);//	Front/Right inner wall
 	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
-
 }
 
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
-	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
-	cameraCollider.init(&clearBox, 1.0, Vector3(0,0,0), Vector3(0,0,0), 1, 1);
+}
+
+void ColoredCubeApp::initEnemies() {
+	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++) {
+		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
+		//enemy[i].faceObject(Vector3(0,0,0)); //working overload!
+		enemy[i].faceObject(&player);
+	}
 }
 
 void ColoredCubeApp::initOrigin() {
@@ -818,7 +824,6 @@ void ColoredCubeApp::doEndScreen() {
 
 void ColoredCubeApp::updateUniqueObjects(float dt) {
 	floor.update(dt);
-	cameraCollider.update(dt);
 	//big floor update must also be added here for it to show.
 }
 
@@ -1106,7 +1111,6 @@ void ColoredCubeApp::drawScene()
 		drawBuildings();
 		drawPickups();
 		drawLamps();
-		//cameraCollider.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 		D3D10_TECHNIQUE_DESC techDesc;
 		mTech->GetDesc( &techDesc );
@@ -1130,9 +1134,9 @@ void ColoredCubeApp::drawScene()
 		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		
-		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
-		printText(timeOfDay, 5, 30, 0, 0);
-		printText("Health: ", 5, 55, 0, 0, player.getHealth());
+		printText("Score: ", 20, 5, 0, 0, player.getScore()); //This has to be the last thing in the draw function.
+		//printText(timeOfDay, 50, 30, 0, 0);
+		printText("Health: ", 670, 5, 0, 0, player.getHealth());
 	}
 	else if(startScreen)
 	{
