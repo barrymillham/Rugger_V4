@@ -16,7 +16,7 @@ Global Settings
     Header File = C:\Users\lehmanad1\Documents\GitHub\RuggerV3\RnD2\audio\RnD2_audio.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 1902778234;
+    Last Modified Low = 3952781978;
     Last Modified High = 30364282;
 
     Category
@@ -772,6 +772,8 @@ Sound Bank
     Windows File = Win\Sound Bank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
+    Bank Last Modified Low = 3952812000;
+    Bank Last Modified High = 30364282;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
