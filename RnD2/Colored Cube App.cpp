@@ -72,6 +72,7 @@ public:
 
 	void updateScene(float dt);
 	void updatePickups(float dt);
+	void placePickups();
 	void updateOrigin(float dt);
 	void updateWalls(float dt);
 	void updateBuildings(float dt);
@@ -128,7 +129,8 @@ private:
 	Building buildings[gameNS::NUM_BUILDINGS];
 	Wall floor;
 	vector<LampPost> lamps;
-	vector<Pickup> pickups;
+	vector<Pickup> dayPickups;
+	vector<Pickup> nightPickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
 	Quad menu;
 
@@ -156,6 +158,7 @@ private:
 	bool debugMode;
 	bool hasntPlayedYet;
 	bool nightDayTrans;
+	bool placedPickups;
 
 	float spinAmount;
 	int shotTimer;
@@ -246,6 +249,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	flashChanged = false;
 	flashChangeTime = 0.0f;
 	flashOn = false;
+	placedPickups = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -361,13 +365,23 @@ void ColoredCubeApp::initLamps() {
 void ColoredCubeApp::initPickups() {
 	
 	//define the pickups
-	pickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, GRUNT1, audio));
-
-	//place the pickups
-	pickups[0].init(Vector3(-35,0,95));
-	//pickups[1].init(Vector3(-6,0,-80));
-	//pickups[2].init(Vector3(-84,0,-56));
-	//pickups[3].init(Vector3(10,0,80));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 0, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 1, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 2, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 3, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 4, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 5, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 6, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 7, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 8, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 9, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 10, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 11, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 12, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 13, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 14, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 15, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 16, GRUNT1, audio));
 }
 
 void ColoredCubeApp::initBullets() {
@@ -646,6 +660,7 @@ void ColoredCubeApp::updateScene(float dt)
 		handleUserInput();
 		updatePlayer(dt);
 		updateEnemies(dt);
+		placePickups();
 		updatePickups(dt);
 		updateLamps(dt);
 		updateWalls(dt);
@@ -995,12 +1010,74 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 
 }
 
-void ColoredCubeApp::updatePickups(float dt) {
-	for (int i = 0; i < pickups.size(); i++) {
-			if (player.collided(&pickups[i])) {
-				pickups[i].activate();
+void ColoredCubeApp::placePickups() {
+	if (!placedPickups) {
+		int maxNightPickups = 5; //Locations: 0, 13, 14, 15, 16
+		int maxDayPickups = 17; //All locations
+		vector<int> choices;
+		bool day = !night;
+		if (day) {
+			if (dayPickups.size() > 0) { //otherwise divide by zero when I mod by size
+				vector<int> tempUsedIndices;
+				for (int i = 0; i < maxDayPickups; i++) {
+					bool add = true;
+					int choice = rand()%dayPickups.size();
+					for (int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
+						if (tempUsedIndices[j] == dayPickups[choice].getMapIndex())
+							add = false; //there is already a pickup in the spot of the chosen day pickup
+					}
+					if (add) {
+						choices.push_back(choice); //add that to displayed pickups
+						tempUsedIndices.push_back(dayPickups[choice].getMapIndex()); //record that mapIndex as used
+					}
+				}
 			}
-			pickups[i].update(dt);
+		} else {
+			if (nightPickups.size() > 0) {
+				vector<int> tempUsedIndices;
+				for (int i = 0; i < maxNightPickups; i++) {
+					bool add = true;
+					int choice = rand()%nightPickups.size();
+					for (int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
+						if (tempUsedIndices[j] == nightPickups[choice].getMapIndex())
+							add = false; //there is already a pickup in the spot of the chosen night pickup
+					}
+					if (add) {
+							choices.push_back(choice); //add that to displayed pickups
+							tempUsedIndices.push_back(nightPickups[choice].getMapIndex()); //record that mapIndex as used
+					}
+				}
+			}
+		}
+	
+		for (int i = 0; i < nightPickups.size(); i++)
+			nightPickups[i].setInActive();
+		for (int i = 0; i < dayPickups.size(); i++)
+			dayPickups[i].setInActive();
+
+		if (day)
+			for (int i = 0; i < choices.size(); i++) 
+				dayPickups[choices[i]].setActive();
+		else if (night) 
+			for (int i = 0; i < choices.size(); i++) 
+				dayPickups[choices[i]].setActive();
+
+		placedPickups = true;
+	}
+}
+
+void ColoredCubeApp::updatePickups(float dt) {
+	for (int i = 0; i < dayPickups.size(); i++) {
+			if (player.collided(&dayPickups[i])) {
+				dayPickups[i].activate();
+			}
+			dayPickups[i].update(dt);
+	}
+	for (int i = 0; i < nightPickups.size(); i++) {
+			if (player.collided(&nightPickups[i])) {
+				nightPickups[i].activate();
+			}
+			nightPickups[i].update(dt);
 	}
 }
 
@@ -1020,6 +1097,7 @@ void ColoredCubeApp::updateDayNight() {
 			if(timeOfDay == "Evening")
 			{
 				nightCount++;
+				placedPickups = false;
 				int spawnedEnemies = 0;
 				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && spawnedEnemies < nightCount*2; i++)
 				{
@@ -1057,6 +1135,7 @@ void ColoredCubeApp::updateDayNight() {
 		{
 			if (timeOfDay == "Dawn")
 			{
+				placedPickups = false;
 				nightDayTrans = true;
 			}
 			timeOfDay = "Day";
@@ -1343,8 +1422,10 @@ void ColoredCubeApp::drawOrigin() {
 void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
 	
-	for (int i = 0; i < pickups.size(); i++)
-		pickups[i].draw(mfxWVPVar, mTech, &mVP);
+	for (int i = 0; i < dayPickups.size(); i++)
+		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	for (int i = 0; i < nightPickups.size(); i++) 
+		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 }
 

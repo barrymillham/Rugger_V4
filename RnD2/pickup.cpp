@@ -1,6 +1,6 @@
 #include "pickup.h"
 
-Pickup::Pickup(Box *b, int* value, bool MOD, int amount, const char* sound, Audio* a) {
+Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const char* sound, Audio* a) {
 	radius = 1;
 	radius *= 1.01f; //fudge factor
 	active = true;
@@ -17,7 +17,29 @@ Pickup::Pickup(Box *b, int* value, bool MOD, int amount, const char* sound, Audi
 	radiusSquared = radius * radius;
 	box = b;
 
+	mapLocations.push_back(Vector3(0,0,0));
+	mapLocations.push_back(Vector3(-40,0,40));
+	mapLocations.push_back(Vector3(40,0,40));
+	mapLocations.push_back(Vector3(40,0,-40));
+	mapLocations.push_back(Vector3(-40,0,-40));
 
+	mapLocations.push_back(Vector3(0,0,80));
+	mapLocations.push_back(Vector3(80,0,0));
+	mapLocations.push_back(Vector3(0,0,-80));
+	mapLocations.push_back(Vector3(-80,0,0));
+	
+	mapLocations.push_back(Vector3(-100,0,100));
+	mapLocations.push_back(Vector3(100,0,100));
+	mapLocations.push_back(Vector3(100,0,-100));
+	mapLocations.push_back(Vector3(-100,0,-100));
+
+	mapLocations.push_back(Vector3(-230,0,230));
+	mapLocations.push_back(Vector3(230,0,230));
+	mapLocations.push_back(Vector3(230,0,-230));
+	mapLocations.push_back(Vector3(-230,0,-230));
+
+	position = mapLocations[mapIndex];
+	Pickup::mapIndex = mapIndex;
 	Pickup::value = value;
 	audio = a;
 	mod = MOD;
@@ -38,27 +60,6 @@ void Pickup::activate() {
 Pickup::~Pickup()
 {
 	box = NULL;
-}
-
-void Pickup::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
-{
-	if (!active)
-		return;
-
-	Matrix mWVP = world* (*mVP);
-	mfxWVPVar->SetMatrix((float*)&mWVP);
-	D3D10_TECHNIQUE_DESC techDesc;
-	mTech->GetDesc( &techDesc );
-	for(UINT p = 0; p < techDesc.Passes; ++p)
-	{
-		mTech->GetPassByIndex( p )->Apply(0);
-		box->draw();
-	}
-}
-
-void Pickup::init(Vector3 pos)
-{
-	position = pos;
 }
 
 void Pickup::update(float dt)

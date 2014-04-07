@@ -3,17 +3,17 @@
 #include "GameObject.h"
 #include "Audio.h"
 #include "constants.h"
+#include<vector>
+using std::vector;
 
 class Pickup : public GameObject
 {
 public:
 	Pickup(){}
-	Pickup(Box *b, int* value, bool MOD, int amount, const char* sound, Audio* a);
+	Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const char* sound, Audio* a);
 	~Pickup();
 
 	//Width and height in integral number of boxes(bricks)
-	virtual void init(Vector3 pos);
-	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void update(float dt);
 	void activate();
 	//void setPosition (Vector3 pos) {position = pos;}
@@ -40,6 +40,8 @@ public:
 		return depth;
 	}
 
+	int getMapIndex() {return mapIndex;}
+
 private:
 	float radius;
 	float radiusSquared;
@@ -48,6 +50,8 @@ private:
 	bool mod;
 	int amount;
 	char* SOUND;
+	int mapIndex;
+	vector<Vector3> mapLocations;
 };
 
 #endif
