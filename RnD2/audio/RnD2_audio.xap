@@ -16,8 +16,8 @@ Global Settings
     Header File = C:\Users\lehmanad1\Documents\GitHub\RuggerV3\RnD2\audio\RnD2_audio.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 166400905;
-    Last Modified High = 30364274;
+    Last Modified Low = 1902778234;
+    Last Modified High = 30364282;
 
     Category
     {
@@ -85,7 +85,7 @@ Global Settings
         Instance Limit
         {
             Max Instances = 1;
-            Behavior = 0;
+            Behavior = 4;
 
             Crossfade
             {
@@ -253,10 +253,10 @@ Wave Bank
     Compression Preset Name = <none>;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 1183556180;
-    PC Bank Last Modified High = 30364272;
-    Bank Last Revised Low = 752031849;
-    Bank Last Revised High = 30364272;
+    PC Bank Last Modified Low = 3130832443;
+    PC Bank Last Modified High = 30364282;
+    Bank Last Revised Low = 3130792416;
+    Bank Last Revised High = 30364282;
 
     Wave
     {
@@ -598,8 +598,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3444773691;
-            Last Modified High = 30364271;
+            Last Modified Low = 775739086;
+            Last Modified High = 30364279;
         }
     }
 
@@ -621,8 +621,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3625773692;
-            Last Modified High = 30364271;
+            Last Modified Low = 775779124;
+            Last Modified High = 30364279;
         }
     }
 
@@ -644,8 +644,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3770186083;
-            Last Modified High = 30364271;
+            Last Modified Low = 775819152;
+            Last Modified High = 30364279;
         }
     }
 
@@ -667,8 +667,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3977353260;
-            Last Modified High = 30364271;
+            Last Modified Low = 775859179;
+            Last Modified High = 30364279;
         }
     }
 
@@ -690,8 +690,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 4131697671;
-            Last Modified High = 30364271;
+            Last Modified Low = 775639014;
+            Last Modified High = 30364279;
         }
     }
 
@@ -713,8 +713,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 18594455;
-            Last Modified High = 30364272;
+            Last Modified Low = 775669051;
+            Last Modified High = 30364279;
         }
     }
 
@@ -736,8 +736,31 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 286482215;
-            Last Modified High = 30364272;
+            Last Modified Low = 775699070;
+            Last Modified High = 30364279;
+        }
+    }
+
+    Wave
+    {
+        Name = introMusic;
+        File = introMusic.wav;
+        Build Settings Last Modified Low = 1364563289;
+        Build Settings Last Modified High = 30364282;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 9283900;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3086690834;
+            Last Modified High = 30364282;
         }
     }
 }
@@ -749,8 +772,6 @@ Sound Bank
     Windows File = Win\Sound Bank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 1185617316;
-    Bank Last Modified High = 30364272;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -857,7 +878,7 @@ Sound Bank
 
         Category Entry
         {
-            Name = Default;
+            Name = Music;
         }
 
         Track
@@ -998,7 +1019,7 @@ Sound Bank
 
         Category Entry
         {
-            Name = Default;
+            Name = Music;
         }
 
         Track
@@ -1741,6 +1762,53 @@ Sound Bank
         }
     }
 
+    Sound
+    {
+        Name = introMusic;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Music;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = introMusic;
+                    Entry Index = 21;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
     Cue
     {
         Name = 14;
@@ -2156,6 +2224,26 @@ Sound Bank
         {
             Name = grunt3;
             Index = 20;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = introMusic;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = introMusic;
+            Index = 21;
             Weight Min = 0;
             Weight Max = 255;
         }

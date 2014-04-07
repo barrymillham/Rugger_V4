@@ -277,7 +277,7 @@ void ColoredCubeApp::initApp()
 
 	SetCursorPos(0,0);
 	ShowCursor(false);
-
+	audio->playCue(INTROMUSIC);
 	//pos will eventually be player.x, player.height, player.z)
 	startScreen = true;
 	mEyePos = D3DXVECTOR3(0, 5, 0);
@@ -626,6 +626,7 @@ void ColoredCubeApp::updateScene(float dt)
 		if(input->isKeyDown(VK_SPACE)){
 			startScreen = false;
 			playing = true;
+			audio->stopCue(INTROMUSIC);
 		}
 	}
 	if(playing){
