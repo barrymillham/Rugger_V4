@@ -37,6 +37,7 @@ public:
 	bool collided(GameObject *gameObject);
 	void faceObject(GameObject *o);
 	void faceObject(Vector3 coordinate);
+	void stopFacing(){facing = false;}
 	void setRotateX(float rx){rotX = rx;}
 	void setRotateY(float ry){rotY = ry;}
 	void setRotateZ(float rz){rotZ = rz;}

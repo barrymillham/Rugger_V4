@@ -71,6 +71,13 @@ const char FOOTSTEP1[] = "footstep1";
 const char FOOTSTEP2[] = "footstep2";
 const char FOOTSTEP3[] = "footstep3_grass";
 const char FOOTSTEP4[] = "footstep4_grass";
+const char GRUNT1[] = "grunt1";
+const char GRUNT2[] = "grunt2";
+const char GRUNT3[] = "grunt3";
+const char GRUNT4[] = "grunt4";
+const char GRUNT5[] = "grunt5";
+const char GRUNT6[] = "grunt6";
+const char GRUNT7[] = "grunt7";
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.

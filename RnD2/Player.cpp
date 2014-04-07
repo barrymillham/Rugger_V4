@@ -13,8 +13,9 @@ Player::~Player(void)
 	box = 0;
 }
 
-void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vector3 vel, float sp, float s, float w, float d, float h)
+void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vector3 vel, float sp, Audio* a, float s, float w, float d, float h)
 { 
+	audio = a;
 	box = b;
 	Player::bullets = theBullets;
 	radius = r;
@@ -50,6 +51,36 @@ void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVaria
 			if(bullets[i]->getActiveState())
 				bullets[i]->draw(mfxWVPVar, mTech, mVP);
     }
+}
+
+void Player::grunt() {
+	int num = rand()%7;
+
+	switch (num) {
+	case(0):
+		audio->playCue(GRUNT1);
+		break;
+	case (1):
+		audio->playCue(GRUNT2);
+		break;
+	case (2):
+		audio->playCue(GRUNT3);
+		break;
+	case (3):
+		audio->playCue(GRUNT4);
+		break;
+	case(4):
+		audio->playCue(GRUNT5);
+		break;
+	case (5):
+		audio->playCue(GRUNT6);
+		break;
+	case(6):
+		audio->playCue(GRUNT7);
+		break;
+	default:
+		audio->playCue(GRUNT1);
+	}
 }
 
 void Player::update(float dt, D3DXVECTOR3 moveAxis)

@@ -306,7 +306,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1, 1, 1, 5);
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f);
 	mBuildingMesh.init(md3dDevice, 1.0f);
@@ -397,13 +397,19 @@ void ColoredCubeApp::initBasicGeometry() {
 }
 
 void ColoredCubeApp::initTextStrings() {
-	sText.addLine("WELCOME RUGGER !", 10, 10);
-	sText.addLine("WASD TO MOVE", 10, 30);
-	sText.addLine("ARROW KEYS TO SHOOT", 10, 50);
-	sText.addLine("HOLD SHIFT TO SPRINT!", 10, 70);
-	sText.addLine("GO KILL DUNSTAN FOR ME!", 10, 90);
-	sText.addLine("PRESS SPACE BAR TO BEGIN !", 250, 300);
-	eText.addLine("CONGRATS RUGGER I WON!", 250, 300);
+	
+
+	sText.addLine("WELCOME RUGGER !", 290, 120);
+	sText.addLine("Controls: ", 30, 210);
+	sText.addLine("Movement: W A S D", 80, 240);
+	sText.addLine("Shoot: Left-Click", 80, 265);
+	sText.addLine("Flashlight: 'F' to toggle", 80, 290);
+	sText.addLine("Objective:", 30, 360);
+	sText.addLine("Collect items and shoot enemies to survive as long as you can!", 80, 390);
+	sText.addLine("PRESS SPACE BAR TO BEGIN !", 250, 500);
+	
+	eText.addLine("TOO BAD, RUGGER, I WON!", 260, 180);
+	eText.addLine("Press SPACEBAR to exit", 276, 500);
 }
 
 void ColoredCubeApp::initBasicVariables() {
@@ -616,8 +622,6 @@ void ColoredCubeApp::updateScene(float dt)
 
 	D3DXMATRIX sunRot;
 	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
-
-	
 	if (startScreen){
 		if(input->isKeyDown(VK_SPACE)){
 			startScreen = false;
@@ -625,6 +629,7 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	}
 	if(playing){
+		
 		timect += dt;
 		updateMusic();
 		updateCamera();
@@ -814,8 +819,7 @@ void ColoredCubeApp::updateCamera() {
 }
 
 void ColoredCubeApp::doEndScreen() {
-	Sleep(2000);
-	if(input->anyKeyPressed())
+	if(input->wasKeyPressed(KEY_SPACE))
 	{
 		endScreen = false;
 		PostQuitMessage(0);
@@ -847,6 +851,11 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	//player.setVelocity(moveRuggerDirection() * player.getSpeed());
 	player.setPosition(Vector3(mEyePos.x, mEyePos.y-2, mEyePos.z));
 	player.update(dt, moveAxis);
+	if (player.getHealth() <= 0) {
+		Sleep(2000);
+		endScreen = true;
+		input->clearKeyPress(KEY_SPACE);
+	}
 }
 
 void ColoredCubeApp::updateEnemies(float dt)
@@ -863,7 +872,8 @@ void ColoredCubeApp::updateEnemies(float dt)
 				}
 				else enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
 			}
-			else enemy[i].setSpeed(enemyNS::DAY_SPEED);
+			else enemy[i].setSpeed(enemyNS::DAY_SPEED);		
+			
 			enemy[i].update(dt, &player);
 		}
 	}
@@ -980,6 +990,7 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 			if(enemy[i].collided(&buildings[j])) enemy[i].setPosition(enemy[i].getOldPos());
 		}
 	}
+
 }
 
 void ColoredCubeApp::updatePickups(float dt) {
@@ -1009,7 +1020,7 @@ void ColoredCubeApp::updateDayNight() {
 			{
 				nightCount++;
 				int spawnedEnemies = 0;
-				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && spawnedEnemies < nightCount; i++)
+				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && spawnedEnemies < nightCount*2; i++)
 				{
 					if(!enemy[i].getActiveState())
 					{
@@ -1133,7 +1144,6 @@ void ColoredCubeApp::drawScene()
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
 		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		
 		printText("Score: ", 20, 5, 0, 0, player.getScore()); //This has to be the last thing in the draw function.
 		//printText(timeOfDay, 50, 30, 0, 0);
 		printText("Health: ", 670, 5, 0, 0, player.getHealth());
@@ -1150,7 +1160,7 @@ void ColoredCubeApp::drawScene()
 	}
 	else { // End Screen 
 		printText(eText);
-		printText("Score: ", 300, 350, 0, 0, score);
+		printText("Score: ", 350, 280, 0, 0, player.getScore());
 	}
 	
 	// We specify DT_NOCLIP, so we do not care about width/height of the rect.
@@ -1198,7 +1208,7 @@ void ColoredCubeApp::printText(string text, int rectPosX, int rectPosY, int rect
 	std::wostringstream outs;   
 	outs.precision(6);
 	if (value != -1)
-		outs << text.c_str() << score;
+		outs << text.c_str() << value;
 	else 
 		outs << text.c_str();
 	std::wstring sc = outs.str();

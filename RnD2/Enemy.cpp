@@ -80,9 +80,11 @@ void Enemy::update(float dt, Player* p)
 		nav.clear();
 		velocity = D3DXVECTOR3(0,0,0);
 		attack(p);
+		facing = true;
 	}
 	else if (dist <= 50)
 	{
+		facing = true;
 		nav.clear();
 		D3DXVECTOR3 tar;
 		D3DXVec3Normalize(&tar, &(p->getPosition() - position));
@@ -92,7 +94,7 @@ void Enemy::update(float dt, Player* p)
 	else
 	{
 		//calculate the path from the nearest waypoint to the nearest waypoint to the player
-		
+		facing = false;
 		if(nav.empty())
 		{
 			//find nearest waypoint
@@ -142,6 +144,7 @@ void Enemy::attack(Player* p)
 	if(lastAttacked >= 0.5f){
 		lastAttacked = 0;
 		p->damage(5);
+		p->grunt();
 	}
 }
 

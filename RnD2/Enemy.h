@@ -14,7 +14,7 @@ using std::list;
 namespace enemyNS {
 	const float SPEED = 20.0f;
 	const float NIGHT_SPEED = 50.0f;
-	const float DAY_SPEED = 10.0f;
+	const float DAY_SPEED = 18.0f;
 }
 
 class Enemy : public GameObject

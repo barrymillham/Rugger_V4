@@ -123,6 +123,9 @@ void GameObject::update(float dt)
 //Note that this collision only works for axis-aligned cubes
 bool GameObject::collided(GameObject *gameObject)
 {
+	//to get this collision working,
+	//transform position vector by the rotY (The amount the cube is rotated around the y axis by)?
+
 	if (!gameObject->getActiveState() || !active) return false;
 	if( position.x - getWidth() <= gameObject->getPosition().x + gameObject->getWidth() && 
 		position.x + getWidth() >= gameObject->getPosition().x - gameObject->getWidth() &&
