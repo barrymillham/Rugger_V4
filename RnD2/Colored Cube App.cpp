@@ -311,12 +311,12 @@ void ColoredCubeApp::initApp()
 
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, audio, 1, 1, 1, 5);
 
-	mWallMesh.init(md3dDevice, 1.0f);
-	mBuildingMesh.init(md3dDevice, 1.0f);
-	mEnemyMesh.init(md3dDevice, 1.0f);
-	mPoleMesh.init(md3dDevice, 1.0f);
-	mStreetMesh.init(md3dDevice, 1.0f);
-	mBulletMesh.init(md3dDevice, 1.0f);
+	mWallMesh.init(md3dDevice, 1.0f, mfxGlow);
+	mBuildingMesh.init(md3dDevice, 1.0f, mfxGlow);
+	mEnemyMesh.init(md3dDevice, 1.0f, mfxGlow);
+	mPoleMesh.init(md3dDevice, 1.0f, mfxGlow);
+	mStreetMesh.init(md3dDevice, 1.0f, mfxGlow);
+	mBulletMesh.init(md3dDevice, 1.0f, mfxGlow);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
@@ -365,23 +365,23 @@ void ColoredCubeApp::initLamps() {
 void ColoredCubeApp::initPickups() {
 	
 	//define the pickups
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 0, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 1, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 2, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 3, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 4, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 5, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 6, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 7, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 8, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 9, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 10, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 11, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 12, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 13, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 14, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 15, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.health, INCREASE, 30, 16, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 0, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 1, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 2, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 3, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 4, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 5, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 6, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 7, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 8, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 9, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 10, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 11, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 12, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 13, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 14, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 15, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 16, GRUNT1, audio));
 }
 
 void ColoredCubeApp::initBullets() {
@@ -393,22 +393,21 @@ void ColoredCubeApp::initBullets() {
 }
 
 void ColoredCubeApp::initBasicGeometry() {	
-	mBox.init(md3dDevice, 2.0f, D3DXCOLOR(0,0,0,0));
-	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL);
-	clearBox.init(md3dDevice, 1.0f, D3DXCOLOR(0,0,0,0));
-	redBox.init(md3dDevice, 1.0f, colorNS::RED);
-	brick.init(md3dDevice, 1.0f, DARKBROWN);
-	bulletBox.init(md3dDevice, 0.25f, D3DXCOLOR(0,0,0,0));
-	eBulletBox.init(md3dDevice, 0.5f, RED);
-	maroonBox.init(md3dDevice, 10000, colorNS::MAROON);
-	//redBox.init(md3dDevice, 0.00001f, RED);
-	yellowGreenBox.init(md3dDevice, 1.f,D3DXCOLOR(0,0,0,0));
-	goldBox.init(md3dDevice, 1.0f, YELLOW);
-	blueBox.init(md3dDevice, 2.0f, BLUE);
+	mBox.init(md3dDevice, 2.0f, D3DXCOLOR(0,0,0,0), mfxGlow);
+	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL, mfxGlow);
+	clearBox.init(md3dDevice, 1.0f, D3DXCOLOR(0,0,0,0), mfxGlow);
+	redBox.init(md3dDevice, 1.0f, colorNS::RED, mfxGlow);
+	brick.init(md3dDevice, 1.0f, DARKBROWN, mfxGlow);
+	bulletBox.init(md3dDevice, 0.25f, D3DXCOLOR(0,0,0,0), mfxGlow);
+	eBulletBox.init(md3dDevice, 0.5f, RED, mfxGlow);
+	maroonBox.init(md3dDevice, 10000, colorNS::MAROON, mfxGlow);
+	yellowGreenBox.init(md3dDevice, 1.f,D3DXCOLOR(0,0,0,0), mfxGlow);
+	goldBox.init(md3dDevice, 1.0f, YELLOW, mfxGlow);
+	blueBox.init(md3dDevice, 2.0f, BLUE, mfxGlow);
 	rLine.init(md3dDevice, 10.0f, RED);
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
-	activeLine.init(md3dDevice, 1.0f, RED);
+	activeLine.init(md3dDevice, 1.0f, RED, mfxGlow);
 }
 
 void ColoredCubeApp::initTextStrings() {
@@ -1423,9 +1422,9 @@ void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
 	
 	for (int i = 0; i < dayPickups.size(); i++)
-		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, true);
 	for (int i = 0; i < nightPickups.size(); i++) 
-		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, true);
 
 }
 

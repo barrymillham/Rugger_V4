@@ -19,8 +19,9 @@ Box::~Box()
 	ReleaseCOM(mVB);
 	ReleaseCOM(mIB);
 }
-void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
+void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c, ID3D10EffectScalarVariable* mfxGlow)
 {
+	Box::mfxGlow = mfxGlow;
 	md3dDevice = device;
  
 	mNumVertices = 24;
@@ -128,8 +129,9 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c)
     iinitData.pSysMem = indices;
     HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mIB));
 }
-void Box::init(ID3D10Device* device, float scale) //I don't think this init function is ever called.
+void Box::init(ID3D10Device* device, float scale, ID3D10EffectScalarVariable* mfxGlow)
 {
+	Box::mfxGlow = mfxGlow;
 	md3dDevice = device;
 
     Vertex vertices[] =
@@ -224,6 +226,7 @@ void Box::init(ID3D10Device* device, float scale) //I don't think this init func
 
 void Box::draw()
 {
+
 	UINT stride = sizeof(Vertex);
     UINT offset = 0;
 	md3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

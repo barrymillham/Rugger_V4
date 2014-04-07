@@ -16,6 +16,7 @@ public:
 	//Width and height in integral number of boxes(bricks)
 	virtual void update(float dt);
 	void activate();
+	void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, bool glow);
 	//void setPosition (Vector3 pos) {position = pos;}
 	//Vector3 getPosition() {return position;}
 	//void setRadius(float r) {radius = r; radiusSquared = (scale*r)*(scale*r);}
@@ -42,6 +43,7 @@ public:
 
 	int getMapIndex() {return mapIndex;}
 
+
 private:
 	float radius;
 	float radiusSquared;
@@ -52,6 +54,7 @@ private:
 	char* SOUND;
 	int mapIndex;
 	vector<Vector3> mapLocations;
+	ID3D10EffectScalarVariable* mfxGlow;
 };
 
 #endif
