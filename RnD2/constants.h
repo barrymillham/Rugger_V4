@@ -38,6 +38,7 @@ const UCHAR KEY_L	= 'L';
 const UCHAR KEY_K	= 'K';
 const UCHAR KEY_M	= 'M';
 const UCHAR KEY_F	= 'F';
+const UCHAR KEY_SPACE = ' ';
 
 #define COLOR_ARGB DWORD
 #define SETCOLOR_ARGB(a,r,g,b) \

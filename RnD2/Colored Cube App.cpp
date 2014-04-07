@@ -401,7 +401,7 @@ void ColoredCubeApp::initTextStrings() {
 	sText.addLine("ARROW KEYS TO SHOOT", 10, 50);
 	sText.addLine("HOLD SHIFT TO SPRINT!", 10, 70);
 	sText.addLine("GO KILL DUNSTAN FOR ME!", 10, 90);
-	sText.addLine("PRESS ANY KEY TO BEGIN !", 250, 300);
+	sText.addLine("PRESS SPACE BAR TO BEGIN !", 250, 300);
 	eText.addLine("CONGRATS RUGGER I WON!", 250, 300);
 }
 
@@ -602,7 +602,6 @@ void ColoredCubeApp::initWaypoints()
 
 void ColoredCubeApp::updateScene(float dt)
 {
-	timect += dt;
 	ColoredCubeApp::dt = dt;
 	bool playing = (!endScreen && !startScreen);
 	Vector3 oldPos = mEyePos;
@@ -614,12 +613,13 @@ void ColoredCubeApp::updateScene(float dt)
 
 	
 	if (startScreen){
-		if(input->anyKeyPressed()){
+		if(input->isKeyDown(VK_SPACE)){
 			startScreen = false;
 			playing = true;
 		}
 	}
-	if(playing){	
+	if(playing){
+		timect += dt;
 		updateMusic();
 		updateCamera();
 
