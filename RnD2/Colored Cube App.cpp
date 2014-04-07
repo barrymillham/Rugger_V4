@@ -103,7 +103,7 @@ public:
 	void onResize();
 	Vector3 moveRuggerDirection();
 	void printText(DebugText text);
-	void printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, int value = -1);
+	void printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, D3DXCOLOR color, int value = -1);
 	void setDeviceAndShaderInformation();
 	void doEndScreen();
 	
@@ -1020,7 +1020,7 @@ void ColoredCubeApp::placePickups() {
 				vector<int> tempUsedIndices;
 				for (int i = 0; i < maxDayPickups; i++) {
 					bool add = true;
-					int choice = rand()%dayPickups.size();
+					int choice = i;
 					for (int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
 						if (tempUsedIndices[j] == dayPickups[choice].getMapIndex())
 							add = false; //there is already a pickup in the spot of the chosen day pickup
@@ -1223,9 +1223,11 @@ void ColoredCubeApp::drawScene()
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
 		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		printText("Score: ", 20, 5, 0, 0, player.getScore()); //This has to be the last thing in the draw function.
-		//printText(timeOfDay, 50, 30, 0, 0);
-		printText("Health: ", 670, 5, 0, 0, player.getHealth());
+		printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
+		printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
+		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
+		printText(timeOfDay, 670, 20, 0, 0, WHITE);
+
 	}
 	else if(startScreen)
 	{
@@ -1277,11 +1279,11 @@ void ColoredCubeApp::printText(DebugText text) {
 				yMargin = incrementedYMargin;
 				incrementedYMargin += lineHeight;
 			}
-			printText(text.lines[i].s, xMargin, yMargin, 0, 0);
+			printText(text.lines[i].s, xMargin, yMargin, 0, 0, WHITE);
 		}
 }
 
-void ColoredCubeApp::printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, int value) {
+void ColoredCubeApp::printText(string text, int rectPosX, int rectPosY, int rectWidth, int rectHeight, D3DXCOLOR color, int value) {
 	
 	RECT POS = {rectPosX, rectPosY, rectWidth, rectHeight};
 	std::wostringstream outs;   
@@ -1291,7 +1293,7 @@ void ColoredCubeApp::printText(string text, int rectPosX, int rectPosY, int rect
 	else 
 		outs << text.c_str();
 	std::wstring sc = outs.str();
-	mFont->DrawText(0, sc.c_str(), -1, &POS, DT_NOCLIP, WHITE);
+	mFont->DrawText(0, sc.c_str(), -1, &POS, DT_NOCLIP, color);
 }
 
 void ColoredCubeApp::drawLine(LineObject* line) {
