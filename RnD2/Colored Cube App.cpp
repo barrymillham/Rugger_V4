@@ -963,13 +963,6 @@ void ColoredCubeApp::updateOrigin(float dt) {
 }
 
 void ColoredCubeApp::updateDayNight() {
-	//mLights[0].dir;
-	//D3DXMATRIX rot;
-	//D3DXMatrixRotationZ(&rot, -(ToRadian(180)/gameNS::DAYLEN)*dt);
-	//D3DXVECTOR4 temp;
-	//D3DXVec3Transform(&temp, &mLights[0].dir, &rot);
-	//mLights[0].dir = D3DXVECTOR3(temp.x, temp.y, temp.z);
-
 	if(timect >= gameNS::DAYLEN)
 	{
 		timect = 0;
@@ -979,7 +972,8 @@ void ColoredCubeApp::updateDayNight() {
 			if(timeOfDay == "Evening")
 			{
 				nightCount++;
-				for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
+				int spawnedEnemies = 0;
+				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && spawnedEnemies < nightCount; i++)
 				{
 					if(!enemy[i].getActiveState())
 					{
@@ -987,18 +981,19 @@ void ColoredCubeApp::updateDayNight() {
 						switch(rand()%4)
 						{
 						case 0:
-							enemy[i].setPosition(D3DXVECTOR3(0,0,200));
+							enemy[i].setPosition(D3DXVECTOR3(0,0,-205 + rand()%10));
 							break;
 						case 1:
-							enemy[i].setPosition(D3DXVECTOR3(0,0,2200));
+							enemy[i].setPosition(D3DXVECTOR3(0,0,195 + rand()%10));
 							break;
 						case 2:
-							enemy[i].setPosition(D3DXVECTOR3(200,0,0));
+							enemy[i].setPosition(D3DXVECTOR3(195  + rand()%10,0,0));
 							break;
 						case 3:
-							enemy[i].setPosition(D3DXVECTOR3(-200,0,0));
+							enemy[i].setPosition(D3DXVECTOR3(-205  + rand()%10,0,0));
 							break;
 						}
+						spawnedEnemies++;
 					}
 				}
 			}

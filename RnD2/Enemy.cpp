@@ -118,6 +118,8 @@ void Enemy::update(float dt, Player* p)
 			//Waypoint* dest = waypoints[rand()%WAYPOINT_SIZE][rand()%WAYPOINT_SIZE];
 
 			//calculate path from nearest waypoint to the player's nearest waypoint
+			//if(src != dest) nav = pathfindAStar(src, dest);
+			//else nav.push_front(src);
 			nav = pathfindAStar(src, dest);
 		}
 		else
@@ -164,6 +166,11 @@ list<Waypoint*> Enemy::pathfindAStar(Waypoint* src, Waypoint* dest)
 	priority_queue<Waypoint*, vector<Waypoint*>, WaypointCompare> openWay;
 	vector<Waypoint*> closedWay;
 	list<Waypoint*> path;
+	if(src == dest)
+	{
+		path.push_front(src);
+		return path;
+	}
 
 	for(int i=0; i<WAYPOINT_SIZE; i++)
 	{
