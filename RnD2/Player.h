@@ -33,7 +33,7 @@ public:
 	int getScore() {return score;}
 	void grunt();
 	
-	float speed;
+	int speed;
 	int health;
 	int ammo;
 	int score;

@@ -365,23 +365,24 @@ void ColoredCubeApp::initLamps() {
 void ColoredCubeApp::initPickups() {
 	
 	//define the pickups
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 0, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 1, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 2, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 3, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 4, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 5, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 6, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 7, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 8, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 9, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 10, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 11, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 12, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 13, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 14, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 15, GRUNT1, audio));
-	dayPickups.push_back(Pickup(&tealBox, &player.ammo, INCREASE, 30, 16, GRUNT1, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 0, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 1, RELOAD, audio));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 2, RELOAD, audio));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 3, RELOAD, audio));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 4, RELOAD, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 5, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 6, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 7, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 8, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 8, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 9, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 10, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 11, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 30, 12, ZIPPER, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 13, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 14, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 15, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 16, WHOOSH, audio));
 }
 
 void ColoredCubeApp::initBullets() {

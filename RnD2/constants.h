@@ -81,6 +81,9 @@ const char GRUNT5[] = "grunt5";
 const char GRUNT6[] = "grunt6";
 const char GRUNT7[] = "grunt7";
 const char INTROMUSIC[] = "introMusic";
+const char RELOAD[] = "reload";
+const char ZIPPER[] = "zipper";
+const char WHOOSH[] = "whoosh";
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.
