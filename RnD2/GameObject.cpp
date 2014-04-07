@@ -10,6 +10,10 @@ GameObject::GameObject()
 	Identity(&mTranslate);
 	Identity(&mRotate);
 	Identity(&mScale);
+	Identity(&transformation);
+	facing = false;
+	facedObject = NULL;
+	facedCoordinate = Vector3(0,0,0);
 }
 
 GameObject::~GameObject()
@@ -17,13 +21,41 @@ GameObject::~GameObject()
 	box = NULL;
 }
 
+void GameObject::faceObject(GameObject *o) {
+	facing = true;
+	facedObject = o;
+}
+
+void GameObject::faceObject(Vector3 coordinate) {
+	facing = true;
+	facedCoordinate = coordinate;
+}
+
 void GameObject::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
 {
-	if (!active)
-		return;
-	Matrix mWVP = world* (*mVP);
+
+	if (!active) return;	
+	if (facing) {
+		if (facedObject != NULL){
+			Vector3 direction = facedObject->getPosition() - position;
+			rotY = -atanf(direction.z/direction.x);
+		} else {
+			Vector3 direction = facedCoordinate - position;
+			rotY = -atanf(direction.z/direction.x);
+		}
+	}
+
+	transformation = transform(Vector3(1,1,1), Vector3(0,rotY,0), Vector3(0,0,0));
+	drawWithWorld(mfxWVPVar, mfxWorldVar, mTech, mVP, transformation);
+}
+
+void GameObject::drawWithWorld(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, Matrix transformation) {
+	
+	Matrix worldMatrix = GameObject::world;
+	worldMatrix=transformation*worldMatrix;
+	Matrix mWVP = worldMatrix* (*mVP);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
-	mfxWorldVar->SetMatrix((float*)&world);
+	mfxWorldVar->SetMatrix((float*)&worldMatrix);
 	D3D10_TECHNIQUE_DESC techDesc;
 	mTech->GetDesc( &techDesc );
 	for(UINT p = 0; p < techDesc.Passes; ++p)
@@ -31,6 +63,38 @@ void GameObject::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixV
 		mTech->GetPassByIndex( p )->Apply(0);
 		box->draw();
 	}
+}
+
+
+Matrix GameObject::transform(Vector3 scale, Vector3 rotate, Vector3 translate) {
+	Matrix transformation = Matrix();
+	Identity(&transformation);
+
+	Matrix scaley;
+	Matrix rotx;
+	Matrix roty;
+	Matrix rotz;
+	Matrix rot;
+	Matrix transy;
+	Identity(&scaley);
+	Identity(&rotx);
+	Identity(&roty);
+	Identity(&rotz);
+	Identity(&rot);
+	Identity(&transy);
+
+	//scale rotate translate
+	D3DXMatrixScaling(&scaley, scale.x, scale.y, scale.z);
+	D3DXMatrixRotationX(&rotx, rotate.x);
+	D3DXMatrixRotationY(&roty, rotate.y);
+	D3DXMatrixRotationZ(&rotz, rotate.z);
+	D3DXMatrixTranslation(&transy, translate.x, translate.y, translate.z);
+	rot = rotx*roty*rotz;
+
+	transformation *= scaley;
+	transformation *= rot;
+	transformation *= transy;
+	return transformation;
 }
 
 void GameObject::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s)

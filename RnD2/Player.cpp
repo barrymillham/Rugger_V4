@@ -13,8 +13,8 @@ Player::~Player(void)
 	box = 0;
 }
 
-void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vector3 vel, float sp, float s)
-{
+void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vector3 vel, float sp, float s, float w, float d, float h)
+{ 
 	box = b;
 	Player::bullets = theBullets;
 	radius = r;
@@ -24,11 +24,12 @@ void Player::init(Box* b, vector<Bullet*> theBullets, float r, Vector3 pos, Vect
 	speed = sp;
 	scale = s;
 	radiusSquared = radius * radius;
-	width = s;
-	height = s;
-	depth = s;
+	width = s*w;
+	height = s*h;
+	depth = s*d;
 	timeSinceLastShot = 0;
-
+	score = 0;
+	health = 100;
 }
 
 void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
@@ -40,6 +41,7 @@ void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVaria
 	mfxWorldVar->SetMatrix((float*)&world);
     D3D10_TECHNIQUE_DESC techDesc;
     mTech->GetDesc( &techDesc );
+	D3DXMatrixScaling(&mScale, width, height, depth);
     for(UINT p = 0; p < techDesc.Passes; ++p)
     {
         mTech->GetPassByIndex( p )->Apply(0);
@@ -72,9 +74,9 @@ void Player::update(float dt, D3DXVECTOR3 moveAxis)
 void Player::charge() {
 }
 
-bool Player::shoot(D3DXVECTOR3 moveAxis)
+void Player::shoot(D3DXVECTOR3 moveAxis)
 {
-	if(ammo == 0) return false;
+	if(ammo == 0) return;
 	//If the player's got an active bullet on the level, he doesn't get to shoot
 	int index = -1;
 	for (int i = 0; i < bullets.size(); i++) {
@@ -91,47 +93,15 @@ bool Player::shoot(D3DXVECTOR3 moveAxis)
 		timeSinceLastShot = 0;
 	}
 
-	if (index == -1) return false;
+	if (index == -1) return;
+
 	bullets[index]->setPosition(position);
 	bullets[index]->setSpeed(bulletNS::SPEED);
-	
-	/*Vector3 nDir;
-	float multiplier = 1;
-	if (direction == UP) {
-		nDir = Vector3(1,0,0);
-		if (this->getVelocity().z > 0) nDir.z = 1;
-		if (this->getVelocity().z < 0) nDir.z = -1;
-		nDir.x *= bulletNS::SPEED;
-		nDir.z *= this->getSpeed()*multiplier;
-	}
-	else if (direction == DOWN) {
-		nDir = Vector3(-1, 0, 0);
-		if (this->getVelocity().z > 0) nDir.z = 1;
-		if (this->getVelocity().z < 0) nDir.z = -1;
-		nDir.x *= bulletNS::SPEED;
-		nDir.z *= this->getSpeed()*multiplier;
-	}
-	else if (direction == LEFT) {
-		nDir = Vector3(0,0,1);
-		if (this->getVelocity().x > 0) nDir.x = 1;
-		if (this->getVelocity().x < 0) nDir.x = -1;
-		nDir.z *= bulletNS::SPEED;
-		nDir.x *= this->getSpeed()*multiplier;
-	}
-	else if (direction == RIGHT) {
-		nDir = Vector3(0,0,-1);
-		if (this->getVelocity().x > 0) nDir.x = 1;
-		if (this->getVelocity().x < 0) nDir.x = -1;
-		nDir.z *= bulletNS::SPEED;
-		nDir.x *= this->getSpeed()*multiplier;
-	}*/
-
 	bullets[index]->setVelocity(moveAxis);
 	bullets[index]->setActive();
 	ammo--;
 	timeSinceLastShot = 0;
 	fired = false;
-	return true;
 }
 
 void Player::rotateTargeting(int s)

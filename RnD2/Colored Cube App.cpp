@@ -32,18 +32,21 @@
 using std::time;
 
 namespace gameNS {
+	const float DAYLEN = 40;
 	const int NUM_WALLS = 16;
 	const int NUM_BUILDINGS = 12;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
 	const int NUM_PICKUPS = 4;
 	const int NUM_LIGHTS = 11;
-	const float DAYLEN = 40;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	const int MAX_NUM_ENEMIES = 20;
 	bool PLAY_MUSIC = true;
+	const float FOOTSTEP_GAP = 0.45;
+	const int GRASSY_AREA_WIDTH = 110;
+	const int FLASHLIGHT_NUM = 2;
 }
 
 
@@ -66,6 +69,7 @@ public:
 	void initLights();
 	void initLamps();
 	void initWaypoints();
+	void initEnemies();
 
 	void updateScene(float dt);
 	void updatePickups(float dt);
@@ -127,7 +131,6 @@ private:
 	vector<LampPost> lamps;
 	vector<Pickup> pickups;
 	GameObject superLowFloorOffInTheDistanceUnderTheScene;
-	GameObject cameraCollider;
 	Quad menu;
 
 	//Lighting and Camera-specific declarations
@@ -146,8 +149,6 @@ private:
 	Box activeLine;
 	//GameObject wayLine[100][100];
 	GameObject wayLine[WAYPOINT_SIZE*WAYPOINT_SIZE];
-	
-	
 	
 	Waypoint* dest;
 	Waypoint* src;
@@ -214,6 +215,10 @@ private:
 	string timeOfDay;
 	Enemy enemy[gameNS::MAX_NUM_ENEMIES];
 	int nightCount;
+	float stepTime;
+	bool step1;
+	bool flashChanged, flashOn;
+	float flashChangeTime;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -237,6 +242,11 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	srand(time(0));
 	debugMode = false;
 	nightCount = 0;
+	stepTime = 0.0f;
+	step1 = true;
+	flashChanged = false;
+	flashChangeTime = 0.0f;
+	flashOn = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -283,6 +293,7 @@ void ColoredCubeApp::initApp()
 	initBuildingPositions();
 	initLights();
 	initLamps();
+	initEnemies();
 	initWaypoints();
 
 	menu.init(md3dDevice, 1.0f, WHITE);
@@ -295,8 +306,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1);
-	
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f);
 	mBuildingMesh.init(md3dDevice, 1.0f);
@@ -341,8 +351,9 @@ void ColoredCubeApp::initLamps() {
 	lamps[2].init(&brick, Vector3(58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
 	lamps[3].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
 		
-	for (int i = 0; i < lamps.size(); i++) 
+	for (int i = 0; i < lamps.size(); i++) {
 		lamps[i].giveGlowVar(mfxGlow);
+	}
 	
 
 
@@ -391,7 +402,7 @@ void ColoredCubeApp::initTextStrings() {
 	sText.addLine("ARROW KEYS TO SHOOT", 10, 50);
 	sText.addLine("HOLD SHIFT TO SPRINT!", 10, 70);
 	sText.addLine("GO KILL DUNSTAN FOR ME!", 10, 90);
-	sText.addLine("PRESS ANY KEY TO BEGIN !", 250, 300);
+	sText.addLine("PRESS SPACE BAR TO BEGIN !", 250, 300);
 	eText.addLine("CONGRATS RUGGER I WON!", 250, 300);
 }
 
@@ -443,14 +454,19 @@ void ColoredCubeApp::initWallPositions() {
 	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		2.5,	1);//	Right/Front inner wall
 	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		2.5,	20);//	Front/Right inner wall
 	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
-
 }
 
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
 	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
-	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
-	cameraCollider.init(&clearBox, 1.0, Vector3(0,0,0), Vector3(0,0,0), 1, 1);
+}
+
+void ColoredCubeApp::initEnemies() {
+	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++) {
+		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 0.75f, 1, 2, 1);
+		//enemy[i].faceObject(Vector3(0,0,0)); //working overload!
+		enemy[i].faceObject(&player);
+	}
 }
 
 void ColoredCubeApp::initOrigin() {
@@ -506,7 +522,7 @@ void ColoredCubeApp::initLights()
 	mLights[2].att.y    = 0.0f;
 	mLights[2].att.z    = 0.0f;
 	mLights[2].spotPow  = 128.0f;
-	mLights[2].range    = 100.0f;
+	mLights[2].range    = 0.0f;
 
 	//Inner corner lights
 	mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -592,7 +608,6 @@ void ColoredCubeApp::initWaypoints()
 
 void ColoredCubeApp::updateScene(float dt)
 {
-	timect += dt;
 	ColoredCubeApp::dt = dt;
 	bool playing = (!endScreen && !startScreen);
 	Vector3 oldPos = mEyePos;
@@ -604,12 +619,13 @@ void ColoredCubeApp::updateScene(float dt)
 
 	
 	if (startScreen){
-		if(input->anyKeyPressed()){
+		if(input->isKeyDown(VK_SPACE)){
 			startScreen = false;
 			playing = true;
 		}
 	}
-	if(playing){	
+	if(playing){
+		timect += dt;
 		updateMusic();
 		updateCamera();
 
@@ -681,39 +697,30 @@ void ColoredCubeApp::updateDebugMode() {
 void ColoredCubeApp::updateCamera() {
 	int dx = input->getMouseRawX();
 	int dy = input->getMouseRawY();
-
+	D3DXVECTOR3 pos = player.getPosition();
 	if(dx < 0)
-	//if(input->isKeyDown(KEY_A))
-	{
 		mPhi -= 6.0f*dt;
-	}
 	if(dx > 0)
-	//if(input->isKeyDown(KEY_D))
-	{
 		mPhi += 6.0f*dt;
-	}
 	if(dy < 0)
-	//if(input->isKeyDown(KEY_W))
-	{
 		mTheta += 3.0f*dt;
-	}
 	if(dy > 0)
-	//if(input->isKeyDown(KEY_S))
-	{
 		mTheta -= 3.0f*dt;
-	}
+
 	//Restricting the mouse movement
 	RECT restrict = {639, 399, 640, 400};
 	ClipCursor(&restrict);
-
+	bool walking = false;
 	if(input->isKeyDown(KEY_W))
 	{
+		walking = true;
 		moveAxis.y = 0;
 		D3DXVec3Normalize(&moveAxis, &moveAxis);
 		mEyePos += moveAxis * dt * 20;
 	}
 	if(input->isKeyDown(KEY_S))
 	{
+		walking = true;
 		moveAxis.y = 0;
 		D3DXVec3Normalize(&moveAxis, &moveAxis);
 	
@@ -721,10 +728,12 @@ void ColoredCubeApp::updateCamera() {
 	}
 	if(input->isKeyDown(KEY_D))
 	{
+		walking = true;
 		mEyePos -= perpAxis * dt * 20;
 	}
 	if(input->isKeyDown(KEY_A))
 	{
+		walking = true;
 		mEyePos += perpAxis * dt * 20;
 	}
 	
@@ -755,6 +764,21 @@ void ColoredCubeApp::updateCamera() {
 	if(input->getMouseRButton())
 	{
 		//Do something
+	}
+
+	if (walking) {
+		stepTime += 1;
+		if (stepTime*dt > gameNS::FOOTSTEP_GAP) {
+			if (pos.x < gameNS::GRASSY_AREA_WIDTH/2.0f && pos.x > -gameNS::GRASSY_AREA_WIDTH/2.0f  && pos.z > -gameNS::GRASSY_AREA_WIDTH/2.0f && pos.z < gameNS::GRASSY_AREA_WIDTH/2.0f) { //in grassy area 
+				if (step1) audio->playCue(FOOTSTEP3);
+				else audio->playCue(FOOTSTEP4);
+			} else {
+				if (step1) audio->playCue(FOOTSTEP1);
+				else audio->playCue(FOOTSTEP2);
+			}
+			step1 = !step1;
+			stepTime = 0.0f;
+		}
 	}
 
 	// Restrict the angle mPhi and radius mRadius.
@@ -800,7 +824,6 @@ void ColoredCubeApp::doEndScreen() {
 
 void ColoredCubeApp::updateUniqueObjects(float dt) {
 	floor.update(dt);
-	cameraCollider.update(dt);
 	//big floor update must also be added here for it to show.
 }
 
@@ -856,9 +879,22 @@ void ColoredCubeApp::updateEnemies(float dt)
 
 void ColoredCubeApp::handleUserInput() {
 
-	if(input->isKeyDown(VK_SHIFT)) player.setSpeed(40);
-	else player.setSpeed(20);
+	if (flashChanged)
+		flashChangeTime++;
 
+	if (flashChangeTime*dt >= 0.30f) {
+		flashChangeTime = 0;
+		flashChanged = false;
+	}
+	
+	if (input->isKeyDown(KEY_F) && flashChanged == false) {
+		flashChanged = true;	
+		flashOn = !flashOn;
+		if (flashOn)
+			mLights[gameNS::FLASHLIGHT_NUM].range = 100;
+		else 
+			mLights[gameNS::FLASHLIGHT_NUM].range = 0;
+	}
 }
 
 void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
@@ -1075,7 +1111,6 @@ void ColoredCubeApp::drawScene()
 		drawBuildings();
 		drawPickups();
 		drawLamps();
-		//cameraCollider.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 		D3D10_TECHNIQUE_DESC techDesc;
 		mTech->GetDesc( &techDesc );
@@ -1099,9 +1134,9 @@ void ColoredCubeApp::drawScene()
 		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		
-		printText("Score: ", 5, 5, 0, 0, score); //This has to be the last thing in the draw function.
-		printText(timeOfDay, 5, 30, 0, 0);
-		printText("Health: ", 5, 55, 0, 0, player.getHealth());
+		printText("Score: ", 20, 5, 0, 0, player.getScore()); //This has to be the last thing in the draw function.
+		//printText(timeOfDay, 50, 30, 0, 0);
+		printText("Health: ", 670, 5, 0, 0, player.getHealth());
 	}
 	else if(startScreen)
 	{

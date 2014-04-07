@@ -21,22 +21,22 @@ Wall::~Wall()
 	box = NULL;
 }
 
-void Wall::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
-{
-	if (!active)
-		return;
-
-	Matrix mWVP = world* (*mVP);
-	mfxWVPVar->SetMatrix((float*)&mWVP);
-	mfxWorldVar->SetMatrix((float*)&world);
-	D3D10_TECHNIQUE_DESC techDesc;
-	mTech->GetDesc( &techDesc );
-	for(UINT p = 0; p < techDesc.Passes; ++p)
-	{
-		mTech->GetPassByIndex( p )->Apply(0);
-		box->draw();
-	}
-}
+//void Wall::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
+//{
+//	if (!active)
+//		return;
+//
+//	Matrix mWVP = world* (*mVP);
+//	mfxWVPVar->SetMatrix((float*)&mWVP);
+//	mfxWorldVar->SetMatrix((float*)&world);
+//	D3D10_TECHNIQUE_DESC techDesc;
+//	mTech->GetDesc( &techDesc );
+//	for(UINT p = 0; p < techDesc.Passes; ++p)
+//	{
+//		mTech->GetPassByIndex( p )->Apply(0);
+//		box->draw();
+//	}
+//}
 
 void Wall::init(Box *b, float r, Vector3 pos, float s, int w, int h, int d, float rx, float ry, float rz)
 {
