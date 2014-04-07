@@ -25,15 +25,9 @@ public:
 	//bool getActiveState() {return active;}
 	//bool collided(GameObject *gameObject);
 
-	float getWidth(){
-		return width;
-	}
-	float getHeight(){
-		return height;
-	}
-	float getDepth(){
-		return depth;
-	}
+	float getWidth(){return width;}
+	float getHeight(){return 2*height;}
+	float getDepth(){return depth;}
 
 private:
 	float radius;

@@ -46,7 +46,7 @@ public:
 
 	//float getWidth(){return scale;}
 	virtual float getWidth(){return width;}
-	virtual float getHeight(){return height;}
+	virtual float getHeight(){return 2*height;}
 	virtual float getDepth(){return depth;}
 
 	void setBox(Box* b){box = b;}
