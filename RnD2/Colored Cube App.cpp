@@ -45,6 +45,7 @@ namespace gameNS {
 	const float FOOTSTEP_GAP = 0.45;
 	const int GRASSY_AREA_WIDTH = 110;
 	const int FLASHLIGHT_NUM = 2;
+	const int NUM_NIGHTS_TO_WIN = 4;
 }
 
 
@@ -721,7 +722,7 @@ void ColoredCubeApp::updateScene(float dt)
 		handlePickupCollisions(dt);
 		handleEnemyCollisions(dt);
 
-		if(dayCount >= 3){
+		if(dayCount >= gameNS::NUM_NIGHTS_TO_WIN + 1){
 			won = true;
 			playing = false;
 			endScreen = true;
