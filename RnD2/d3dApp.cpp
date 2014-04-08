@@ -50,7 +50,7 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	mDepthStencilView   = 0;
 	mFont               = 0;
 
-	mMainWndCaption = L"D3D10 Application";
+	mMainWndCaption = L"Dunstan's Vindictive Counterinsurgency";
 	md3dDriverType  = D3D10_DRIVER_TYPE_HARDWARE;
 	mClearColor     = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
 	mClientWidth    = 800;
@@ -132,7 +132,6 @@ void D3DApp::initApp()
 	else{
 		//error-throwing code here
 	}
-    
 }
  
 void D3DApp::onResize()
