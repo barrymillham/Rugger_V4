@@ -450,6 +450,8 @@ void ColoredCubeApp::initTextStrings() {
 	sText.addLine("Collect items and shoot enemies to survive as long as you can!", 80, 390);
 	sText.addLine("PRESS SPACE BAR TO BEGIN !", 250, 500);
 	
+	
+
 	lText.addLine("TOO BAD, RUGGER, I WON!", 260, 180);
 	lText.addLine("Press SPACEBAR to exit", 276, 500);
 
@@ -1289,12 +1291,12 @@ void ColoredCubeApp::drawScene()
 	}
 	else { // End Screen 
 		if(!won){
+				printText("Score: ", 350, 280, 0, 0, player.getScore());
 			printText(lText);
-			printText("Score: ", 350, 280, 0, 0, player.getScore());
 		}
 		else {
-			printText(wText);
 			printText("Score: ", 350, 280, 0, 0, player.getScore());
+			printText(wText);
 		}
 	}
 	
