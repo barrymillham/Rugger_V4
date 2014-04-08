@@ -13,8 +13,9 @@ public:
 
 	GameObject();
 	~GameObject();
-
-	void init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s);
+	//				   geom,  rad,  position,				sc,	w,		h,	d
+	//walls[0].init(&brick, 2.0f, Vector3(155, 0, 250), 	1,	115,	10, 10);//	Left/Front wall 
+	void init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s = 1.0f, float w = 1.0f, float h = 1.0f, float d = 1.0f);
 	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void drawWithWorld(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, Matrix transformation);
 	virtual void update(float dt);
@@ -41,6 +42,8 @@ public:
 	void setRotateX(float rx){rotX = rx;}
 	void setRotateY(float ry){rotY = ry;}
 	void setRotateZ(float rz){rotZ = rz;}
+	void startGlowing(){glow = true;}
+	void stopGlowing() {glow = false;}
 
 	Matrix transform(Vector3 scale, Vector3 rotate, Vector3 translate);
 
@@ -53,8 +56,6 @@ public:
 
 private:
 	float speed;
-	
-	
 	
 protected:
 	Box *box;
@@ -72,7 +73,9 @@ protected:
 	bool facing;
 	GameObject* facedObject;
 	Vector3 facedCoordinate;
-	
+	ID3D10EffectScalarVariable* mfxGlow;
+	ID3D10EffectVariable* mfxCubeColorVar;
+	bool glow;
 };
 
 

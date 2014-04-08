@@ -8,7 +8,6 @@ public:
 	Wall();
 	~Wall();
 
-	virtual void init(Box *b, float r, Vector3 pos, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
 	virtual void update(float dt);
 
 	//void setPosition (Vector3 pos) {position = pos;}

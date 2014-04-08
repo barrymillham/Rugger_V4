@@ -19,14 +19,17 @@ Box::~Box()
 	ReleaseCOM(mVB);
 	ReleaseCOM(mIB);
 }
-void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c, ID3D10EffectScalarVariable* mfxGlow)
+
+void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c, ID3D10Effect* mFX)
 {
-	Box::mfxGlow = mfxGlow;
+	Box::mFX = mFX;
+	pullInVariables();
+	boxColor = Vector3(c.r,c.g,c.b);
 	md3dDevice = device;
- 
+
+
 	mNumVertices = 24;
 	mNumFaces    = 12; // 2 per quad
-
 	D3DXCOLOR diffuse = c;
 	D3DXCOLOR spec = c;
 	//D3DXCOLOR diffuse(0.5,0.5,1,1);
@@ -129,9 +132,11 @@ void Box::init(ID3D10Device* device, float scale, D3DXCOLOR c, ID3D10EffectScala
     iinitData.pSysMem = indices;
     HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mIB));
 }
-void Box::init(ID3D10Device* device, float scale, ID3D10EffectScalarVariable* mfxGlow)
+void Box::init(ID3D10Device* device, float scale, ID3D10Effect* mFX)
 {
-	Box::mfxGlow = mfxGlow;
+	Box::mFX = mFX;
+	pullInVariables();
+	boxColor = Vector3(1,1,1);
 	md3dDevice = device;
 
     Vertex vertices[] =
@@ -226,7 +231,6 @@ void Box::init(ID3D10Device* device, float scale, ID3D10EffectScalarVariable* mf
 
 void Box::draw()
 {
-
 	UINT stride = sizeof(Vertex);
     UINT offset = 0;
 	md3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
