@@ -17,7 +17,7 @@ Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const cha
 	radiusSquared = radius * radius;
 	box = b;
 	box->toggleGlow();
-	mapLocations.push_back(Vector3(0,0,0));
+	mapLocations.push_back(Vector3(20,0,0));
 	mapLocations.push_back(Vector3(-40,0,40));
 	mapLocations.push_back(Vector3(40,0,40));
 	mapLocations.push_back(Vector3(40,0,-40));
