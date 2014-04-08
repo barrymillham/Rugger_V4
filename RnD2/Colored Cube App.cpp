@@ -159,6 +159,8 @@ private:
 	bool hasntPlayedYet;
 	bool nightDayTrans;
 	bool placedPickups;
+	int dayCount;
+	bool won;
 
 	float spinAmount;
 	int shotTimer;
@@ -211,7 +213,7 @@ private:
 	bool firstpass;
 	bool startScreen, endScreen;
 	float dt;
-	DebugText sText, eText;
+	DebugText sText, lText, wText;
 
 	float timect;
 	string timeOfDay;
@@ -250,6 +252,8 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	flashChangeTime = 0.0f;
 	flashOn = false;
 	placedPickups = false;
+	dayCount = 2;
+	won = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -423,8 +427,12 @@ void ColoredCubeApp::initTextStrings() {
 	sText.addLine("Collect items and shoot enemies to survive as long as you can!", 80, 390);
 	sText.addLine("PRESS SPACE BAR TO BEGIN !", 250, 500);
 	
-	eText.addLine("TOO BAD, RUGGER, I WON!", 260, 180);
-	eText.addLine("Press SPACEBAR to exit", 276, 500);
+	lText.addLine("TOO BAD, RUGGER, I WON!", 260, 180);
+	lText.addLine("Press SPACEBAR to exit", 276, 500);
+
+	wText.addLine("RUGGER YOU FIEND! THOSE MINIONS WERE EXPENSIVE!", 260, 180);
+	wText.addLine("NEXT TIME I'LL SEND THE DEVIL HIMSELF DOWN TO GEORGIA!", 260, 250);
+	wText.addLine("Press SPACEBAR to exit", 276, 500);
 }
 
 void ColoredCubeApp::initBasicVariables() {
@@ -672,6 +680,12 @@ void ColoredCubeApp::updateScene(float dt)
 		handleBuildingCollisions(oldPos);
 		handlePickupCollisions(dt);
 		handleEnemyCollisions(dt);
+
+		if(dayCount >= 3){
+			won = true;
+			playing = false;
+			endScreen = true;
+		}
 	}
 	if(endScreen){
 		doEndScreen();
@@ -836,7 +850,7 @@ void ColoredCubeApp::updateCamera() {
 }
 
 void ColoredCubeApp::doEndScreen() {
-	if(input->wasKeyPressed(KEY_SPACE))
+	if(input->isKeyDown(VK_SPACE))
 	{
 		endScreen = false;
 		PostQuitMessage(0);
@@ -1145,6 +1159,7 @@ void ColoredCubeApp::updateDayNight() {
 			mLights[4].att.y    = 0.55f;
 			mLights[5].att.y    = 0.55f;
 			mLights[6].att.y    = 0.55f;
+			dayCount++;
 		}
 	}
 	if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
@@ -1241,8 +1256,14 @@ void ColoredCubeApp::drawScene()
 		printText(sText);
 	}
 	else { // End Screen 
-		printText(eText);
-		printText("Score: ", 350, 280, 0, 0, player.getScore());
+		if(!won){
+			printText(lText);
+			printText("Score: ", 350, 280, 0, 0, player.getScore());
+		}
+		else {
+			printText(wText);
+			printText("Score: ", 350, 280, 0, 0, player.getScore());
+		}
 	}
 	
 	// We specify DT_NOCLIP, so we do not care about width/height of the rect.
