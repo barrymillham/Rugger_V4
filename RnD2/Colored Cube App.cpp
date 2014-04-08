@@ -1120,7 +1120,7 @@ void ColoredCubeApp::placePickups() {
 				dayPickups[choices[i]].setActive();
 		else if (night) 
 			for (int i = 0; i < choices.size(); i++) 
-				dayPickups[choices[i]].setActive();
+				nightPickups[choices[i]].setActive();
 
 		placedPickups = true;
 	}
