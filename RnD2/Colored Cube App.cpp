@@ -120,7 +120,7 @@ private:
 	Box mBulletMesh;
 
 	Line rLine, bLine, gLine;
-	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox;
+	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox, whiteBox;
 	Box testBox;
 	Player player;
 	vector<Bullet*> pBullets;
@@ -188,7 +188,6 @@ private:
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
 	D3DXMATRIX mCompCubeWorld;
-	ID3D10EffectScalarVariable* mfxGlow;
 
 	bool night;
 	//my addition
@@ -228,7 +227,7 @@ private:
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 : D3DApp(hInstance), mFX(0), mTech(0), mVertexLayout(0),
   mfxWVPVar(0), mTheta(0.0f), mPhi(0.0f), mfxWorldVar(0), 
-  mfxEyePosVar(0), mfxLightVar(0), mfxLightType(0), mfxGlow(0)
+  mfxEyePosVar(0), mfxLightVar(0), mfxLightType(0)
 {
 	srand(time(0));
 	D3DXMatrixIdentity(&mView);
@@ -315,12 +314,12 @@ void ColoredCubeApp::initApp()
 
 	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 20, audio, 1, 1, 1, 5);
 
-	mWallMesh.init(md3dDevice, 1.0f, mfxGlow);
-	mBuildingMesh.init(md3dDevice, 1.0f, mfxGlow);
-	mEnemyMesh.init(md3dDevice, 1.0f, mfxGlow);
-	mPoleMesh.init(md3dDevice, 1.0f, mfxGlow);
-	mStreetMesh.init(md3dDevice, 1.0f, mfxGlow);
-	mBulletMesh.init(md3dDevice, 1.0f, mfxGlow);
+	mWallMesh.init(md3dDevice, 1.0f, mFX);
+	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
+	mEnemyMesh.init(md3dDevice, 1.0f, mFX);
+	mPoleMesh.init(md3dDevice, 1.0f, mFX);
+	mStreetMesh.init(md3dDevice, 1.0f, mFX);
+	mBulletMesh.init(md3dDevice, 1.0f, mFX);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
@@ -357,18 +356,12 @@ void ColoredCubeApp::initLamps() {
 	lamps[1].init(&brick, Vector3(-58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
 	lamps[2].init(&brick, Vector3(58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
 	lamps[3].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
-		
-	for (int i = 0; i < lamps.size(); i++) {
-		lamps[i].giveGlowVar(mfxGlow);
-	}
-	
-
-
 }
 
 void ColoredCubeApp::initPickups() {
 	//int speed1 = player.getSpeed();
 	//define the pickups
+
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio));
 	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio));
@@ -383,10 +376,22 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio));
+<<<<<<< HEAD
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio));
+=======
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 13, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 14, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 15, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 16, WHOOSH, audio));
+
+		for (int i = 0; i < dayPickups.size(); i++)
+		dayPickups[i].startGlowing();
+	for (int i = 0; i < nightPickups.size(); i++) 
+		nightPickups[i].startGlowing();
+>>>>>>> 10893c2d4adaccd8d4e84be9b530523ad6734d61
 }
 
 void ColoredCubeApp::initBullets() {
@@ -398,21 +403,22 @@ void ColoredCubeApp::initBullets() {
 }
 
 void ColoredCubeApp::initBasicGeometry() {	
-	mBox.init(md3dDevice, 2.0f, D3DXCOLOR(0,0,0,0), mfxGlow);
-	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL, mfxGlow);
-	clearBox.init(md3dDevice, 1.0f, D3DXCOLOR(0,0,0,0), mfxGlow);
-	redBox.init(md3dDevice, 1.0f, colorNS::RED, mfxGlow);
-	brick.init(md3dDevice, 1.0f, DARKBROWN, mfxGlow);
-	bulletBox.init(md3dDevice, 0.25f, D3DXCOLOR(0,0,0,0), mfxGlow);
-	eBulletBox.init(md3dDevice, 0.5f, RED, mfxGlow);
-	maroonBox.init(md3dDevice, 10000, colorNS::MAROON, mfxGlow);
-	yellowGreenBox.init(md3dDevice, 1.f,D3DXCOLOR(0,0,0,0), mfxGlow);
-	goldBox.init(md3dDevice, 1.0f, YELLOW, mfxGlow);
-	blueBox.init(md3dDevice, 2.0f, BLUE, mfxGlow);
+	mBox.init(md3dDevice, 2.0f, D3DXCOLOR(0,0,0,0), mFX);
+	whiteBox.init(md3dDevice, 1.0f, D3DXCOLOR(1,1,1,0), mFX);
+	tealBox.init(md3dDevice, 1.0f, colorNS::TEAL, mFX);
+	clearBox.init(md3dDevice, 1.0f, D3DXCOLOR(0,0,0,0), mFX);
+	redBox.init(md3dDevice, 1.0f, colorNS::RED, mFX);
+	brick.init(md3dDevice, 1.0f, DARKBROWN, mFX);
+	bulletBox.init(md3dDevice, 0.25f, D3DXCOLOR(0,0,0,0), mFX);
+	eBulletBox.init(md3dDevice, 0.5f, RED, mFX);
+	maroonBox.init(md3dDevice, 10000, colorNS::MAROON, mFX);
+	yellowGreenBox.init(md3dDevice, 1.f,D3DXCOLOR(0,0,0,0), mFX);
+	goldBox.init(md3dDevice, 1.0f, YELLOW, mFX);
+	blueBox.init(md3dDevice, 2.0f, BLUE, mFX);
 	rLine.init(md3dDevice, 10.0f, RED);
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
-	activeLine.init(md3dDevice, 1.0f, RED, mfxGlow);
+	activeLine.init(md3dDevice, 1.0f, RED, mFX);
 }
 
 void ColoredCubeApp::initTextStrings() {
@@ -464,6 +470,7 @@ void ColoredCubeApp::initBuildingPositions() {
 void ColoredCubeApp::initWallPositions() {
 	
 //				   geom,  rad,  position,				sc,	w,		h,	d
+<<<<<<< HEAD
 	walls[0].init(&brick, 2.0f, Vector3(125, 0, 250), 	1,	125,	10, 10);//	Left/Front wall 
 	walls[1].init(&brick, 2.0f, Vector3(-125, 0, -250),	1,	125,	10, 10);//	Right/back wall
 	walls[2].init(&brick, 2.0f, Vector3(250, 0, 125),	1,	10,		10, 125);//	Front/Left wall
@@ -483,16 +490,37 @@ void ColoredCubeApp::initWallPositions() {
 	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	1,	20,		2.5,	1);//	Right/Front inner wall
 	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	1,	1,		2.5,	20);//	Front/Right inner wall
 	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	1,	1,		2.5,	20);//	Back/Left inner wall
+=======
+	//       init(Box *b, float r, Vector3 pos,        Vector3 vel,  float sp, float s = 1.0f, float w = 1.0f, float h = 1.0f, float d = 1.0f);
+	walls[0].init(&brick, 2.0f, Vector3(155, 0, 250), Vector3(0,0,0),	1, 1,	115,	10, 10);//	Left/Front wall 
+	walls[1].init(&brick, 2.0f, Vector3(-155, 0, -250), Vector3(0,0,0),	1, 1,	115,	10, 10);//	Right/back wall
+	walls[2].init(&brick, 2.0f, Vector3(250, 0, 155), Vector3(0,0,0),	1, 1,	10,		10, 95);//	Front/Left wall
+	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -155), Vector3(0,0,0),	1, 1,	10,		10, 95);//	Back/Right wall
+
+	walls[4].init(&brick, 2.0f, Vector3(-155, 0, 250), Vector3(0,0,0),	1, 1,	115,	10, 10);//	Left/Back wall 
+	walls[5].init(&brick, 2.0f, Vector3(155, 0, -250), Vector3(0,0,0),	1, 1,	115,	10, 10);//	Right/Front wall
+	walls[6].init(&brick, 2.0f, Vector3(250, 0, -155), Vector3(0,0,0),	1, 1,	10,		10, 95);//	Front/Right wall
+	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 155), Vector3(0,0,0),	1, 1,	10,		10, 95);//	Back/Left wall
+
+	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),	 Vector3(0,0,0),	1, 1,	20,		2.5,	1);//	Left/Front inner wall 
+	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55), Vector3(0,0,0),	1, 1,	20,		2.5,	1);//	Right/Back inner wall
+	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36), Vector3(0,0,0),	1, 1,	1,		2.5,	20);//	Front/Left inner wall
+	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36), Vector3(0,0,0),	1, 1,	1,		2.5,	20);//	Back/Right inner wall
+
+	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55), Vector3(0,0,0),	1, 1,	20,		2.5,	1);//	Left/Back inner wall 
+	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55), Vector3(0,0,0),	1, 1,	20,		2.5,	1);//	Right/Front inner wall
+	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36), Vector3(0,0,0),	1, 1,	1,		2.5,	20);//	Front/Right inner wall
+	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36), Vector3(0,0,0),	1, 1,	1,		2.5,	20);//	Back/Left inner wall
+>>>>>>> 10893c2d4adaccd8d4e84be9b530523ad6734d61
 }
 
 void ColoredCubeApp::initUniqueObjects() {
-	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), 1.0f, 250, 1, 250);
-	superLowFloorOffInTheDistanceUnderTheScene.init(&maroonBox, 2.0f, Vector3(0,-10.0f,0), Vector3(0,0,0), 0, 100000);
+	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), Vector3(0,0,0), 1, 1.0f, 250, 1, 250);
 }
 
 void ColoredCubeApp::initEnemies() {
 	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++) {
-		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), 1, 1, 2, 1);
+		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), Vector3(0,0,0), 1, 1, 1, 2, 1);
 		//enemy[i].faceObject(Vector3(0,0,0)); //working overload!
 		enemy[i].faceObject(&player);
 	}
@@ -1251,7 +1279,7 @@ void ColoredCubeApp::drawScene()
 		printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
 		printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
 		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
-		printText(timeOfDay, 670, 20, 0, 0, WHITE);
+		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
 
 	}
 	else if(startScreen)
@@ -1358,16 +1386,15 @@ void ColoredCubeApp::buildFX()
 
 	mTech = mFX->GetTechniqueByName("LightTech");
 	
-	mfxWVPVar    = mFX->GetVariableByName("gWVP")->AsMatrix();
-	mfxWorldVar  = mFX->GetVariableByName("gWorld")->AsMatrix();
-	mfxEyePosVar = mFX->GetVariableByName("gEyePosW");
-	mfxLightVar  = mFX->GetVariableByName("gLight");
-	mfxLightType = mFX->GetVariableByName("gLightType")->AsScalar();
+	mfxWVPVar		= mFX->GetVariableByName("gWVP")->AsMatrix();
+	mfxWorldVar		= mFX->GetVariableByName("gWorld")->AsMatrix();
+	mfxEyePosVar	= mFX->GetVariableByName("gEyePosW");
+	mfxLightVar		= mFX->GetVariableByName("gLight");
+	mfxLightType	= mFX->GetVariableByName("gLightType")->AsScalar();
 	mfxDiffuseMapVar= mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
-	mfxSpecMapVar   = mFX->GetVariableByName("gSpecMap")->AsShaderResource();
-	mfxTexMtxVar    = mFX->GetVariableByName("gTexMtx")->AsMatrix();
+	mfxSpecMapVar	= mFX->GetVariableByName("gSpecMap")->AsShaderResource();
+	mfxTexMtxVar	= mFX->GetVariableByName("gTexMtx")->AsMatrix();
 	mfxLightNum		= mFX->GetVariableByName("gLightNum")->AsScalar();
-	mfxGlow			= mFX->GetVariableByName("gGlow")->AsScalar();
 }
 
 void ColoredCubeApp::buildVertexLayouts()
@@ -1411,7 +1438,6 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
 	mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
 	mfxLightVar->SetRawValue(&mLights, 0, mLightNum*sizeof(Light));
 	mfxLightType->SetInt(mLightType);
-	mfxGlow->SetInt(0);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
 	mfxWorldVar->SetMatrix((float*)&mCompCubeWorld);
 
@@ -1455,9 +1481,9 @@ void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
 	
 	for (int i = 0; i < dayPickups.size(); i++)
-		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, true);
+		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
 	for (int i = 0; i < nightPickups.size(); i++) 
-		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, true);
+		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
 
 }
 

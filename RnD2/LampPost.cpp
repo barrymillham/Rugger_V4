@@ -75,8 +75,12 @@ Matrix LampPost::transform(Vector3 scale, Vector3 rotate, Vector3 translate) {
 }
 
 void LampPost::drawWithWorld(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, Matrix transformation, bool glow) {
-	if (glow)
+	if (glow) {
 		mfxGlow->SetInt(2);
+		mfxCubeColorVar = lamp.getCubeColorVar();
+		mfxCubeColorVar->SetRawValue(&lamp.getColor(), 0, sizeof(D3DXVECTOR3));
+		//think I have to add a  mfxCubeColorVar->setRawValue call
+	}
 	else mfxGlow->SetInt(0);
 
 	Matrix worldMatrix = GameObject::world;
@@ -108,7 +112,10 @@ void LampPost::init(Box *b, Vector3 pos, float r, float s, int w, int h, int d, 
 	rotX = rx;
 	rotY = ry;
 	rotZ = rz;
+	mfxCubeColorVar = box->getCubeColorVar();
+	mfxGlow = box->getGlowVar();
 	//Translate(&world, position.x, position.y, position.z);
+	lamp.init(box->getDevice(), 1.0f, D3DXCOLOR(1,1,1,0), box->getMFX());
 }
 
 void LampPost::update(float dt)

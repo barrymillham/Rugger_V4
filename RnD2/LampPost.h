@@ -18,14 +18,12 @@ public:
 	float getWidth(){return width;}
 	float getHeight(){return height;}
 	float getDepth(){return depth;}
-	void giveGlowVar(ID3D10EffectScalarVariable* g) {
-		mfxGlow = g;
-	}
 
 private:
 	ID3D10EffectScalarVariable* mfxGlow;
 	float radius;
 	float radiusSquared;
+	Box lamp;
 };
 
 #endif
