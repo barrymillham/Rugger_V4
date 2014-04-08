@@ -13,15 +13,15 @@ public:
 	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void update(float dt);
 
-	float getWidth(){
-		return width;
-	}
-	float getHeight(){
-		return height;
-	}
-	float getDepth(){
-		return depth;
-	}
+	//float getWidth(){
+	//	return width;
+	//}
+	//float getHeight(){
+	//	return height;
+	//}
+	//float getDepth(){
+	//	return depth;
+	//}
 
 private:
 	float radius;

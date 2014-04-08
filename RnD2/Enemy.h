@@ -37,9 +37,9 @@ public:
 	D3DXVECTOR3 getOldPos(){return oldPos;}
 	float getSpeed(){return speed;}
 	void setSpeed(float s){speed = s;}
-	float getWidth(){return width;}
-	float getHeight(){return 2*height;}
-	float getDepth(){return depth;}
+	//float getWidth(){return width;}
+	//float getHeight(){return 2*height;}
+	//float getDepth(){return depth;}
 
 
 	list<Waypoint*> pathfindAStar(Waypoint* source, Waypoint* target);
