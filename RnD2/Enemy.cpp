@@ -78,7 +78,7 @@ void Enemy::update(float dt, Player* p)
 		attack(p);
 		facing = true;
 	}
-	else if (dist <= 50)
+	else if (dist <= 55)
 	{
 		facing = true;
 		nav.clear();
