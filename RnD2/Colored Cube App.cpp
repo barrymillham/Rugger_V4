@@ -1290,11 +1290,11 @@ void ColoredCubeApp::drawScene()
 	else { // End Screen 
 		if(!won){
 			printText(lText);
-			printText("Score: ", 350, 280, 0, 0, player.getScore());
+			printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
 		}
 		else {
 			printText(wText);
-			printText("Score: ", 350, 280, 0, 0, player.getScore());
+			printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
 		}
 	}
 	
