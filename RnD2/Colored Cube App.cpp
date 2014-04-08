@@ -313,7 +313,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, audio, 1, 1, 1, 5);
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 20, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mfxGlow);
 	mBuildingMesh.init(md3dDevice, 1.0f, mfxGlow);
@@ -367,7 +367,7 @@ void ColoredCubeApp::initLamps() {
 }
 
 void ColoredCubeApp::initPickups() {
-	int speed1 = player.getSpeed();
+	//int speed1 = player.getSpeed();
 	//define the pickups
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio));
@@ -383,10 +383,10 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 13, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 14, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 15, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 16, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio));
 }
 
 void ColoredCubeApp::initBullets() {
@@ -464,15 +464,15 @@ void ColoredCubeApp::initBuildingPositions() {
 void ColoredCubeApp::initWallPositions() {
 	
 //				   geom,  rad,  position,				sc,	w,		h,	d
-	walls[0].init(&brick, 2.0f, Vector3(155, 0, 250), 	1,	115,	10, 10);//	Left/Front wall 
-	walls[1].init(&brick, 2.0f, Vector3(-155, 0, -250),	1,	115,	10, 10);//	Right/back wall
-	walls[2].init(&brick, 2.0f, Vector3(250, 0, 155),	1,	10,		10, 95);//	Front/Left wall
-	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -155),	1,	10,		10, 95);//	Back/Right wall
+	walls[0].init(&brick, 2.0f, Vector3(125, 0, 250), 	1,	125,	10, 10);//	Left/Front wall 
+	walls[1].init(&brick, 2.0f, Vector3(-125, 0, -250),	1,	125,	10, 10);//	Right/back wall
+	walls[2].init(&brick, 2.0f, Vector3(250, 0, 125),	1,	10,		10, 125);//	Front/Left wall
+	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -125),	1,	10,		10, 125);//	Back/Right wall
 
-	walls[4].init(&brick, 2.0f, Vector3(-155, 0, 250),	1,	115,	10, 10);//	Left/Back wall 
-	walls[5].init(&brick, 2.0f, Vector3(155, 0, -250),	1,	115,	10, 10);//	Right/Front wall
-	walls[6].init(&brick, 2.0f, Vector3(250, 0, -155),	1,	10,		10, 95);//	Front/Right wall
-	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 155),	1,	10,		10, 95);//	Back/Left wall
+	walls[4].init(&brick, 2.0f, Vector3(-125, 0, 250),	1,	125,	10, 10);//	Left/Back wall 
+	walls[5].init(&brick, 2.0f, Vector3(125, 0, -250),	1,	125,	10, 10);//	Right/Front wall
+	walls[6].init(&brick, 2.0f, Vector3(250, 0, -125),	1,	10,		10, 125);//	Front/Right wall
+	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 125),	1,	10,		10, 125);//	Back/Left wall
 
 	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		1,	20,		2.5,	1);//	Left/Front inner wall 
 	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	1,	20,		2.5,	1);//	Right/Back inner wall
@@ -751,7 +751,7 @@ void ColoredCubeApp::updateCamera() {
 		walking = true;
 		moveAxis.y = 0;
 		D3DXVec3Normalize(&moveAxis, &moveAxis);
-		mEyePos += moveAxis * dt * 20;
+		mEyePos += moveAxis * dt * player.getSpeed();
 	}
 	if(input->isKeyDown(KEY_S))
 	{
@@ -759,17 +759,17 @@ void ColoredCubeApp::updateCamera() {
 		moveAxis.y = 0;
 		D3DXVec3Normalize(&moveAxis, &moveAxis);
 	
-		mEyePos -= moveAxis * dt * 20;
+		mEyePos -= moveAxis * dt * player.getSpeed();
 	}
 	if(input->isKeyDown(KEY_D))
 	{
 		walking = true;
-		mEyePos -= perpAxis * dt * 20;
+		mEyePos -= perpAxis * dt * player.getSpeed();
 	}
 	if(input->isKeyDown(KEY_A))
 	{
 		walking = true;
-		mEyePos += perpAxis * dt * 20;
+		mEyePos += perpAxis * dt * player.getSpeed();
 	}
 	
 	if (debugMode) 
