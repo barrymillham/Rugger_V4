@@ -118,6 +118,9 @@ private:
 	Box mPoleMesh;
 	Box mStreetMesh;
 	Box mBulletMesh;
+	Box mRedMesh;
+	Box mBlueMesh;
+	Box mYellowMesh;
 
 	Line rLine, bLine, gLine;
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox, whiteBox;
@@ -184,6 +187,12 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVStreet;
 	ID3D10ShaderResourceView* mDiffuseMapRVBullet;
 	ID3D10ShaderResourceView* mSpecMapRVBullet;
+	ID3D10ShaderResourceView* mDiffuseMapRVBlue;
+	ID3D10ShaderResourceView* mSpecMapRVBlue;
+	ID3D10ShaderResourceView* mDiffuseMapRVRed;
+	ID3D10ShaderResourceView* mSpecMapRVRed;
+	ID3D10ShaderResourceView* mDiffuseMapRVYellow;
+	ID3D10ShaderResourceView* mSpecMapRVYellow;
 	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
@@ -320,6 +329,9 @@ void ColoredCubeApp::initApp()
 	mPoleMesh.init(md3dDevice, 1.0f, mFX);
 	mStreetMesh.init(md3dDevice, 1.0f, mFX);
 	mBulletMesh.init(md3dDevice, 1.0f, mFX);
+	mBlueMesh.init(md3dDevice, 1.0f, mFX);
+	mRedMesh.init(md3dDevice, 1.0f, mFX);
+	mYellowMesh.init(md3dDevice, 1.0f, mFX);
 
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
@@ -345,6 +357,18 @@ void ColoredCubeApp::initApp()
 		L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"blue.png", 0, 0, &mDiffuseMapRVBlue, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVBlue, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"red.png", 0, 0, &mDiffuseMapRVRed, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVRed, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"yellow.png", 0, 0, &mDiffuseMapRVYellow, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVYellow, 0 ));
 
 }
 
@@ -381,7 +405,7 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio));
 
-		for (int i = 0; i < dayPickups.size(); i++)
+	for (int i = 0; i < dayPickups.size(); i++)
 		dayPickups[i].startGlowing();
 	for (int i = 0; i < nightPickups.size(); i++) 
 		nightPickups[i].startGlowing();
@@ -1070,8 +1094,8 @@ void ColoredCubeApp::placePickups() {
 	
 		for (int i = 0; i < nightPickups.size(); i++)
 			nightPickups[i].setInActive();
-		for (int i = 0; i < dayPickups.size(); i++)
-			dayPickups[i].setInActive();
+		//for (int i = 0; i < dayPickups.size(); i++)
+		//	dayPickups[i].setInActive();
 
 		if (day)
 			for (int i = 0; i < choices.size(); i++) 
@@ -1452,9 +1476,37 @@ void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
 	
 	for (int i = 0; i < dayPickups.size(); i++)
-		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+		if (dayPickups[i].getActiveState()) {
+			if(dayPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+				mfxSpecMapVar->SetResource(mSpecMapRVRed);
+			}
+			else if(dayPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+				mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+			}
+			else if(dayPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+			}
+			dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+		}	
 	for (int i = 0; i < nightPickups.size(); i++) 
-		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+		if (nightPickups[i].getActiveState()) {
+			if(nightPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+				mfxSpecMapVar->SetResource(mSpecMapRVRed);
+			}
+			else if(nightPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+				mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+			}
+			else if(nightPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+			}
+			nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+		}
 
 }
 

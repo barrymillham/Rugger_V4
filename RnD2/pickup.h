@@ -42,7 +42,7 @@ public:
 	}
 
 	int getMapIndex() {return mapIndex;}
-
+	D3DXVECTOR3 getColor(){return box->getColor();}
 
 private:
 	float radius;

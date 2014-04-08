@@ -49,6 +49,8 @@ Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const cha
 }
 
 void Pickup::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, bool glow) {
+	
+	
 	if (glow)
 		mfxGlow->SetInt(2);
 	else mfxGlow->SetInt(0);
