@@ -252,7 +252,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	flashChangeTime = 0.0f;
 	flashOn = false;
 	placedPickups = false;
-	dayCount = 2;
+	dayCount = 1;
 	won = false;
 }
 
@@ -430,9 +430,9 @@ void ColoredCubeApp::initTextStrings() {
 	lText.addLine("TOO BAD, RUGGER, I WON!", 260, 180);
 	lText.addLine("Press SPACEBAR to exit", 276, 500);
 
-	wText.addLine("RUGGER YOU FIEND! THOSE MINIONS WERE EXPENSIVE!", 260, 180);
-	wText.addLine("NEXT TIME I'LL SEND THE DEVIL HIMSELF DOWN TO GEORGIA!", 260, 250);
-	wText.addLine("Press SPACEBAR to exit", 276, 500);
+	wText.addLine("RUGGER YOU FIEND! YOU WON!", 250, 180);
+	wText.addLine("THOSE MINIONS WERE EXPENSIVE!", 235, 250);
+	wText.addLine("Press SPACEBAR to exit", 300, 500);
 }
 
 void ColoredCubeApp::initBasicVariables() {
