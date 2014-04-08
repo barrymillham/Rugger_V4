@@ -1291,12 +1291,12 @@ void ColoredCubeApp::drawScene()
 	}
 	else { // End Screen 
 		if(!won){
-				printText("Score: ", 350, 280, 0, 0, player.getScore());
 			printText(lText);
+			printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
 		}
 		else {
-			printText("Score: ", 350, 280, 0, 0, player.getScore());
 			printText(wText);
+			printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
 		}
 	}
 	
