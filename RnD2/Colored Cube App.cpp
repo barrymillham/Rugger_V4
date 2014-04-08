@@ -5,7 +5,6 @@
 //
 // Controls:
 //		'A'/'D'/'W'/'S' - Rotate 
-//
 //=============================================================================
 
 
@@ -134,7 +133,6 @@ private:
 	vector<LampPost> lamps;
 	vector<Pickup> dayPickups;
 	vector<Pickup> nightPickups;
-	GameObject superLowFloorOffInTheDistanceUnderTheScene;
 	Quad menu;
 
 	//Lighting and Camera-specific declarations
@@ -405,6 +403,22 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio));
 
+	
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 13, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 14, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 15, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 16, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 13, RELOAD, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 14, RELOAD, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 15, RELOAD, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 16, RELOAD, audio));
+
+
+
 	//for (int i = 0; i < dayPickups.size(); i++)
 	//	dayPickups[i].startGlowing();
 	//for (int i = 0; i < nightPickups.size(); i++) 
@@ -666,6 +680,7 @@ void ColoredCubeApp::updateScene(float dt)
 	bool playing = (!endScreen && !startScreen);
 	Vector3 oldPos = mEyePos;
 	
+
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
 	D3DXMATRIX sunRot;
@@ -686,6 +701,7 @@ void ColoredCubeApp::updateScene(float dt)
 		updateDayNight();
 
 		menu.update(dt);
+		
 		//General Update
 		D3DApp::updateScene(dt);
 		updateOrigin(dt);
@@ -1096,8 +1112,8 @@ void ColoredCubeApp::placePickups() {
 	
 		for (int i = 0; i < nightPickups.size(); i++)
 			nightPickups[i].setInActive();
-		/*for (int i = 0; i < dayPickups.size(); i++)
-			dayPickups[i].setInActive();*/
+		for (int i = 0; i < dayPickups.size(); i++)
+			dayPickups[i].setInActive();
 
 		if (day)
 			for (int i = 0; i < choices.size(); i++) 
