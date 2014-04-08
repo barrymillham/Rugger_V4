@@ -54,6 +54,7 @@ void Enemy::init(Box *b, float r, Vector3 pos, float s, int w, int h, int d, flo
 //Call this after calculating collisions
 void Enemy::update(float dt)
 {
+	position = position + velocity * dt;
 	Identity(&world);
 	D3DXMatrixScaling(&mScale, width, height, depth);
 	D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
@@ -123,8 +124,6 @@ void Enemy::update(float dt, Player* p)
 			}
 		}
 	}
-
-	position = position + velocity * dt;
 	update(dt);
 }
 

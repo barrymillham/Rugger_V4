@@ -560,8 +560,8 @@ void ColoredCubeApp::initLights()
 	mLights[3].att.x    = 0.0f;
 	mLights[3].att.y    = 0.55f;
 	mLights[3].att.z    = 0.0f;
-	mLights[3].range    = 75.0f;
-	mLights[3].pos = D3DXVECTOR3(45, 10, 45);
+	mLights[3].range    = 90.0f;
+	mLights[3].pos = D3DXVECTOR3(30, 10, 30);
 	
 	mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[4].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -569,8 +569,8 @@ void ColoredCubeApp::initLights()
 	mLights[4].att.x    = 0.0f;
 	mLights[4].att.y    = 0.55f;
 	mLights[4].att.z    = 0.0f;
-	mLights[4].range    = 75.0f;
-	mLights[4].pos = D3DXVECTOR3(-45, 10, 45);
+	mLights[4].range    = 90.0f;
+	mLights[4].pos = D3DXVECTOR3(-30, 10, 30);
 
 	mLights[5].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[5].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -578,8 +578,8 @@ void ColoredCubeApp::initLights()
 	mLights[5].att.x    = 0.0f;
 	mLights[5].att.y    = 0.55f;
 	mLights[5].att.z    = 0.0f;
-	mLights[5].range    = 75.0f;
-	mLights[5].pos = D3DXVECTOR3(45, 10, -45);
+	mLights[5].range    = 90.0f;
+	mLights[5].pos = D3DXVECTOR3(30, 10, -30);
 
 	mLights[6].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[6].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -587,44 +587,44 @@ void ColoredCubeApp::initLights()
 	mLights[6].att.x    = 0.0f;
 	mLights[6].att.y    = 0.55f;
 	mLights[6].att.z    = 0.0f;
-	mLights[6].range    = 75.0f;
-	mLights[6].pos = D3DXVECTOR3(-45, 10, -45);
+	mLights[6].range    = 90.0f;
+	mLights[6].pos = D3DXVECTOR3(-30, 10, -30);
 
 	//Enemy entry vectors
 	mLights[7].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[7].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-	mLights[7].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[7].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
 	mLights[7].att.x    = 0.0f;
-	mLights[7].att.y    = 0.55f;
+	mLights[7].att.y    = 0.45f;
 	mLights[7].att.z    = 0.0f;
-	mLights[7].range    = 50.0f;
+	mLights[7].range    = 35.0f;
 	mLights[7].pos = D3DXVECTOR3(200, 10, 0);
 
 	mLights[8].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[8].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-	mLights[8].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[8].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
 	mLights[8].att.x    = 0.0f;
-	mLights[8].att.y    = 0.55f;
+	mLights[8].att.y    = 0.45f;
 	mLights[8].att.z    = 0.0f;
-	mLights[8].range    = 50.0f;
+	mLights[8].range    = 35.0f;
 	mLights[8].pos = D3DXVECTOR3(-200, 10, 0);
 
 	mLights[9].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[9].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-	mLights[9].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[9].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
 	mLights[9].att.x    = 0.0f;
-	mLights[9].att.y    = 0.55f;
+	mLights[9].att.y    = 0.45f;
 	mLights[9].att.z    = 0.0f;
-	mLights[9].range    = 50.0f;
+	mLights[9].range    = 35.0f;
 	mLights[9].pos = D3DXVECTOR3(0, 10, -200);
 
 	mLights[10].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	mLights[10].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
 	mLights[10].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	mLights[10].att.x    = 0.0f;
-	mLights[10].att.y    = 0.55f;
+	mLights[10].att.y    = 0.45f;
 	mLights[10].att.z    = 0.0f;
-	mLights[10].range    = 50.0f;
+	mLights[10].range    = 35.0f;
 	mLights[10].pos = D3DXVECTOR3(0, 10, 200);
 }
 
@@ -653,7 +653,6 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	}
 	if(playing){
-		
 		timect += dt;
 		updateMusic();
 		updateCamera();
@@ -962,7 +961,6 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 	{
 		if(player.collided(&buildings[i]))
 			mEyePos = pos;
-
 		for (int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&buildings[i])) {
 				pBullets[j]->setInActive();
@@ -998,6 +996,7 @@ void ColoredCubeApp::handlePickupCollisions(float dt) {
 
 void ColoredCubeApp::handleEnemyCollisions(float dt)
 {
+	
 	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 	{
 		for(int j=0; j<pBullets.size(); j++)
@@ -1009,19 +1008,25 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
 				shotTimer = 0;
 				enemy[i].damage(50);
-				//enemy[i].setInActive();
 			}
 		}
 		for(int j=0; j<gameNS::NUM_WALLS; j++)
 		{
-			if(enemy[i].collided(&walls[j])) enemy[i].setPosition(enemy[i].getOldPos());
+			if(enemy[i].collided(&walls[j]) && D3DXVec3LengthSq(&(enemy[i].getPosition() - player.getPosition())) < 55*55)
+			{
+				enemy[i].setPosition(enemy[i].getOldPos());
+			}
 		}
 		for(int j=0; j<gameNS::NUM_BUILDINGS; j++)
 		{
 			if(enemy[i].collided(&buildings[j])) enemy[i].setPosition(enemy[i].getOldPos());
 		}
+		//for(int j=0; j<gameNS::MAX_NUM_ENEMIES; j++)
+		//{
+		//	if(enemy[j].getActiveState())
+		//		if(enemy[i].collided(&enemy[j])) enemy[i].setPosition(enemy[i].getOldPos());
+		//}
 	}
-
 }
 
 void ColoredCubeApp::placePickups() {
@@ -1112,30 +1117,33 @@ void ColoredCubeApp::updateDayNight() {
 			{
 				nightCount++;
 				placedPickups = false;
-				int spawnedEnemies = 0;
-				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && spawnedEnemies < nightCount*2; i++)
+
+				int x = 0;
+				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && x < 4*nightCount; i++)
 				{
 					if(!enemy[i].getActiveState())
 					{
 						enemy[i].setActive();
-						switch(rand()%4)
+						enemy[i].setHealth(100);
+						switch(x%4)
 						{
 						case 0:
-							enemy[i].setPosition(D3DXVECTOR3(0,0,-205 + rand()%10));
+							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,0,-250));
 							break;
 						case 1:
-							enemy[i].setPosition(D3DXVECTOR3(0,0,195 + rand()%10));
+							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,0,250));
 							break;
 						case 2:
-							enemy[i].setPosition(D3DXVECTOR3(195  + rand()%10,0,0));
+							enemy[i].setPosition(D3DXVECTOR3(250, 0, 50-rand()%100));
 							break;
 						case 3:
-							enemy[i].setPosition(D3DXVECTOR3(-205  + rand()%10,0,0));
+							enemy[i].setPosition(D3DXVECTOR3(-250, 0, 50-rand()%100));
 							break;
 						}
-						spawnedEnemies++;
+						x++;
 					}
 				}
+
 			}
 			timeOfDay = "Night";
 			mClearColor = gameNS::NIGHT_SKY_COLOR;
@@ -1188,6 +1196,7 @@ void ColoredCubeApp::updateDayNight() {
 			mLights[6].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
 		}
 	}
+	
 }
 
 

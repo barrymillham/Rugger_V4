@@ -8,8 +8,6 @@ using std::vector;
 using std::list;
 #include "Player.h"
 
-//enum STATE {};
-
 
 namespace enemyNS {
 	const float SPEED = 20.0f;
@@ -37,6 +35,8 @@ public:
 	D3DXVECTOR3 getOldPos(){return oldPos;}
 	float getSpeed(){return speed;}
 	void setSpeed(float s){speed = s;}
+	void setHealth(int h){health = h;}
+	int getHealth(){return health;}
 	//float getWidth(){return width;}
 	//float getHeight(){return 2*height;}
 	//float getDepth(){return depth;}
@@ -47,8 +47,6 @@ public:
 	//For positioning waypoint indicators
 	vector<D3DXVECTOR3> waypointPositions();
 	void calculatePath(Player*);
-
-	
 
 private:
 	float radius;
