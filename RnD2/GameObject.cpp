@@ -14,6 +14,7 @@ GameObject::GameObject()
 	facing = false;
 	facedObject = NULL;
 	facedCoordinate = Vector3(0,0,0);
+	glow = false;
 }
 
 GameObject::~GameObject()
@@ -50,7 +51,11 @@ void GameObject::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixV
 }
 
 void GameObject::drawWithWorld(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, Matrix transformation) {
-	
+	if (glow) {
+		mfxGlow->SetInt(2);
+		mfxCubeColorVar->SetRawValue(&box->getColor(), 0, sizeof(D3DXVECTOR3));
+	}
+	else mfxGlow->SetInt(0);
 	Matrix worldMatrix = GameObject::world;
 	worldMatrix=transformation*worldMatrix;
 	Matrix mWVP = worldMatrix* (*mVP);
@@ -63,6 +68,9 @@ void GameObject::drawWithWorld(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10Effe
 		mTech->GetPassByIndex( p )->Apply(0);
 		box->draw();
 	}
+
+	if (glow)
+		mfxGlow->SetInt(0);
 }
 
 
@@ -97,7 +105,7 @@ Matrix GameObject::transform(Vector3 scale, Vector3 rotate, Vector3 translate) {
 	return transformation;
 }
 
-void GameObject::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s)
+void GameObject::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s, float w, float h, float d)
 {
 	box = b;
 	radius = r;
@@ -107,7 +115,12 @@ void GameObject::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float
 	speed = sp;
 	scale = s;
 	radiusSquared = radius * radius;
-	width = depth = height = s;
+	width = w*s;
+	depth = d*s;
+	height = h*s;
+
+	mfxCubeColorVar	= box->getMFX()->GetVariableByName("gCubeColor");
+	mfxGlow			= box->getMFX()->GetVariableByName("gGlow")->AsScalar();
 }
 
 void GameObject::update(float dt)
