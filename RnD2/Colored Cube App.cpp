@@ -1250,7 +1250,7 @@ void ColoredCubeApp::drawScene()
 		printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
 		printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
 		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
-		printText(timeOfDay, 670, 20, 0, 0, WHITE);
+		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
 
 	}
 	else if(startScreen)
