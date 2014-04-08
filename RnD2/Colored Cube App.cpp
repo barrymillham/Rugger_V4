@@ -1490,7 +1490,7 @@ void ColoredCubeApp::drawPickups() {
 				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
 				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
 			}
-			dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+			dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		}	
 	for (int i = 0; i < nightPickups.size(); i++) 
 		if (nightPickups[i].getActiveState()) {
@@ -1506,7 +1506,7 @@ void ColoredCubeApp::drawPickups() {
 				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
 				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
 			}
-			nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+			nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		}
 
 }
