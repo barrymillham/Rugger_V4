@@ -22,7 +22,7 @@ public:
 	~Enemy();
 
 	//Width and height in integral number of boxes(bricks)
-	virtual void init(Box *b, float r, Vector3 pos, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
+	virtual void init(Box *b, float r, Vector3 pos, Vector3 velocity = Vector3(0,0,0), float sp = 1.0f, float s = 1, int width = 1, int height = 1, int depth = 1, float rx = 0.0f, float ry = 0.0f, float rz = 0.0f);
 	virtual void update(float dt);
 
 	void update(float dt, Player* p);

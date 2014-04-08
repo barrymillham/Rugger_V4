@@ -381,6 +381,10 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio));
 
+		for (int i = 0; i < dayPickups.size(); i++)
+		dayPickups[i].startGlowing();
+	for (int i = 0; i < nightPickups.size(); i++) 
+		nightPickups[i].startGlowing();
 }
 
 void ColoredCubeApp::initBullets() {
@@ -487,8 +491,8 @@ void ColoredCubeApp::initUniqueObjects() {
 
 void ColoredCubeApp::initEnemies() {
 	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++) {
-		enemy[i].init(&mBox, 2.0f, Vector3(0,0,0));
-		//enemy[i].faceObject(Vector3(0,0,0)); //working overload!
+		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), Vector3(0,0,0), 1, 1, 1, 2, 1);
+
 		enemy[i].faceObject(&player);
 	}
 }

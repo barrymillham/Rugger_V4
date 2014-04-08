@@ -16,7 +16,6 @@ public:
 	//				   geom,  rad,  position,				sc,	w,		h,	d
 	//walls[0].init(&brick, 2.0f, Vector3(155, 0, 250), 	1,	115,	10, 10);//	Left/Front wall 
 	void init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s = 1.0f, float w = 1.0f, float h = 1.0f, float d = 1.0f);
-
 	virtual void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	virtual void drawWithWorld(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, Matrix transformation);
 	virtual void update(float dt);

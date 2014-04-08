@@ -31,9 +31,10 @@ Enemy::~Enemy()
 	box = NULL;
 }
 //void Game init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s, float w, float h, float d)
-void Enemy::init(Box *b, float r, Vector3 pos, float s, int w, int h, int d, float rx, float ry, float rz)
+
+void Enemy::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s, int w, int h, int d, float rx, float ry, float rz)
 {
-	GameObject::init(b,r,pos,D3DXVECTOR3(0,0,0),1,s,w,h);
+	GameObject::init(b,r,pos,vel,sp,s,w,h);
 	rotX = rx;
 	rotY = ry;
 	rotZ = rz;
