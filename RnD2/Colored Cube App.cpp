@@ -405,10 +405,10 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio));
 
-	for (int i = 0; i < dayPickups.size(); i++)
-		dayPickups[i].startGlowing();
-	for (int i = 0; i < nightPickups.size(); i++) 
-		nightPickups[i].startGlowing();
+	//for (int i = 0; i < dayPickups.size(); i++)
+	//	dayPickups[i].startGlowing();
+	//for (int i = 0; i < nightPickups.size(); i++) 
+	//	nightPickups[i].startGlowing();
 }
 
 void ColoredCubeApp::initBullets() {
