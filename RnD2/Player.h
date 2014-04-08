@@ -32,7 +32,7 @@ public:
 	void addScore(int s) {score += s;}
 	int getScore() {return score;}
 	float getSpeed(){return speed;}
-    void setSpeed(float s){speed = s;}
+    void setSpeed(int s){speed = s;}
 	void grunt();
 	
 	int speed;

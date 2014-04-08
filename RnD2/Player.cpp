@@ -4,7 +4,8 @@
 Player::Player(void) : GameObject()
 {
 	health = 100;
-	ammo = 100;
+	ammo = 25;
+	speed = 20;
 }
 
 
@@ -85,6 +86,8 @@ void Player::grunt() {
 
 void Player::update(float dt, D3DXVECTOR3 moveAxis)
 {
+	D3DXVec3Normalize(&velocity, &velocity);
+	velocity *= speed;
 	position += velocity*dt;
 	Identity(&world);
 	D3DXMatrixScaling(&mScale, width, height, depth);
