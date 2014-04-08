@@ -16,7 +16,6 @@ Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const cha
 	rotZ = 0.0f;
 	radiusSquared = radius * radius;
 	box = b;
-	box->toggleGlow();
 	mapLocations.push_back(Vector3(20,0,0));
 	mapLocations.push_back(Vector3(-40,0,40));
 	mapLocations.push_back(Vector3(40,0,40));
@@ -46,9 +45,11 @@ Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const cha
 	Pickup::amount = amount;
 	Pickup::SOUND = const_cast<char*>(sound);
 	mfxGlow = box->getGlowVar();
+	mfxCubeColorVar = box->getCubeColorVar();
+	mfxCubeColorVar->SetRawValue(&box->getColor(), 0, sizeof(D3DXVECTOR3));
 }
 
-void Pickup::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, bool glow) {
+void Pickup::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP) {
 	if (glow)
 		mfxGlow->SetInt(2);
 	else mfxGlow->SetInt(0);

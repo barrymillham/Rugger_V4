@@ -53,7 +53,6 @@ void GameObject::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixV
 void GameObject::drawWithWorld(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP, Matrix transformation) {
 	if (glow) {
 		mfxGlow->SetInt(2);
-		mfxCubeColorVar->SetRawValue(&box->getColor(), 0, sizeof(D3DXVECTOR3));
 	}
 	else mfxGlow->SetInt(0);
 	Matrix worldMatrix = GameObject::world;
@@ -118,9 +117,10 @@ void GameObject::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float
 	width = w*s;
 	depth = d*s;
 	height = h*s;
-
+	D3DXVECTOR3 temp = box->getColor();
 	mfxCubeColorVar	= box->getMFX()->GetVariableByName("gCubeColor");
 	mfxGlow			= box->getMFX()->GetVariableByName("gGlow")->AsScalar();
+	mfxCubeColorVar->SetRawValue(&box->getColor(), 0, sizeof(D3DXVECTOR3));
 }
 
 void GameObject::update(float dt)

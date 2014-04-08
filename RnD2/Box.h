@@ -18,7 +18,6 @@ public:
 	void init(ID3D10Device* device, float scale, ID3D10Effect* mFX);
 	void init(ID3D10Device* device, float scale, D3DXCOLOR c, ID3D10Effect* mFX);
 	void draw();
-	void toggleGlow() {glow = true;}
 
 	void pullInVariables() {
 		mfxCubeColorVar	= mFX->GetVariableByName("gCubeColor");

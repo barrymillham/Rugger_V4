@@ -86,8 +86,10 @@ float4 PS(VS_OUT pIn) : SV_Target
     SurfaceInfo v = {pIn.posW, pIn.normalW, pIn.diffuse, pIn.spec};
     
     float3 litColor = {0.05f, 0.05f, 0.05f};
-	if (gGlow == 2) return float4(gCubeColor.x, gCubeColor.y, gCubeColor.z, pIn.diffuse.a);    
-	
+	if (gGlow == 2) 
+		return float4(gCubeColor.x, gCubeColor.y, gCubeColor.z, pIn.diffuse.a);
+		//return float4(gCubeColor.x, 0, 0, pIn.diffuse.a);
+		
 	//directed light for scene (sun)
 	litColor += ParallelLight(v, gLight[0], gEyePosW);
 	//

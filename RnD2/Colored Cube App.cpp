@@ -381,7 +381,7 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 15, WHOOSH, audio));
 	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 16, WHOOSH, audio));
 
-		for (int i = 0; i < dayPickups.size(); i++)
+	for (int i = 0; i < dayPickups.size(); i++)
 		dayPickups[i].startGlowing();
 	for (int i = 0; i < nightPickups.size(); i++) 
 		nightPickups[i].startGlowing();
@@ -1039,7 +1039,7 @@ void ColoredCubeApp::placePickups() {
 				vector<int> tempUsedIndices;
 				for (int i = 0; i < maxDayPickups; i++) {
 					bool add = true;
-					int choice = i;
+					int choice = rand()%dayPickups.size();
 					for (int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
 						if (tempUsedIndices[j] == dayPickups[choice].getMapIndex())
 							add = false; //there is already a pickup in the spot of the chosen day pickup
@@ -1070,8 +1070,8 @@ void ColoredCubeApp::placePickups() {
 	
 		for (int i = 0; i < nightPickups.size(); i++)
 			nightPickups[i].setInActive();
-		for (int i = 0; i < dayPickups.size(); i++)
-			dayPickups[i].setInActive();
+		/*for (int i = 0; i < dayPickups.size(); i++)
+			dayPickups[i].setInActive();*/
 
 		if (day)
 			for (int i = 0; i < choices.size(); i++) 
@@ -1452,9 +1452,9 @@ void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
 	
 	for (int i = 0; i < dayPickups.size(); i++)
-		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+		if (dayPickups[i].getActiveState()) dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 	for (int i = 0; i < nightPickups.size(); i++) 
-		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP, false);
+		if (nightPickups[i].getActiveState()) nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 }
 
