@@ -367,7 +367,7 @@ void ColoredCubeApp::initLamps() {
 }
 
 void ColoredCubeApp::initPickups() {
-	
+	int speed1 = player.getSpeed();
 	//define the pickups
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio));
@@ -383,10 +383,10 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio));
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 13, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 14, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 15, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 30, 16, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 13, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 14, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 15, WHOOSH, audio));
+	dayPickups.push_back(Pickup(&goldBox, &speed1, INCREASE, 30, 16, WHOOSH, audio));
 }
 
 void ColoredCubeApp::initBullets() {

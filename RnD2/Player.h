@@ -31,6 +31,8 @@ public:
 	void addAmmo(int a){ammo += a;}
 	void addScore(int s) {score += s;}
 	int getScore() {return score;}
+	float getSpeed(){return speed;}
+    void setSpeed(float s){speed = s;}
 	void grunt();
 	
 	int speed;
