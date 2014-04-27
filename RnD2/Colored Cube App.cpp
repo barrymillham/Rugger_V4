@@ -46,6 +46,7 @@ namespace gameNS {
 	const int GRASSY_AREA_WIDTH = 110;
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_WIN = 4;
+	const float FAR_CLIP = 10000.0f;
 }
 
 
@@ -866,8 +867,8 @@ void ColoredCubeApp::updateCamera() {
 
 	
 	if (debugMode) { //Allow flying with space and shift
-		if(input->isKeyDown(VK_SPACE)) position.y += 20 * dt;
-		if(input->isKeyDown(VK_SHIFT)) position.y -= 20 * dt;
+		if(input->isKeyDown(VK_SPACE)) position.y += player.getSpeed() * dt;
+		if(input->isKeyDown(VK_SHIFT)) position.y -= player.getSpeed() * dt;
 	}
 	
 	//Generate transformation matrices
@@ -1539,7 +1540,7 @@ void ColoredCubeApp::onResize()
 	D3DApp::onResize();
 
 	float aspect = (float)mClientWidth/mClientHeight;
-	D3DXMatrixPerspectiveFovLH(&mProj, 0.25f*PI, aspect, 1.0f, 1000.0f);
+	D3DXMatrixPerspectiveFovLH(&mProj, 0.25f*PI, aspect, 1.0f, gameNS::FAR_CLIP);
 }
 
 void ColoredCubeApp::drawOrigin() {
