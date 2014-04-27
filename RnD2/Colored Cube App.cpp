@@ -32,7 +32,7 @@ using std::time;
 
 namespace gameNS {
 	const float DAYLEN = 40;
-	const int NUM_WALLS = 16;
+	const int NUM_WALLS = 20;
 	const int NUM_BUILDINGS = 39;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
@@ -304,7 +304,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 20, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -545,26 +545,32 @@ void ColoredCubeApp::initBuildingPositions() {
 
 void ColoredCubeApp::initWallPositions() {
 	
-//				   geom,  rad,  position,				sc,	w,		h,	d
-	walls[0].init(&brick, 2.0f, Vector3(125, 0, 250), Vector3(0,0,0), 1, 	1,	125,	10, 10);//	Left/Front wall 
-	walls[1].init(&brick, 2.0f, Vector3(-125, 0, -250), Vector3(0,0,0), 1,	1,	125,	10, 10);//	Right/back wall
-	walls[2].init(&brick, 2.0f, Vector3(250, 0, 125),	 Vector3(0,0,0), 1,1,	10,		10, 125);//	Front/Left wall
-	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -125),	 Vector3(0,0,0), 1,1,	10,		10, 125);//	Back/Right wall
+//				   geom,  rad,  position,								sc,	w,			h,	d
+	walls[0].init(&brick, 2.0f, Vector3(125, 0, 250), Vector3(0,0,0),	1, 	1,	125,	10,		10);//	Left/Front wall 
+	walls[1].init(&brick, 2.0f, Vector3(-125, 0, -250), Vector3(0,0,0), 1,	1,	125,	10,		10);//	Right/back wall
+	walls[2].init(&brick, 2.0f, Vector3(250, 0, 125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Front/Left wall
+	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Back/Right wall
 
-	walls[4].init(&brick, 2.0f, Vector3(-125, 0, 250),	 Vector3(0,0,0), 1,1,	125,	10, 10);//	Left/Back wall 
-	walls[5].init(&brick, 2.0f, Vector3(125, 0, -250),	 Vector3(0,0,0), 1,1,	125,	10, 10);//	Right/Front wall
-	walls[6].init(&brick, 2.0f, Vector3(250, 0, -125),	 Vector3(0,0,0), 1,1,	10,		10, 125);//	Front/Right wall
-	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 125),	 Vector3(0,0,0), 1,1,	10,		10, 125);//	Back/Left wall
+	walls[4].init(&brick, 2.0f, Vector3(-125, 0, 250),	 Vector3(0,0,0), 1,	1,	125,	10,		10);//	Left/Back wall 
+	walls[5].init(&brick, 2.0f, Vector3(125, 0, -250),	 Vector3(0,0,0), 1,	1,	125,	10,		10);//	Right/Front wall
+	walls[6].init(&brick, 2.0f, Vector3(250, 0, -125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Front/Right wall
+	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Back/Left wall
 
-	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		 Vector3(0,0,0), 1,1,	20,		2.5,	1);//	Left/Front inner wall 
-	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	 Vector3(0,0,0), 1,1,	20,		2.5,	1);//	Right/Back inner wall
-	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	 Vector3(0,0,0), 1,1,	1,		2.5,	20);//	Front/Left inner wall
-	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	 Vector3(0,0,0), 1,1,	1,		2.5,	20);//	Back/Right inner wall
+	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Left/Front inner wall 
+	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Right/Back inner wall
+	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Front/Left inner wall
+	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Back/Right inner wall
 
-	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	 Vector3(0,0,0), 1,1,	20,		2.5,	1);//	Left/Back inner wall 
-	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	 Vector3(0,0,0), 1,1,	20,		2.5,	1);//	Right/Front inner wall
-	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	 Vector3(0,0,0), 1,1,	1,		2.5,	20);//	Front/Right inner wall
-	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	 Vector3(0,0,0), 1,1,	1,		2.5,	20);//	Back/Left inner wall
+	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Left/Back inner wall 
+	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Right/Front inner wall
+	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Front/Right inner wall
+	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Back/Left inner wall
+
+	walls[16].init(&brick, 2.0f, Vector3(0, 0, -1625),	 Vector3(0,0,0), 1,	1,	980,	20,	10);// Far Wall
+	walls[17].init(&brick, 2.0f, Vector3(0, 0, 1625),	 Vector3(0,0,0), 1,	1,	980,	20,	10);// Back Wall
+	walls[18].init(&brick, 2.0f, Vector3(-980, 0, 0),	 Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
+	walls[19].init(&brick, 2.0f, Vector3(980, 0, 0),	 Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
+
 
 }
 
@@ -1349,6 +1355,8 @@ void ColoredCubeApp::drawScene()
 			mfxSpecMapVar->SetResource(mSpecMapRVTestStreet);
 			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 			drawBuildings();
+			drawWalls();
+
 		}
 	}
 	else if(startScreen)
@@ -1383,16 +1391,23 @@ void ColoredCubeApp::drawScene()
 void ColoredCubeApp::drawWalls() {
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
 	mfxSpecMapVar->SetResource(mSpecMapRV);
-	for(int i=0; i<gameNS::NUM_WALLS; i++)
-		walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	if(level1)
+		for(int i=0; i<17; i++)
+			walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	else if(level2)
+		for(int i=16; i<gameNS::NUM_WALLS; i++)
+			walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
 
 void ColoredCubeApp::drawBuildings() {
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding);
 	mfxSpecMapVar->SetResource(mSpecMapRVBuilding);
-	for(int i=12; i<39/*gameNS::NUM_BUILDINGS*/; i++)
-		buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-
+	if(level1)
+		for(int i=0; i<13; i++)
+			buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	else if(level2)
+		for(int i=12; i<gameNS::NUM_BUILDINGS; i++)
+			buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
 
 void ColoredCubeApp::printText(DebugText text) {
