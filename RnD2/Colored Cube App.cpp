@@ -33,7 +33,7 @@ using std::time;
 namespace gameNS {
 	const float DAYLEN = 40;
 	const int NUM_WALLS = 16;
-	const int NUM_BUILDINGS = 12;
+	const int NUM_BUILDINGS = 39;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
 	const int NUM_LIGHTS = 11;
@@ -130,6 +130,7 @@ private:
 	Wall walls[gameNS::NUM_WALLS];
 	Building buildings[gameNS::NUM_BUILDINGS];
 	Wall floor;
+	Wall floor2;
 	vector<LampPost> lamps;
 	vector<Pickup> dayPickups;
 	vector<Pickup> nightPickups;
@@ -184,6 +185,8 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVPole;
 	ID3D10ShaderResourceView* mDiffuseMapRVStreet;
 	ID3D10ShaderResourceView* mSpecMapRVStreet;
+	ID3D10ShaderResourceView* mDiffuseMapRVTestStreet;
+	ID3D10ShaderResourceView* mSpecMapRVTestStreet;
 	ID3D10ShaderResourceView* mDiffuseMapRVBullet;
 	ID3D10ShaderResourceView* mSpecMapRVBullet;
 	ID3D10ShaderResourceView* mDiffuseMapRVBlue;
@@ -216,7 +219,7 @@ private:
 	int score;
 	int lineHeight;
 	bool firstpass;
-	bool startScreen, endScreen;
+	bool startScreen, endScreen, level1, level2, level3;
 	float dt;
 	DebugText sText, lText, wText;
 
@@ -274,7 +277,10 @@ void ColoredCubeApp::initApp()
 	audio->playCue(INTROMUSIC);
 	//pos will eventually be player.x, player.height, player.z)
 	startScreen = true;
-	position = D3DXVECTOR3(0, 5, 0);
+	level1 = false;
+	level2 = true;
+	level3 - false;
+	position = D3DXVECTOR3(0, 5, 0); 
 	initBasicGeometry();
 	initTextStrings(); //Like start/end screen text
 	initUniqueObjects(); //Like the floor
@@ -298,7 +304,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 20, audio, 1, 1, 1, 5);
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -330,6 +336,10 @@ void ColoredCubeApp::initApp()
 		L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"street test.png", 0, 0, &mDiffuseMapRVTestStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+		L"defaultspec.dds", 0, 0, &mSpecMapRVTestStreet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
@@ -482,22 +492,56 @@ void ColoredCubeApp::initBasicVariables() {
 }
 
 void ColoredCubeApp::initBuildingPositions() {
-//					geom,  rad,  position,					sc,	w,		h,	d
+//					geom,  rad,  position,					sc,	w,		h,	d    //Level 1 Buildings
 	buildings[0].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
-	buildings[1].init(&brick, 2.0f, Vector3(150, 0, -50),		1,	20,		50,  20);
+	buildings[1].init(&brick, 2.0f, Vector3(150, 0, -50),	1,	20,		50,  20);
 	buildings[2].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
 
 	buildings[3].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
 	buildings[4].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
 	buildings[5].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
 
-	buildings[6].init(&brick, 2.0f, Vector3(-150, 0, -150),1,	20,		50,  20);// Back right corner buildings
+	buildings[6].init(&brick, 2.0f, Vector3(-150, 0, -150), 1,	20,		50,  20);// Back right corner buildings
 	buildings[7].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
 	buildings[8].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
 
 	buildings[9].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
 	buildings[10].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
 	buildings[11].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
+																				 //Level 2 Buildings
+	buildings[12].init(&brick, 2.0f, Vector3(700, 0, 1300),1,	190,	50,  190);//Left Side Building 1
+	buildings[13].init(&brick, 2.0f, Vector3(420, 0, 1020),1,	95,		50,  95);//Left Side Building 2
+	buildings[14].init(&brick, 2.0f, Vector3(300, 0, 1350),1,	95,		50,  95);//Left Side Building 3
+	buildings[15].init(&brick, 2.0f, Vector3(700, 0, 925),1,	95,		50,  95);//Left Side Building 4
+
+	buildings[16].init(&brick, 2.0f, Vector3(300, 0, 700),	1,	95,		70,  120);//Left Side Building 5
+	buildings[17].init(&brick, 2.0f, Vector3(700, 0, 500),	1,	120,	50,  95);//Left Side Building 6
+	buildings[18].init(&brick, 2.0f, Vector3(750, 0, 100),	1,	120,	50,  108);//Left Side Building 7
+	buildings[19].init(&brick, 2.0f, Vector3(350, 0, 250),	1,	72,		50,  120);//Left Side Building 8
+
+	buildings[20].init(&brick, 2.0f, Vector3(800, 0, -200),	1,	95,		80,  95);//Left Side Building 9
+	buildings[21].init(&brick, 2.0f, Vector3(375, 0, -300),	1,	95,		50,  95);//Left Side Building 10
+	buildings[22].init(&brick, 2.0f, Vector3(850, 0, -550),	1,	95,		50,  95);//Left Side Building 11
+	buildings[23].init(&brick, 2.0f, Vector3(350, 0, -700),	1,	130,	50,  95);//Left Side Building 12
+	buildings[24].init(&brick, 2.0f, Vector3(800, 0, -1200),1,	120,	50,  250);//Left Side Building 13
+	buildings[25].init(&brick, 2.0f, Vector3(350, 0, -1300),1,	72,		50,  72);//Left Side Building 14
+
+	buildings[26].init(&brick, 2.0f, Vector3(-700, 0, 1350),1,	95,		50,  120);//Right Side Building 15
+	buildings[27].init(&brick, 2.0f, Vector3(-300, 0, 1100),1,	110,	50,  130);//Right Side Building 16
+	buildings[28].init(&brick, 2.0f, Vector3(-600, 0, 750),	1,	100,	50,  90);//Right Side Building 17
+	buildings[29].init(&brick, 2.0f, Vector3(-300, 0, 550),	1,	50,		30,  150);//Right Side Building 18
+	buildings[30].init(&brick, 2.0f, Vector3(-250, 0, 195),1,	95,		50,  95);//Right Side Building 19
+
+	buildings[31].init(&brick, 2.0f, Vector3(-495, 0, -10),	1,	150,	50,  110);//Right Side Building 20
+	buildings[32].init(&brick, 2.0f, Vector3(-250, 0, -215),1,	95,		50,  95);//Right Side Building 21
+	buildings[33].init(&brick, 2.0f, Vector3(-700, 0, -275),1,	95,		50,  95);//Right Side Building 22
+	buildings[34].init(&brick, 2.0f, Vector3(-250, 0, -700),1,	50,		90,  50);//Right Side Building 23
+
+	buildings[35].init(&brick, 2.0f, Vector3(-650, 0, -800),	1,	110,	50,  200);//Right Side Building 24
+	buildings[36].init(&brick, 2.0f, Vector3(-225, 0, -1000),1,	50,		60,  50);//Right Side Building 25
+	buildings[37].init(&brick, 2.0f, Vector3(-650, 0, -1300),1,	110,	50,  200);//Right Side Building 26
+	buildings[38].init(&brick, 2.0f, Vector3(-200, 0, -1300),1,	50,		30,  50);//Right Side Building 27
+
 }
 
 void ColoredCubeApp::initWallPositions() {
@@ -526,7 +570,8 @@ void ColoredCubeApp::initWallPositions() {
 }
 
 void ColoredCubeApp::initUniqueObjects() {
-	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), Vector3(0,0,0), 1, 1.0f, 250, 1, 250);
+	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), Vector3(0,0,0), 1, 1.0f, 1625, 1, 1625);
+	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), Vector3(0,0,0), 1, 1.0f, 975, 1, 1625);
 }
 
 void ColoredCubeApp::initEnemies() {
@@ -689,39 +734,65 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	}
 	if(playing){
-		timect += dt;
-		updateMusic();
-		updateCamera();
+		if(level1)
+		{
+			timect += dt;
+			updateMusic();
+			updateCamera();
 
-		updateDebugMode();
-		updateDayNight();
+			updateDebugMode();
+			updateDayNight();
 
-		menu.update(dt);
+			menu.update(dt);
 		
-		//General Update
-		D3DApp::updateScene(dt);
-		updateOrigin(dt);
-		handleUserInput();
-		updatePlayer(dt);
-		updateEnemies(dt);
-		placePickups();
-		updatePickups(dt);
-		updateLamps(dt);
-		updateWalls(dt);
-		updateBuildings(dt);
-		updateUniqueObjects(dt); //Like floor
+			//General Update
+			D3DApp::updateScene(dt);
+			updateOrigin(dt);
+			handleUserInput();
+			updatePlayer(dt);
+			updateEnemies(dt);
+			placePickups();
+			updatePickups(dt);
+			updateLamps(dt);
+			updateWalls(dt);
+			updateBuildings(dt);
+			updateUniqueObjects(dt); //Like floor //Actually, only floor
 
-		//Handle Collisions
-		handleWallCollisions(oldPos);
-		handleBuildingCollisions(oldPos);
-		handlePickupCollisions(dt);
-		handleEnemyCollisions(dt);
+			//Handle Collisions
+			handleWallCollisions(oldPos);
+			handleBuildingCollisions(oldPos);
+			handlePickupCollisions(dt);
+			handleEnemyCollisions(dt);
+		}
+		else if(level2)
+		{
+			updateCamera();
+			updateDebugMode();
+			menu.update(dt);
+			D3DApp::updateScene(dt);
+			updateOrigin(dt);
+			handleUserInput();
+			updateUniqueObjects(dt);
+			updateWalls(dt);
+			updateBuildings(dt);
+		}
+		else if(level3)
+		{
+			updateCamera();
+			updateDebugMode();
+			menu.update(dt);
+			D3DApp::updateScene(dt);
+			updateOrigin(dt);
+			handleUserInput();
+			updateUniqueObjects(dt);
+		}
+		
 
-		if(dayCount >= gameNS::NUM_NIGHTS_TO_WIN + 1){
+		/*if(dayCount >= gameNS::NUM_NIGHTS_TO_WIN + 1){
 			won = true;
 			playing = false;
 			endScreen = true;
-		}
+		}*/
 	}
 	if(endScreen){
 		doEndScreen();
@@ -828,6 +899,7 @@ void ColoredCubeApp::doEndScreen() {
 
 void ColoredCubeApp::updateUniqueObjects(float dt) {
 	floor.update(dt);
+	floor2.update(dt);
 	//big floor update must also be added here for it to show.
 }
 
@@ -1221,49 +1293,66 @@ void ColoredCubeApp::drawScene()
 
 	setDeviceAndShaderInformation();
 
-	if(playing) {		
-		mVP = mView*mProj;
-
-		mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
-		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
-		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		//drawOrigin();
-		mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
-		mfxSpecMapVar->SetResource(mSpecMapRVStreet);
-		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		drawWalls();
-		drawBuildings();
-		drawPickups();
-		drawLamps();
-
-		D3D10_TECHNIQUE_DESC techDesc;
-		mTech->GetDesc( &techDesc );
-		for(UINT p = 0; p < techDesc.Passes; ++p)
+	if(playing) {	
+		if(level1)
 		{
-			mWallMesh.draw();
-		}
+			mVP = mView*mProj;
 
-		Matrix mWVP = menu.getWorld() * (mVP);
-		mfxWVPVar->SetMatrix((float*)&mWVP);
-		mfxWorldVar->SetMatrix((float*)&menu.getWorld());
-		//D3D10_TECHNIQUE_DESC techDesc;
-		mTech->GetDesc( &techDesc );
-		for(UINT p = 0; p < techDesc.Passes; ++p)
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
+			mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
+			for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			//drawOrigin();
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
+			mfxSpecMapVar->SetResource(mSpecMapRVStreet);
+			floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			drawWalls();
+			drawBuildings();
+			drawPickups();
+			drawLamps();
+
+			D3D10_TECHNIQUE_DESC techDesc;
+			mTech->GetDesc( &techDesc );
+			for(UINT p = 0; p < techDesc.Passes; ++p)
+			{
+				mWallMesh.draw();
+			}
+
+			Matrix mWVP = menu.getWorld() * (mVP);
+			mfxWVPVar->SetMatrix((float*)&mWVP);
+			mfxWorldVar->SetMatrix((float*)&menu.getWorld());
+			//D3D10_TECHNIQUE_DESC techDesc;
+			mTech->GetDesc( &techDesc );
+			for(UINT p = 0; p < techDesc.Passes; ++p)
+			{
+				mTech->GetPassByIndex( p )->Apply(0);
+				//menu.draw();
+			}
+
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
+			mfxSpecMapVar->SetResource(mSpecMapRVBullet);
+			player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
+			printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
+			printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
+			printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
+		}
+		else if(level2)
 		{
-			mTech->GetPassByIndex( p )->Apply(0);
-			//menu.draw();
+			mVP = mView*mProj;
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTestStreet);
+			mfxSpecMapVar->SetResource(mSpecMapRVTestStreet);
+			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			drawBuildings();
 		}
-
-		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
-		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
-		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
-		printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
-		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
-		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
-
+		else if(level3)
+		{
+			mVP = mView*mProj;
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
+			mfxSpecMapVar->SetResource(mSpecMapRVStreet);
+			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		}
 	}
 	else if(startScreen)
 	{
@@ -1304,7 +1393,7 @@ void ColoredCubeApp::drawWalls() {
 void ColoredCubeApp::drawBuildings() {
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding);
 	mfxSpecMapVar->SetResource(mSpecMapRVBuilding);
-	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+	for(int i=12; i<39/*gameNS::NUM_BUILDINGS*/; i++)
 		buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 }

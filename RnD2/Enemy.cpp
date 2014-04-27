@@ -91,8 +91,7 @@ void Enemy::update(float dt, Player* p)
 	{
 		//calculate the path from the nearest waypoint to the nearest waypoint to the player
 		facing = false;
-		if(nav.empty())
-		{
+		if(nav.empty()) {
 			calculatePath(p);
 		}
 		else
