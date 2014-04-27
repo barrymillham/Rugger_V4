@@ -93,14 +93,12 @@ void Player::update(float dt, D3DXVECTOR3 moveAxis)
 	D3DXMatrixScaling(&mScale, width, height, depth);
 	D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
 	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
-	//Translate(&world, position.x, position.y, position.z);
+	
 	for (int i = 0; i < bullets.size(); i++)
 		bullets[i]->update(dt);
 	
 	if(fired == true)
-	{
 		shoot(moveAxis);
-	}
 
 	timeSinceLastShot+=dt;
 }
@@ -108,10 +106,9 @@ void Player::update(float dt, D3DXVECTOR3 moveAxis)
 void Player::shoot(D3DXVECTOR3 moveAxis)
 {
 	if(ammo == 0) return;
-	//If the player's got an active bullet on the level, he doesn't get to shoot
 	int index = -1;
 	for (int i = 0; i < bullets.size(); i++) {
-		if (!bullets[i]->getActiveState()) { //If the bullet at index i is not in use
+		if (!bullets[i]->getActiveState()) { 
 			index = i;
 			i = bullets.size();
 		}

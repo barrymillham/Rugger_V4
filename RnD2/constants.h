@@ -22,6 +22,9 @@ const UINT GAME_HEIGHT = 720;               // height of game in pixels
 #define Scale	D3DXMatrixScaling
 #define Normalize D3DXVec3Normalize
 #define MultiplyMatrix D3DXMatrixMultiply
+#define Transform D3DXVec3TransformCoord
+
+
 //const double PI = 3.14159265;
 const double GRAVITY = 2.67428e-11f;
 

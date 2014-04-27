@@ -67,7 +67,6 @@ public:
 	void initUniqueObjects();
 	void initLights();
 	void initLamps();
-	void initWaypoints();
 	void initEnemies();
 
 	void updateScene(float dt);
@@ -142,8 +141,8 @@ private:
 	Light sun;
 	int mLightNum;
 	ID3D10EffectScalarVariable* mfxLightNum;
-	D3DXVECTOR3 mEyePos;
-	D3DXVECTOR3 target;
+	D3DXVECTOR3 position;
+	D3DXVECTOR3 lookAt;
 	D3DXVECTOR3 perpAxis;
 	D3DXVECTOR3 moveAxis;
 
@@ -163,6 +162,7 @@ private:
 	bool placedPickups;
 	int dayCount;
 	bool won;
+	bool walking;
 
 	float spinAmount;
 	int shotTimer;
@@ -209,10 +209,8 @@ private:
 	//my edits
 	D3DXMATRIX worldBox1, worldBox2;
 
-	//Theta represents vertical rotation (z-axis rotation)
-	float mTheta;
-	//Phi represents horizontal rotation (y-axis rotation)
-	float mPhi;
+	float pitch;
+	float yaw; //Rotation around Y axis
 	int incrementedYMargin;
 
 	int score;
@@ -234,7 +232,7 @@ private:
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 : D3DApp(hInstance), mFX(0), mTech(0), mVertexLayout(0),
-  mfxWVPVar(0), mTheta(0.0f), mPhi(0.0f), mfxWorldVar(0), 
+  mfxWVPVar(0), pitch(0.0f), yaw(0.0f), mfxWorldVar(0), 
   mfxEyePosVar(0), mfxLightVar(0), mfxLightType(0)
 {
 	srand(time(0));
@@ -242,25 +240,6 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	D3DXMatrixIdentity(&mProj);
 	D3DXMatrixIdentity(&mWVP); 
 	D3DXMatrixIdentity(&mVP); 
-	score = 0;
-	firstpass = true;
-	startScreen = true;
-	endScreen = false;
-	night = false;
-	found = false;
-	timect = 0.0f;
-	timeOfDay = "Day";
-	srand(time(0));
-	debugMode = false;
-	nightCount = 0;
-	stepTime = 0.0f;
-	step1 = true;
-	flashChanged = false;
-	flashChangeTime = 0.0f;
-	flashOn = false;
-	placedPickups = false;
-	dayCount = 1;
-	won = false;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -291,12 +270,12 @@ void ColoredCubeApp::initApp()
 
 	SetCursorPos(0,0);
 	ShowCursor(false);
+	initBasicVariables(); //Like shotTimer, etc.
 	audio->playCue(INTROMUSIC);
 	//pos will eventually be player.x, player.height, player.z)
 	startScreen = true;
-	mEyePos = D3DXVECTOR3(0, 5, 0);
+	position = D3DXVECTOR3(0, 5, 0);
 	initBasicGeometry();
-	initBasicVariables(); //Like shotTimer, etc.
 	initTextStrings(); //Like start/end screen text
 	initUniqueObjects(); //Like the floor
 
@@ -308,10 +287,9 @@ void ColoredCubeApp::initApp()
 	initLights();
 	initLamps();
 	initEnemies();
-	initWaypoints();
 
 	menu.init(md3dDevice, 1.0f, WHITE);
-	menu.setPosition(mEyePos);
+	menu.setPosition(position);
 	menu.setRotYAngle(ToRadian(90));
 	menu.setRotZAngle(ToRadian(0));
 	menu.setRotXAngle(ToRadian(-90));
@@ -480,6 +458,27 @@ void ColoredCubeApp::initBasicVariables() {
 	shotTimer = 0;
 	hasntPlayedYet = true;
 	nightDayTrans = false;
+	walking = false;
+
+	score = 0;
+	firstpass = true;
+	startScreen = true;
+	endScreen = false;
+	night = false;
+	found = false;
+	timect = 0.0f;
+	timeOfDay = "Day";
+	srand(time(0));
+	debugMode = false;
+	nightCount = 0;
+	stepTime = 0.0f;
+	step1 = true;
+	flashChanged = false;
+	flashChangeTime = 0.0f;
+	flashOn = false;
+	placedPickups = false;
+	dayCount = 1;
+	won = false;
 }
 
 void ColoredCubeApp::initBuildingPositions() {
@@ -533,7 +532,6 @@ void ColoredCubeApp::initUniqueObjects() {
 void ColoredCubeApp::initEnemies() {
 	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++) {
 		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), Vector3(0,0,0), 1, 1, 1, 2, 1);
-
 		enemy[i].faceObject(&player);
 	}
 }
@@ -668,19 +666,16 @@ void ColoredCubeApp::initLights()
 	mLights[10].pos = D3DXVECTOR3(0, 10, 200);
 }
 
-void ColoredCubeApp::initWaypoints()
-{
-	
-}
-
-
 
 void ColoredCubeApp::updateScene(float dt)
 {
 	ColoredCubeApp::dt = dt;
 	bool playing = (!endScreen && !startScreen);
-	Vector3 oldPos = mEyePos;
+	Vector3 oldPos = position;
 	
+	//Restricting the mouse movement
+	RECT restrict = {639, 399, 640, 400};
+	ClipCursor(&restrict);
 
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
@@ -741,8 +736,8 @@ void ColoredCubeApp::updateScene(float dt)
 	// The spotlight takes on the camera position and is aimed in the
 	// same direction the camera is looking.  In this way, it looks
 	// like we are holding a flashlight.
-	mLights[2].pos = mEyePos;
-	D3DXVec3Normalize(&mLights[2].dir, &(target-mEyePos));
+	mLights[2].pos = position;
+	D3DXVec3Normalize(&mLights[2].dir, &(lookAt-position));
 
 
 }
@@ -761,7 +756,7 @@ void ColoredCubeApp::updateDebugMode() {
 		input->clear(KEY_K);
 	} 
 	if (input->wasKeyPressed(KEY_L)) {
-		mEyePos = D3DXVECTOR3(mEyePos.x, 5, mEyePos.z);
+		position = D3DXVECTOR3(position.x, 5, position.z);
 		debugMode = false;
 		input->clear(KEY_L);
 	}
@@ -774,120 +769,53 @@ void ColoredCubeApp::updateDebugMode() {
 void ColoredCubeApp::updateCamera() {
 	int dx = input->getMouseRawX();
 	int dy = input->getMouseRawY();
-	D3DXVECTOR3 pos = player.getPosition();
-	if(dx < 0)
-		mPhi -= 6.0f*dt;
-	if(dx > 0)
-		mPhi += 6.0f*dt;
-	if(dy < 0)
-		mTheta += 3.0f*dt;
-	if(dy > 0)
-		mTheta -= 3.0f*dt;
+	float _speed = 6.0;
 
-	//Restricting the mouse movement
-	RECT restrict = {639, 399, 640, 400};
-	ClipCursor(&restrict);
-	bool walking = false;
-	if(input->isKeyDown(KEY_W))
-	{
-		walking = true;
-		moveAxis.y = 0;
-		D3DXVec3Normalize(&moveAxis, &moveAxis);
-		mEyePos += moveAxis * dt * player.getSpeed();
-	}
-	if(input->isKeyDown(KEY_S))
-	{
-		walking = true;
-		moveAxis.y = 0;
-		D3DXVec3Normalize(&moveAxis, &moveAxis);
-	
-		mEyePos -= moveAxis * dt * player.getSpeed();
-	}
-	if(input->isKeyDown(KEY_D))
-	{
-		walking = true;
-		mEyePos -= perpAxis * dt * player.getSpeed();
-	}
-	if(input->isKeyDown(KEY_A))
-	{
-		walking = true;
-		mEyePos += perpAxis * dt * player.getSpeed();
-	}
-	
-	if (debugMode) 
-	if(input->isKeyDown(VK_SPACE))
-	{
-		mEyePos.y += 20 * dt;
-	}
-	if (debugMode) 
-	if(input->isKeyDown(VK_SHIFT))
-	{
-		mEyePos.y -= 20 * dt;
-	}
-
-	if(input->getMouseLButton())
-	{
-		if(!player.firedLastFrame){
-			player.fired = true;
-			if(player.getAmmo() > 0) audio->playCue(FIRE);
-		}
-		player.firedLastFrame = true; 
-	}
-	else
-	{
-		player.firedLastFrame = false;
-		player.fired = false;
-	}
-	if(input->getMouseRButton())
-	{
-		//Do something
-	}
-
-	if (walking) {
-		stepTime += 1;
-		if (stepTime*dt > gameNS::FOOTSTEP_GAP) {
-			if (pos.x < gameNS::GRASSY_AREA_WIDTH/2.0f && pos.x > -gameNS::GRASSY_AREA_WIDTH/2.0f  && pos.z > -gameNS::GRASSY_AREA_WIDTH/2.0f && pos.z < gameNS::GRASSY_AREA_WIDTH/2.0f) { //in grassy area 
-				if (step1) audio->playCue(FOOTSTEP3);
-				else audio->playCue(FOOTSTEP4);
-			} else {
-				if (step1) audio->playCue(FOOTSTEP1);
-				else audio->playCue(FOOTSTEP2);
-			}
-			step1 = !step1;
-			stepTime = 0.0f;
-		}
-	}
-
-	// Restrict the angle mPhi and radius mRadius.
-	if( mTheta < -(PI/2.0f) + 0.01f)	mTheta = -(PI/2.0f) + 0.01f;
-	if( mTheta > PI/2.0f - 0.01f)	mTheta = (PI/2.0f) - 0.01f;
-	//target will start pointing in the +x direction and will be rotated according to the camera's net rotations
-	//Should eventually be pos.x+1, pos.y, pos.z to make the camera rotate according to its own axis
-	//D3DXVECTOR3 target(1, 0, 0);
-	//Up remains unchanged.
+	D3DXVECTOR3 transformRef(1, 0, 0); 
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	Vector3 direction = Vector3(0,0,0);
 
-	//Big changes to lookat vector
-	D3DXVECTOR4 t4(1, 0, 0, 1);
-	Matrix rotZ, rotY, trans;
-	D3DXMatrixRotationZ(&rotZ, mTheta);
-	D3DXMatrixRotationY(&rotY, mPhi);
-	D3DXMatrixTranslation(&trans, mEyePos.x, mEyePos.y, mEyePos.z);
-	//Rotate around the Z-axis first, then the Y-axis, then translate to the camera position
-	Matrix transform = rotZ * rotY/* * trans*/;
+	bool yawUpdate = (dx != 0)?true:false;
+	bool pitchUpdate = (dy != 0)?true:false;
 	
-	//t4 now holds the final position of the camera target point
-	D3DXVec4Transform(&t4, &t4, &transform);
-	moveAxis = D3DXVECTOR3(t4.x, t4.y, t4.z);
-	D3DXVec3Normalize(&moveAxis, &moveAxis);
-	D3DXVec3Cross(&perpAxis, &(D3DXVECTOR3(t4.x, t4.y, t4.z)), &up);
-	D3DXVec3Normalize(&perpAxis, &perpAxis);
-	D3DXVec4Transform(&t4, &t4, &trans);
-	//Assign it into a Vec3 and we should be good to go
-	target = D3DXVECTOR3(t4.x, t4.y, t4.z);
-	//D3DXVec3Normalize(&target, &target);
+	if(dx < 0) yaw -= _speed*dt;
+	if(dx > 0) yaw += _speed*dt;
+	if(dy < 0) pitch += (_speed/2)*dt;
+	if(dy > 0) pitch -= (_speed/2)*dt;
+	// Restrict the angle pitch and radius mRadius.
+	if( pitch < -(PI/2.0f) + 0.01f)		pitch = -(PI/2.0f) + 0.01f;
+	if( pitch > PI/2.0f - 0.01f)		pitch = (PI/2.0f) - 0.01f;
 
-	D3DXMatrixLookAtLH(&mView, &mEyePos, &target, &up);
+	walking = false;
+	if(GetAsyncKeyState('A') & 0x8000) direction.z = 1;
+	if(GetAsyncKeyState('D') & 0x8000) direction.z = -1;
+	if(GetAsyncKeyState('S') & 0x8000) {direction.x = -1; moveAxis.y = 0;}
+	if(GetAsyncKeyState('W') & 0x8000) {direction.x = 1;  moveAxis.y = 0;}
+
+
+	
+	if (debugMode) { //Allow flying with space and shift
+		if(input->isKeyDown(VK_SPACE)) position.y += 20 * dt;
+		if(input->isKeyDown(VK_SHIFT)) position.y -= 20 * dt;
+	}
+	
+	//Generate transformation matrices
+	Matrix yawR = *D3DXMatrixRotationY(&yawR, yaw);
+	Matrix pitchR = *D3DXMatrixRotationZ(&pitchR, pitch);
+	Matrix temp = pitchR * yawR; 
+
+	if (direction != Vector3(0,0,0)) {
+		walking = true;
+		Transform(&direction, &direction, &yawR);
+		position += direction * player.getSpeed() * dt;
+	}
+	
+	Transform(&transformRef, &transformRef, &temp);
+	Normalize(&transformRef, &transformRef);
+	lookAt = transformRef * player.getSpeed() * dt;
+	lookAt += position;
+
+	D3DXMatrixLookAtLH(&mView, &position, &lookAt, &up);
 }
 
 void ColoredCubeApp::doEndScreen() {
@@ -920,14 +848,55 @@ void ColoredCubeApp::updateBuildings(float dt) {
 }
 
 void ColoredCubeApp::updatePlayer(float dt) {
-	//player.setVelocity(moveRuggerDirection() * player.getSpeed());
-	player.setPosition(Vector3(mEyePos.x, mEyePos.y-2, mEyePos.z));
-	player.update(dt, moveAxis);
+	
+	D3DXVECTOR3 pos = player.getPosition();
+	player.setPosition(Vector3(position.x, position.y-2, position.z));
+	player.update(dt, moveAxis); //moveAxis is passed to the bullet
 	if (player.getHealth() <= 0) {
 		Sleep(2000);
 		endScreen = true;
 		input->clearKeyPress(KEY_SPACE);
 	}
+
+
+	//Update shooting
+	if(input->getMouseLButton())
+	{
+		if(!player.firedLastFrame){
+			player.fired = true;
+			if(player.getAmmo() > 0) audio->playCue(FIRE);
+			//else audio->playCue(OUT_OF_AMMO);
+		}
+		player.firedLastFrame = true; 
+	} else {
+		player.firedLastFrame = false;
+		player.fired = false;
+	}
+	if(input->getMouseRButton())
+	{
+		//Do something
+	}
+
+
+	
+	//Update walking noises
+	if (walking) {
+		stepTime += 1;
+		if (stepTime*dt > gameNS::FOOTSTEP_GAP) {
+			if (pos.x < gameNS::GRASSY_AREA_WIDTH/2.0f && pos.x > -gameNS::GRASSY_AREA_WIDTH/2.0f  && pos.z > -gameNS::GRASSY_AREA_WIDTH/2.0f && pos.z < gameNS::GRASSY_AREA_WIDTH/2.0f) { //in grassy area 
+				if (step1) audio->playCue(FOOTSTEP3);
+				else audio->playCue(FOOTSTEP4);
+			} else {
+				if (step1) audio->playCue(FOOTSTEP1);
+				else audio->playCue(FOOTSTEP2);
+			}
+			step1 = !step1;
+			stepTime = 0.0f;
+		}
+	}
+
+
+
 }
 
 void ColoredCubeApp::updateEnemies(float dt)
@@ -984,7 +953,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 	{
 		if(player.collided(&walls[i]))
 		{
-			mEyePos = pos;
+			position = pos;
 		}
 
 		for (int j = 0; j < pBullets.size(); j++) {
@@ -1002,7 +971,7 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
 	{
 		if(player.collided(&buildings[i]))
-			mEyePos = pos;
+			position = pos;
 		for (int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&buildings[i])) {
 				pBullets[j]->setInActive();
@@ -1449,7 +1418,7 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
     md3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Set per frame constants.
-	mfxEyePosVar->SetRawValue(&mEyePos, 0, sizeof(D3DXVECTOR3));
+	mfxEyePosVar->SetRawValue(&position, 0, sizeof(D3DXVECTOR3));
 	mfxLightVar->SetRawValue(&mLights, 0, mLightNum*sizeof(Light));
 	mfxLightType->SetInt(mLightType);
 	mfxWVPVar->SetMatrix((float*)&mWVP);
