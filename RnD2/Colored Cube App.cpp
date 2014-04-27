@@ -220,7 +220,7 @@ private:
 	int score;
 	int lineHeight;
 	bool firstpass;
-	bool startScreen, endScreen, level1, level2, level3;
+	bool startScreen, endScreen, level1, level2;
 	float dt;
 	DebugText sText, lText, wText;
 
@@ -280,7 +280,6 @@ void ColoredCubeApp::initApp()
 	startScreen = true;
 	level1 = false;
 	level2 = true;
-	level3 - false;
 	position = D3DXVECTOR3(0, 5, 0); 
 	initBasicGeometry();
 	initTextStrings(); //Like start/end screen text
@@ -371,7 +370,6 @@ void ColoredCubeApp::initLamps() {
 }
 
 void ColoredCubeApp::initPickups() {
-	//int speed1 = player.getSpeed();
 	//define the pickups
 
 	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio));
@@ -398,14 +396,14 @@ void ColoredCubeApp::initPickups() {
 	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio));
 	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio));
 	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 13, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 14, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 15, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 100, 16, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 13, RELOAD, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 14, RELOAD, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 15, RELOAD, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 100, 16, RELOAD, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio));
 
 
 
@@ -767,27 +765,31 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 		else if(level2)
 		{
+			//timect += dt;
+			//updateMusic();
 			updateCamera();
+
 			updateDebugMode();
+			//updateDayNight();
+
 			menu.update(dt);
+			
 			D3DApp::updateScene(dt);
 			updateOrigin(dt);
 			handleUserInput();
-			updateUniqueObjects(dt);
+			updatePlayer(dt);
+			//updateEnemies();
+			//placePickups();
+			//updateLamps();
 			updateWalls(dt);
 			updateBuildings(dt);
-		}
-		else if(level3)
-		{
-			updateCamera();
-			updateDebugMode();
-			menu.update(dt);
-			D3DApp::updateScene(dt);
-			updateOrigin(dt);
-			handleUserInput();
 			updateUniqueObjects(dt);
+
+			//handleWallCollisions(oldPos);
+			//handleBuildingCollisions(oldPos);
+			handlePickupCollisions(dt);
+			handleEnemyCollisions(dt);
 		}
-		
 
 		/*if(dayCount >= gameNS::NUM_NIGHTS_TO_WIN + 1){
 			won = true;
@@ -1043,6 +1045,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
 	{
+		if (buildings[i].getActiveState() == false) continue;
 		if(player.collided(&buildings[i]))
 			position = pos;
 		for (int j = 0; j < pBullets.size(); j++) {
@@ -1346,13 +1349,6 @@ void ColoredCubeApp::drawScene()
 			mfxSpecMapVar->SetResource(mSpecMapRVTestStreet);
 			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 			drawBuildings();
-		}
-		else if(level3)
-		{
-			mVP = mView*mProj;
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
-			mfxSpecMapVar->SetResource(mSpecMapRVStreet);
-			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		}
 	}
 	else if(startScreen)
