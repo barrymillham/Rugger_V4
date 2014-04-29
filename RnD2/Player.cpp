@@ -131,8 +131,3 @@ void Player::shoot(D3DXVECTOR3 moveAxis)
 	timeSinceLastShot = 0;
 	fired = false;
 }
-
-void Player::rotateTargeting(int s)
-{
-//unneeded, we will use the camera vectors for targeting
-}

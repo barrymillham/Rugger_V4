@@ -28,6 +28,7 @@
 #include "Light.h"
 #include "LampPost.h"
 #include "Enemy.h"
+#include "Camera.h"
 using std::time;
 
 namespace gameNS {
@@ -232,6 +233,8 @@ private:
 	bool step1;
 	bool flashChanged, flashOn;
 	float flashChangeTime;
+
+	Camera camera;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -356,6 +359,8 @@ void ColoredCubeApp::initApp()
 		L"yellow.png", 0, 0, &mDiffuseMapRVYellow, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
 		L"defaultspec.dds", 0, 0, &mSpecMapRVYellow, 0 ));
+
+	camera.init(input, position, Vector3(1, 0, 0), player.getPosition() + Vector3(1, 0, 0));
 
 }
 
@@ -729,8 +734,9 @@ void ColoredCubeApp::updateScene(float dt)
 
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
-	D3DXMATRIX sunRot;
-	D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
+	//D3DXMATRIX sunRot;
+	//D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
+
 	if (startScreen){
 		if(input->isKeyDown(VK_SPACE)){
 			startScreen = false;
@@ -739,69 +745,41 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	}
 	if(playing){
+		timect += dt;
+		D3DApp::updateScene(dt);
+		menu.update(dt);
+		updateDebugMode();
+		updateMusic();
+		menu.update(dt);
+		updateDayNight();
+
+		camera.update(dt);
+		player.setPosition(camera.getPosition());
 		if(level1)
 		{
-			timect += dt;
-			updateMusic();
-			updateCamera();
-
-			updateDebugMode();
-			updateDayNight();
-
-			menu.update(dt);
-		
-			//General Update
-			D3DApp::updateScene(dt);
-			updateOrigin(dt);
-			handleUserInput();
-			updatePlayer(dt);
-			updateEnemies(dt);
 			placePickups();
-			updatePickups(dt);
-			updateLamps(dt);
-			updateWalls(dt);
-			updateBuildings(dt);
-			updateUniqueObjects(dt); //Like floor //Actually, only floor
 
-			//Handle Collisions
-			handleWallCollisions(oldPos);
-			handleBuildingCollisions(oldPos);
-			handlePickupCollisions(dt);
-			handleEnemyCollisions(dt);
 		}
 		else if(level2)
 		{
-			//timect += dt;
-			//updateMusic();
-			updateCamera();
 
-			updateDebugMode();
-			//updateDayNight();
-
-			menu.update(dt);
-			
-			D3DApp::updateScene(dt);
-			updateOrigin(dt);
-			handleUserInput();
-			updatePlayer(dt);
-			//updateEnemies();
-			//placePickups();
-			//updateLamps();
-			updateWalls(dt);
-			updateBuildings(dt);
-			updateUniqueObjects(dt);
-
-			//handleWallCollisions(oldPos);
-			//handleBuildingCollisions(oldPos);
-			handlePickupCollisions(dt);
-			handleEnemyCollisions(dt);
 		}
+		updateOrigin(dt);
+		handleUserInput();
+		updatePlayer(dt);
+		updateEnemies(dt);
+		updatePickups(dt);
+		updateLamps(dt);
 
-		/*if(dayCount >= gameNS::NUM_NIGHTS_TO_WIN + 1){
-			won = true;
-			playing = false;
-			endScreen = true;
-		}*/
+		updateWalls(dt);
+		updateBuildings(dt);
+		updateUniqueObjects(dt);
+
+		//Handle Collisions
+		handleWallCollisions(oldPos);
+		handleBuildingCollisions(oldPos);
+		handlePickupCollisions(dt);
+		handleEnemyCollisions(dt);
 	}
 	if(endScreen){
 		doEndScreen();
@@ -818,8 +796,6 @@ void ColoredCubeApp::updateScene(float dt)
 	// like we are holding a flashlight.
 	mLights[2].pos = position;
 	D3DXVec3Normalize(&mLights[2].dir, &(lookAt-position));
-
-
 }
 
 void ColoredCubeApp::updateMusic() {
@@ -931,8 +907,9 @@ void ColoredCubeApp::updateBuildings(float dt) {
 void ColoredCubeApp::updatePlayer(float dt) {
 	
 	D3DXVECTOR3 pos = player.getPosition();
-	player.setPosition(Vector3(position.x, position.y-2, position.z));
-	player.update(dt, moveAxis); //moveAxis is passed to the bullet
+	//player.setPosition(Vector3(position.x, position.y-2, position.z));
+	player.setPosition(camera.getPosition());
+	player.update(dt, camera.getLookatDirection()); //moveAxis is passed to the bullet
 	if (player.getHealth() <= 0) {
 		Sleep(2000);
 		endScreen = true;
@@ -1306,7 +1283,8 @@ void ColoredCubeApp::drawScene()
 	if(playing) {	
 		if(level1)
 		{
-			mVP = mView*mProj;
+			//mVP = mView*mProj;
+			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
 
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
 			mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
@@ -1350,7 +1328,9 @@ void ColoredCubeApp::drawScene()
 		}
 		else if(level2)
 		{
-			mVP = mView*mProj;
+			//mVP = mView*mProj;
+			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
+
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTestStreet);
 			mfxSpecMapVar->SetResource(mSpecMapRVTestStreet);
 			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
@@ -1440,7 +1420,8 @@ void ColoredCubeApp::printText(string text, int rectPosX, int rectPosY, int rect
 }
 
 void ColoredCubeApp::drawLine(LineObject* line) {
-	mWVP = line->getWorldMatrix()*mView*mProj;
+	//mWVP = line->getWorldMatrix()*mView*mProj;
+	mWVP = line->getWorldMatrix()*camera.getViewMatrix()*camera.getProjectionMatrix();
 	mfxWVPVar->SetMatrix((float*)&mWVP);
 	line->setMTech(mTech);
 	line->draw();
