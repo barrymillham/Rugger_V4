@@ -1430,10 +1430,10 @@ void ColoredCubeApp::drawLine(LineObject* line) {
 void ColoredCubeApp::buildFX()
 {
 		DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
-#if defined( DEBUG ) || defined( _DEBUG )
-    shaderFlags |= D3D10_SHADER_DEBUG;
-	shaderFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
-#endif
+//#if defined( DEBUG ) || defined( _DEBUG )
+//    shaderFlags |= D3D10_SHADER_DEBUG;
+//	shaderFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
+//#endif
 
 	ID3D10Blob* compilationErrors = 0;
 	HRESULT hr = 0;
