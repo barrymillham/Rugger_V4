@@ -25,7 +25,7 @@ public:
 	void setSpeed(float s) {speed = s;}
 	float getSpeed () {return speed;}
 	Vector3 getLookatDirection(){return transformedReference;}
-
+	Vector3 getRightVec() {return right;}
 	void setFoV(float fov){FoV = fov;}
 	float getFoV() {return FoV;}
 	

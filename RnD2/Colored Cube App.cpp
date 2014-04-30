@@ -48,6 +48,7 @@ namespace gameNS {
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_WIN = 4;
 	const float FAR_CLIP = 10000.0f;
+	const int PLAYER_SPEED = 40;
 }
 
 
@@ -319,46 +320,26 @@ void ColoredCubeApp::initApp()
 	mRedMesh.init(md3dDevice, 1.0f, mFX);
 	mYellowMesh.init(md3dDevice, 1.0f, mFX);
 
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"skyscraper.jpg", 0, 0, &mDiffuseMapRVBuilding, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"Robot.png", 0, 0, &mDiffuseMapRVEnemy, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVEnemy, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"pole.png", 0, 0, &mDiffuseMapRVPole, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVPole, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"street test.png", 0, 0, &mDiffuseMapRVTestStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVTestStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"blue.png", 0, 0, &mDiffuseMapRVBlue, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVBlue, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"red.png", 0, 0, &mDiffuseMapRVRed, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVRed, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"yellow.png", 0, 0, &mDiffuseMapRVYellow, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRVYellow, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"skyscraper.jpg", 0, 0, &mDiffuseMapRVBuilding, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"Robot.png", 0, 0, &mDiffuseMapRVEnemy, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVEnemy, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"pole.png", 0, 0, &mDiffuseMapRVPole, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVPole, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"street test.png", 0, 0, &mDiffuseMapRVTestStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVTestStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"blue.png", 0, 0, &mDiffuseMapRVBlue, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBlue, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"red.png", 0, 0, &mDiffuseMapRVRed, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVRed, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"yellow.png", 0, 0, &mDiffuseMapRVYellow, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVYellow, 0 ));
 
 	camera.init(input, position, Vector3(1, 0, 0), player.getPosition() + Vector3(1, 0, 0));
 
@@ -409,8 +390,6 @@ void ColoredCubeApp::initPickups() {
 	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio));
 	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio));
 	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio));
-
-
 
 	//for (int i = 0; i < dayPickups.size(); i++)
 	//	dayPickups[i].startGlowing();
@@ -734,9 +713,6 @@ void ColoredCubeApp::updateScene(float dt)
 
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
-	//D3DXMATRIX sunRot;
-	//D3DXMatrixRotationX(&sunRot, ToRadian(15.0f));
-
 	if (startScreen){
 		if(input->isKeyDown(VK_SPACE)){
 			startScreen = false;
@@ -784,12 +760,6 @@ void ColoredCubeApp::updateScene(float dt)
 	if(endScreen){
 		doEndScreen();
 	}
-	
-	// The point light circles the scene as a function of time, 
-	// staying 7 units above the land's or water's surface.
-	mLights[1].pos.x = 50.0f*cosf( mTimer.getGameTime() );
-	mLights[1].pos.z = 50.0f*sinf( mTimer.getGameTime() );
-	mLights[1].pos.y = 7.0f;
 	
 	// The spotlight takes on the camera position and is aimed in the
 	// same direction the camera is looking.  In this way, it looks
