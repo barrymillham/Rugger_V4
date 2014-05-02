@@ -25,7 +25,9 @@ cbuffer cbPerFrame
 cbuffer cbFixed
 {
 	// Net constant acceleration used to accerlate the particles.
-	float3 gAccelW = {0.0f, 7.8f, 0.0f};
+	//float3 gAccelW = {0.0f, 7.8f, 0.0f};
+	float3 gAccelW = {0.0f, 30.0f, 0.0f};
+	
 	
 	// Texture coordinates used to stretch texture over quad 
 	// when we expand point particle into a quad.
@@ -240,8 +242,10 @@ void DrawGS(point VS_OUT gIn[1],
 		// Compute 4 triangle strip vertices (quad) in local space.
 		// The quad faces down the +z axis in local space.
 		//
-		float halfWidth  = 0.5f*gIn[0].sizeW.x;
-		float halfHeight = 0.5f*gIn[0].sizeW.y;
+		//float halfWidth  = 0.5f*gIn[0].sizeW.x;
+		//float halfHeight = 0.5f*gIn[0].sizeW.y;
+		float halfWidth  = 2*gIn[0].sizeW.x;
+		float halfHeight = 2*gIn[0].sizeW.y;
 	
 		float4 v[4];
 		v[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f);

@@ -247,7 +247,7 @@ private:
 	Camera camera;
 
 	//PARTICLES
-	PSystem mFire;
+	PSystem mFire[5];
 	float gameTime;
 };
 
@@ -369,7 +369,8 @@ void ColoredCubeApp::initApp()
 	flares.push_back(L"flare0.dds"); 
 	ID3D10ShaderResourceView* texArray = GetTextureMgr().createTexArray(L"flares", flares);
  
-	mFire.init(md3dDevice, fx::FireFX, texArray, 1000, D3DXVECTOR3(10, 10, 10), &camera); 
+	for(int i=0; i<5; i++)
+		mFire[i].init(md3dDevice, fx::FireFX, texArray, 150, D3DXVECTOR3(10 * i, 1, 10), &camera); 
 	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
 }
 
@@ -807,7 +808,8 @@ void ColoredCubeApp::updateScene(float dt)
 		handlePickupCollisions(dt);
 		handleEnemyCollisions(dt);
 
-		mFire.update(dt, gameTime);
+		for(int i=0; i<5; i++)
+			mFire[i].update(dt, gameTime);
 	}
 	if(endScreen){
 		doEndScreen();
@@ -1368,8 +1370,12 @@ void ColoredCubeApp::drawScene()
 		md3dDevice->OMSetDepthStencilState(0, 0);
 		float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 		md3dDevice->OMSetBlendState(0, blendFactor, 0xffffffff);
-		mFire.setEyePos(camera.getPosition());
-		mFire.draw();
+		
+		for(int i=0; i<5; i++)
+		{
+			mFire[i].setEyePos(camera.getPosition());
+			mFire[i].draw();
+		}
 	}
 	else if(startScreen)
 	{
