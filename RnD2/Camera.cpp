@@ -13,6 +13,8 @@ Camera::Camera()
 	yaw = 0;
 	roll = 0;
 	pitch = 0;
+	fly = false;
+	fall = false;
 }
 
 Camera::~Camera()
@@ -34,14 +36,16 @@ void Camera::setPerspective()
 	D3DXMatrixPerspectiveFovLH(&mProj, FoV, aspectRatio, nearClippingPlane,farClippingPlane); 
 }
 
-void Camera::update(float dt)
+void Camera::update(float dt, float playerSpeeed)
 {
 	int dx = input->getMouseRawX();
 	int dy = input->getMouseRawY();
 
 	bool rotated = false;
 	//float _speed = 100;
-	float _speed = 6.0f;
+	float cameraSpeed = 6.0f;
+	speed = cameraSpeed;
+	float playerSpeed = playerSpeeed;
 	float deltaYaw = 0;
 	float deltaPitch = 0;
 
@@ -59,7 +63,7 @@ void Camera::update(float dt)
 	//if(input->isKeyDown(VK_RIGHT))
 	if(dx > 0)
 	{
-		deltaYaw += _speed*dt;
+		deltaYaw += cameraSpeed*dt;
 		yaw += deltaYaw;
 		rotated = true;
 	}
@@ -68,14 +72,14 @@ void Camera::update(float dt)
 	if(dx < 0)
 	{
 		rotated = true;
-		deltaYaw -= _speed*dt;
+		deltaYaw -= cameraSpeed*dt;
 		yaw += deltaYaw;
 	}
 	//if (input->isKeyDown(VK_UP))
 	if(dy < 0)
 	{
 		rotated = true;
-		deltaPitch += _speed*dt;
+		deltaPitch += cameraSpeed*dt;
 		if (deltaPitch > 1) 
 			deltaPitch = 1;
 		pitch += deltaPitch;
@@ -84,22 +88,29 @@ void Camera::update(float dt)
 	if(dy > 0)
 	{
 		rotated = true;
-		deltaPitch -= _speed*dt;
+		deltaPitch -= cameraSpeed*dt;
 		if (deltaPitch < -1) 
 			deltaPitch = -1;
 		pitch += deltaPitch;
 
 	}
 
-	if(input->isKeyDown(KEY_A))
-			direction.z = 1;
-	if(input->isKeyDown(KEY_D))
-			direction.z = -1;
-	if(input->isKeyDown(KEY_S))
-			direction.x = -1;
-	if(input->isKeyDown(KEY_W))
-			direction.x = 1;
+	if(input->isKeyDown(KEY_A)) direction.z = 1;
+	if(input->isKeyDown(KEY_D)) direction.z = -1;
+	if(input->isKeyDown(KEY_S)) direction.x = -1;
+	if(input->isKeyDown(KEY_W)) direction.x = 1;
 	
+	if (fly)  {
+		float flySpeed = playerSpeed * dt * 8;
+		position.y += flySpeed;
+		lookAt.y += flySpeed;
+	}
+	if (fall) {
+		float fallSpeed = playerSpeed * dt * 8;
+		position.y -= fallSpeed;
+		lookAt.y -= fallSpeed;
+	}
+
 	//Generate rotation matrices
 	if( pitch < -(PI/2.0f) + 0.01f)		pitch = -(PI/2.0f) + 0.01f;
 	if( pitch > PI/2.0f - 0.01f)		pitch = (PI/2.0f) - 0.01f;
@@ -110,9 +121,8 @@ void Camera::update(float dt)
 	if(direction != Vector3(0,0,0))
 	{
 		Transform(&direction, &direction, &(yawR));
-		//Transform(&direction, &direction, &(yawR));
 		D3DXVec3Normalize(&direction, &direction);
-		position += direction * speed * dt;
+		position += direction * playerSpeed * dt;
 	}
 
 	//Update LookAt
@@ -120,12 +130,12 @@ void Camera::update(float dt)
 	{
 		Transform(&transformedReference, &transformedReference, &(pitchR * yawR));
 		D3DXVec3Normalize(&transformedReference, &transformedReference);
-		lookAt = transformedReference * speed ;
+		lookAt = transformedReference * playerSpeed;
 		lookAt += position;
 		rotated = false;
 	}
 	else{
-		lookAt += direction * speed * dt;
+		lookAt += direction * playerSpeed * dt;
 	}
 
 	//Generate new matrix

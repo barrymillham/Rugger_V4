@@ -1,12 +1,12 @@
-#ifndef WALL_H
-#define WALL_H
+#ifndef __HUDOBJECT_H
+#define __HUDOBJECT_H
 #include "GameObject.h"
 
-class Wall : public GameObject
+class HudObject : public GameObject
 {
 public:
-	Wall();
-	~Wall();
+	HudObject();
+	~HudObject();
 
 	virtual void update(float dt);
 

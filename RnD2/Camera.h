@@ -13,7 +13,7 @@ public:
 	Camera();
 	~Camera();
 	void init(Input* input, Vector3 position, Vector3 direction, Vector3 _lookAt);
-	void update(float dt);
+	void update(float dt, float playerSpeeed);
 
 	Matrix getViewMatrix() {return mView;}
 	Matrix getProjectionMatrix() {return mProj;}
@@ -28,7 +28,9 @@ public:
 	Vector3 getRightVec() {return right;}
 	void setFoV(float fov){FoV = fov;}
 	float getFoV() {return FoV;}
-	
+	void flying(bool b){fly = b;}
+	void falling(bool b){fall = b;}
+
 	void setPerspective();
 	void setPitch(float p) {pitch = p;}
 
@@ -49,6 +51,8 @@ private:
 	float pitch;
 	float roll;
 	Vector3 transformedReference;
+	bool fly;
+	bool fall;
 
 	Input* input;
 };

@@ -29,6 +29,7 @@
 #include "LampPost.h"
 #include "Enemy.h"
 #include "Camera.h"
+#include "HudObject.h"
 using std::time;
 
 namespace gameNS {
@@ -71,6 +72,7 @@ public:
 	void initLights();
 	void initLamps();
 	void initEnemies();
+	void initHUD();
 
 	void updateScene(float dt);
 	void updatePickups(float dt);
@@ -86,6 +88,7 @@ public:
 	void updateLamps(float dt);
 	void updateDebugMode();
 	void updateMusic();
+	void updateHUD(float dt);
 
 	void handleUserInput();
 	void handleBuildingCollisions(Vector3 pos);
@@ -101,6 +104,7 @@ public:
 	void drawWalls();
 	void drawLamps();
 	void drawBuildings();
+	void drawHUD();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
@@ -137,6 +141,7 @@ private:
 	vector<LampPost> lamps;
 	vector<Pickup> dayPickups;
 	vector<Pickup> nightPickups;
+	vector<HudObject> hudObjects;
 	Quad menu;
 
 	//Lighting and Camera-specific declarations
@@ -280,7 +285,6 @@ void ColoredCubeApp::initApp()
 	ShowCursor(false);
 	initBasicVariables(); //Like shotTimer, etc.
 	audio->playCue(INTROMUSIC);
-	//pos will eventually be player.x, player.height, player.z)
 	startScreen = true;
 	level1 = false;
 	level2 = true;
@@ -297,6 +301,7 @@ void ColoredCubeApp::initApp()
 	initLights();
 	initLamps();
 	initEnemies();
+	initHUD();
 
 	menu.init(md3dDevice, 1.0f, WHITE);
 	menu.setPosition(position);
@@ -391,10 +396,17 @@ void ColoredCubeApp::initPickups() {
 	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio));
 	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio));
 
-	//for (int i = 0; i < dayPickups.size(); i++)
+	for (int i = 0; i < dayPickups.size(); i++) {
 	//	dayPickups[i].startGlowing();
-	//for (int i = 0; i < nightPickups.size(); i++) 
+		dayPickups[i].setInActive();
+	}
+	for (int i = 0; i < nightPickups.size(); i++) {
 	//	nightPickups[i].startGlowing();
+		nightPickups[i].setInActive();
+	}
+
+
+
 }
 
 void ColoredCubeApp::initBullets() {
@@ -559,8 +571,8 @@ void ColoredCubeApp::initWallPositions() {
 }
 
 void ColoredCubeApp::initUniqueObjects() {
-	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), Vector3(0,0,0), 1, 1.0f, 1625, 1, 1625);
-	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1.5f,0), Vector3(0,0,0), 1, 1.0f, 975, 1, 1625);
+	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 1625, 500, 1625);
+	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 975, 500, 1625);
 }
 
 void ColoredCubeApp::initEnemies() {
@@ -700,6 +712,19 @@ void ColoredCubeApp::initLights()
 	mLights[10].pos = D3DXVECTOR3(0, 10, 200);
 }
 
+void ColoredCubeApp::initHUD() {
+	hudObjects.push_back(HudObject());
+
+	hudObjects[0].init(&blueBox, 1.0f, Vector3(0,0,0), Vector3(0,0,0), 1, 1);
+
+	for (int i = 0; i < hudObjects.size(); i++) {
+		hudObjects[i].faceObject(&player);
+		hudObjects[i].setActive();
+	}
+}
+
+
+
 
 void ColoredCubeApp::updateScene(float dt)
 {
@@ -728,9 +753,20 @@ void ColoredCubeApp::updateScene(float dt)
 		updateMusic();
 		menu.update(dt);
 		updateDayNight();
-
-		camera.update(dt);
+		camera.update(dt, gameNS::PLAYER_SPEED);
 		player.setPosition(camera.getPosition());
+		updateOrigin(dt);
+		handleUserInput();
+		updatePlayer(dt);
+		updateEnemies(dt);
+		updatePickups(dt);
+		updateLamps(dt);
+		updateWalls(dt);
+		updateBuildings(dt);
+		updateUniqueObjects(dt);
+		updateHUD(dt);
+
+
 		if(level1)
 		{
 			placePickups();
@@ -740,16 +776,6 @@ void ColoredCubeApp::updateScene(float dt)
 		{
 
 		}
-		updateOrigin(dt);
-		handleUserInput();
-		updatePlayer(dt);
-		updateEnemies(dt);
-		updatePickups(dt);
-		updateLamps(dt);
-
-		updateWalls(dt);
-		updateBuildings(dt);
-		updateUniqueObjects(dt);
 
 		//Handle Collisions
 		handleWallCollisions(oldPos);
@@ -818,13 +844,6 @@ void ColoredCubeApp::updateCamera() {
 	if(GetAsyncKeyState('S') & 0x8000) {direction.x = -1; moveAxis.y = 0;}
 	if(GetAsyncKeyState('W') & 0x8000) {direction.x = 1;  moveAxis.y = 0;}
 
-
-	
-	if (debugMode) { //Allow flying with space and shift
-		if(input->isKeyDown(VK_SPACE)) position.y += player.getSpeed() * dt;
-		if(input->isKeyDown(VK_SHIFT)) position.y -= player.getSpeed() * dt;
-	}
-	
 	//Generate transformation matrices
 	Matrix yawR = *D3DXMatrixRotationY(&yawR, yaw);
 	Matrix pitchR = *D3DXMatrixRotationZ(&pitchR, pitch);
@@ -924,7 +943,13 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	}
 
 
-
+	//update camera a bit
+	if (debugMode) { //Allow flying with space and shift
+		if(input->isKeyDown(VK_SPACE)) camera.flying(true);
+		else camera.flying(false);
+		if(input->isKeyDown(VK_SHIFT)) camera.falling(true);
+		else camera.falling(false);
+	}
 }
 
 void ColoredCubeApp::updateEnemies(float dt)
@@ -1239,6 +1264,10 @@ void ColoredCubeApp::updateDayNight() {
 	
 }
 
+void ColoredCubeApp::updateHUD(float dt) {
+	for (int i = 0; i < hudObjects.size(); i++) 
+		hudObjects[i].update(dt);
+}
 
 
 void ColoredCubeApp::drawScene()
@@ -1298,7 +1327,8 @@ void ColoredCubeApp::drawScene()
 		}
 		else if(level2)
 		{
-			//mVP = mView*mProj;
+			drawHUD();
+
 			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
 
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTestStreet);
@@ -1556,4 +1586,12 @@ void ColoredCubeApp::drawLamps() {
 	mfxSpecMapVar->SetResource(mSpecMapRVPole);
 	for (int i = 0; i < lamps.size(); i++)
 		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+}
+
+void ColoredCubeApp::drawHUD() {
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
+	mfxSpecMapVar->SetResource(mSpecMapRV);
+	
+	for(int i=0; i<hudObjects.size(); i++)
+		hudObjects[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
