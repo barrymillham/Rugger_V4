@@ -37,7 +37,7 @@ cbuffer cbFixed
 		float2(1.0f, 0.0f)
 	};
 };
- 
+
 // Array of textures for texturing the particles.
 Texture2DArray gTexArray;
 

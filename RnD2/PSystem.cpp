@@ -57,11 +57,13 @@ void PSystem::setEmitDir(const D3DXVECTOR3& emitDirW)
 }
 
 void PSystem::init(ID3D10Device* device, ID3D10Effect* FX, ID3D10ShaderResourceView* texArrayRV,
-				   UINT maxParticles, Camera* c)
+				   UINT maxParticles,  D3DXVECTOR3& pos, Camera* c)
 {
 	md3dDevice = device;
 
 	camera = c;
+
+	mEmitPosW = D3DXVECTOR4(pos, 1);
 
 	mMaxParticles = maxParticles;
 

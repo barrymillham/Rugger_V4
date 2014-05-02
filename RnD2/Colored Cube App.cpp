@@ -369,7 +369,8 @@ void ColoredCubeApp::initApp()
 	flares.push_back(L"flare0.dds"); 
 	ID3D10ShaderResourceView* texArray = GetTextureMgr().createTexArray(L"flares", flares);
  
-	mFire.init(md3dDevice, fx::FireFX, texArray, 500, &camera); 
+	mFire.init(md3dDevice, fx::FireFX, texArray, 1000, D3DXVECTOR3(10, 10, 10), &camera); 
+	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
 }
 
 void ColoredCubeApp::initLamps() {

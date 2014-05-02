@@ -21,7 +21,7 @@ public:
 	void setEmitDir(const D3DXVECTOR3& emitDirW);
 
 	void init(ID3D10Device* device, ID3D10Effect* FX, 
-		ID3D10ShaderResourceView* texArrayRV, UINT maxParticles, Camera* c);
+		ID3D10ShaderResourceView* texArrayRV, UINT maxParticles, D3DXVECTOR3& pos, Camera* c);
 
 	void reset();
 	void update(float dt, float gameTime);
