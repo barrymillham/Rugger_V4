@@ -30,6 +30,10 @@
 #include "Enemy.h"
 #include "Camera.h"
 #include "HudObject.h"
+#include "TextureMgr.h"
+#include "InputLayouts.h"
+#include "Effects.h"
+#include "PSystem.h"
 using std::time;
 
 namespace gameNS {
@@ -241,6 +245,10 @@ private:
 	float flashChangeTime;
 
 	Camera camera;
+
+	//PARTICLES
+	PSystem mFire;
+	float gameTime;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -253,12 +261,16 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	D3DXMatrixIdentity(&mProj);
 	D3DXMatrixIdentity(&mWVP); 
 	D3DXMatrixIdentity(&mVP); 
+	gameTime = 0.0f;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
 {
 	if( md3dDevice )
 		md3dDevice->ClearState();
+
+	fx::DestroyAll();
+	InputLayout::DestroyAll();
 
 	for(int i=0; i<4; i++)
 	{
@@ -278,6 +290,11 @@ ColoredCubeApp::~ColoredCubeApp()
 void ColoredCubeApp::initApp()
 {
 	D3DApp::initApp();
+
+	fx::InitAll(md3dDevice);
+	InputLayout::InitAll(md3dDevice);
+	GetTextureMgr().init(md3dDevice);
+
 	buildFX();
 	buildVertexLayouts();
 
@@ -348,6 +365,11 @@ void ColoredCubeApp::initApp()
 
 	camera.init(input, position, Vector3(1, 0, 0), player.getPosition() + Vector3(1, 0, 0));
 
+	vector<std::wstring> flares;
+	flares.push_back(L"flare0.dds"); 
+	ID3D10ShaderResourceView* texArray = GetTextureMgr().createTexArray(L"flares", flares);
+ 
+	mFire.init(md3dDevice, fx::FireFX, texArray, 500, &camera); 
 }
 
 void ColoredCubeApp::initLamps() {
@@ -729,6 +751,7 @@ void ColoredCubeApp::initHUD() {
 void ColoredCubeApp::updateScene(float dt)
 {
 	ColoredCubeApp::dt = dt;
+	gameTime += dt;
 	bool playing = (!endScreen && !startScreen);
 	Vector3 oldPos = position;
 	
@@ -782,6 +805,8 @@ void ColoredCubeApp::updateScene(float dt)
 		handleBuildingCollisions(oldPos);
 		handlePickupCollisions(dt);
 		handleEnemyCollisions(dt);
+
+		mFire.update(dt, gameTime);
 	}
 	if(endScreen){
 		doEndScreen();
@@ -1338,6 +1363,12 @@ void ColoredCubeApp::drawScene()
 			drawWalls();
 
 		}
+		//Draw particle systems last
+		md3dDevice->OMSetDepthStencilState(0, 0);
+		float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+		md3dDevice->OMSetBlendState(0, blendFactor, 0xffffffff);
+		mFire.setEyePos(camera.getPosition());
+		mFire.draw();
 	}
 	else if(startScreen)
 	{

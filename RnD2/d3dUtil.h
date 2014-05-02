@@ -30,6 +30,7 @@
 #include <d3dx10.h>
 #include <dxerr.h>
 #include <cassert>
+#include <vector>
 
 
 //*****************************************************************************
@@ -65,6 +66,15 @@
 //*****************************************************************************
 // Convenience functions.
 //*****************************************************************************
+
+void BuildGeoSphere(
+	UINT numSubdivisions,
+	float radius,
+	std::vector<D3DXVECTOR3>& vertices, 
+	std::vector<DWORD>& indices);
+
+// Returns the polar angle of the point (x,y) in [0, 2*PI).
+float AngleFromXY(float x, float y); 
 
 // Converts ARGB 32-bit color format to ABGR 32-bit color format.
 D3DX10INLINE UINT ARGB2ABGR(UINT argb)

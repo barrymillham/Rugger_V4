@@ -67,6 +67,18 @@
     <ClCompile Include="HudObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Effects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputLayouts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h">
@@ -153,6 +165,18 @@
     <ClInclude Include="HudObject.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PSystem.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureMgr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayouts.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd">
@@ -165,6 +189,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="lighting.fx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fire.fx">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

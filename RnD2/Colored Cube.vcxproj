@@ -95,18 +95,22 @@
     <ClCompile Include="Colored Cube App.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="debugText.cpp" />
+    <ClCompile Include="Effects.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="HudObject.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="InputLayouts.cpp" />
     <ClCompile Include="LampPost.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="LineObject.cpp" />
     <ClCompile Include="Origin.cpp" />
     <ClCompile Include="pickup.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PSystem.cpp" />
     <ClCompile Include="Quad.cpp" />
+    <ClCompile Include="TextureMgr.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Waypoint.cpp" />
   </ItemGroup>
@@ -120,12 +124,14 @@
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="debugText.h" />
+    <ClInclude Include="Effects.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="gameError.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="HudObject.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="InputLayouts.h" />
     <ClInclude Include="LampPost.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Line.h" />
@@ -134,8 +140,10 @@
     <ClInclude Include="Origin.h" />
     <ClInclude Include="pickup.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PSystem.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="TextureMgr.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="Waypoint.h" />
@@ -146,6 +154,7 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="color.fx" />
+    <None Include="fire.fx" />
     <None Include="lighthelper.fx" />
     <None Include="lighting.fx" />
   </ItemGroup>
