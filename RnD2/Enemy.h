@@ -61,6 +61,7 @@ private:
 
 	Waypoint* waypoints[WAYPOINT_SIZE][WAYPOINT_SIZE];
 	void initWaypoints();
+	void initWaypoints2();
 
 	Waypoint* target;
 

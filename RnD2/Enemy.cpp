@@ -24,6 +24,13 @@ Enemy::Enemy()
 	velocity = Vector3(0.0f, 0.0f, 0.0f);
 	lastAttacked = 0.5f;
 	health = 100;
+	for(int i=0; i<WAYPOINT_SIZE; i++)
+	{
+		for(int j=0; j<WAYPOINT_SIZE; j++)
+		{
+			waypoints[i][j] = 0;
+		}
+	}
 }
 
 Enemy::~Enemy()
@@ -41,7 +48,7 @@ void Enemy::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s, i
 	//Translate(&world, position.x, position.y, position.z);
 
 	destination = D3DXVECTOR3(0, 0, 0);
-	initWaypoints();
+	initWaypoints2();
 }
 
 //Call this after calculating collisions
@@ -273,7 +280,33 @@ void Enemy::initWaypoints()
 	for(int i=0; i<WAYPOINT_SIZE; i++){
 		for(int j=0; j<WAYPOINT_SIZE; j++)
 		{
-			waypoints[i][j] = new Waypoint(D3DXVECTOR3(i*100 - 200, 0, j*100 - 200));
+			if(waypoints[i][j] == 0) waypoints[i][j] = new Waypoint(D3DXVECTOR3(i*100 - 200, 0, j*100 - 200));
+			else waypoints[i][j]->setPosition(D3DXVECTOR3(i*100 - 200, 0, j*100 - 200));
+			waypoints[i][j]->setContainer(NONE);
+			//wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
+		}
+	}
+
+	for(int i=0; i<WAYPOINT_SIZE; i++)
+	{
+		for(int j=0; j<WAYPOINT_SIZE; j++)
+		{
+			//Currently just waypoints in the cardinal directions
+			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+			if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+			if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+		}
+	}
+}
+
+void Enemy::initWaypoints2()
+{
+	for(int i=0; i<WAYPOINT_SIZE; i++){
+		for(int j=0; j<WAYPOINT_SIZE; j++)
+		{
+			if(waypoints[i][j] == 0) waypoints[i][j] = new Waypoint(D3DXVECTOR3(i*450 - 900, 0, j*800 - 1600));
+			else waypoints[i][j]->setPosition(D3DXVECTOR3(i*450 - 900, 0, j*800 - 1600));
 			waypoints[i][j]->setContainer(NONE);
 			//wayLine[i][j].init(&inactiveLine, 1.0f, D3DXVECTOR3(waypoints[i][j]->getPosition().x, 2, waypoints[i][j]->getPosition().z), D3DXVECTOR3(0,0,0), 0.0f, 0.125f);
 		}

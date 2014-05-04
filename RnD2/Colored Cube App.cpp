@@ -370,7 +370,7 @@ void ColoredCubeApp::initApp()
 	ID3D10ShaderResourceView* texArray = GetTextureMgr().createTexArray(L"flares", flares);
  
 	for(int i=0; i<5; i++)
-		mFire[i].init(md3dDevice, fx::FireFX, texArray, 150, D3DXVECTOR3(10 * i, 1, 10), &camera); 
+		mFire[i].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(10 * i, 1, 10), &camera); 
 	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
 }
 
@@ -457,7 +457,7 @@ void ColoredCubeApp::initBasicGeometry() {
 	rLine.init(md3dDevice, 10.0f, RED);
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
-	activeLine.init(md3dDevice, 1.0f, RED, mFX);
+	activeLine.init(md3dDevice, 5.0f, RED, mFX);
 }
 
 void ColoredCubeApp::initTextStrings() {
@@ -527,6 +527,7 @@ void ColoredCubeApp::initBuildingPositions() {
 	buildings[9].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
 	buildings[10].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
 	buildings[11].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
+
 																				 //Level 2 Buildings
 	buildings[12].init(&brick, 2.0f, Vector3(700, 0, 1300),1,	190,	50,  190);//Left Side Building 1
 	buildings[13].init(&brick, 2.0f, Vector3(420, 0, 1020),1,	95,		50,  95);//Left Side Building 2
@@ -1308,6 +1309,9 @@ void ColoredCubeApp::drawScene()
 	setDeviceAndShaderInformation();
 
 	if(playing) {	
+		if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 		if(level1)
 		{
 			//mVP = mView*mProj;
@@ -1315,8 +1319,8 @@ void ColoredCubeApp::drawScene()
 
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
 			mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
-			for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-			if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			
+			
 			//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 			//drawOrigin();
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
