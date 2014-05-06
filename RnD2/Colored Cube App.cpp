@@ -41,11 +41,12 @@ namespace gameNS {
 	const float DAYLEN = 40;
 	const int NUM_WALLS = 20;
 	const int NUM_BUILDINGS = 39;
-	const int NUM_BARRELS = 12;
+	const int NUM_BARRELS = 24;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
 	const int NUM_LIGHTS = 11;
-	const int NUM_FIRES = 12;
+	const int NUM_FIRES = 24;
+	const int NUM_LAMPS = 8;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
@@ -394,21 +395,34 @@ void ColoredCubeApp::initApp()
 	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
 	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
 	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
+
+	mFire[12].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -275), &camera); 
+	mFire[13].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -300), &camera); 
+	mFire[14].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -475), &camera); 
+	mFire[15].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -500), &camera); 
+	mFire[16].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -775), &camera); 
+	mFire[17].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -800), &camera); 
+	mFire[18].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1075), &camera); 
+	mFire[19].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1100), &camera); 
+	mFire[20].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1275), &camera); 
+	mFire[21].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1300), &camera); 
+	mFire[22].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1475), &camera); 
+	mFire[23].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1500), &camera);
 	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
 }
 
 void ColoredCubeApp::initLamps() {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < gameNS::NUM_LAMPS; i++)
 		lamps.push_back(LampPost());
 	
 	lamps[0].init(&brick, Vector3(58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
 	lamps[1].init(&brick, Vector3(-58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
 	lamps[2].init(&brick, Vector3(58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
 	lamps[3].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
-	lamps[4].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
-	lamps[5].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
-	lamps[6].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
-	lamps[7].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+	lamps[4].init(&brick, Vector3(-100,0.1,100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
+	lamps[5].init(&brick, Vector3(100,0.1,100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
+	lamps[6].init(&brick, Vector3(-100,0.1,-100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
+	lamps[7].init(&brick, Vector3(100,0.1,-100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
 }
 
 void ColoredCubeApp::initPickups() {
@@ -627,17 +641,30 @@ void ColoredCubeApp::initUniqueObjects() {
 	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 975, 500, 1625);
 	
 	barrels[0].init(&brick, 2.0f, Vector3(-85, 0, 1500),	1,	1,		3.5,  1);
-	barrels[1].init(&brick, 2.0f, Vector3(85, 0, 1475),	1,	1,		3.5,  1);
+	barrels[1].init(&brick, 2.0f, Vector3(85, 0, 1475),		1,	1,		3.5,  1);
 	barrels[2].init(&brick, 2.0f, Vector3(-85, 0, 1300),	1,	1,		3.5,  1);
-	barrels[3].init(&brick, 2.0f, Vector3(85, 0, 1275),	1,	1,		3.5,  1);
+	barrels[3].init(&brick, 2.0f, Vector3(85, 0, 1275),		1,	1,		3.5,  1);
 	barrels[4].init(&brick, 2.0f, Vector3(-85, 0, 1100),	1,	1,		3.5,  1);
-	barrels[5].init(&brick, 2.0f, Vector3(85, 0, 1075),	1,	1,		3.5,  1);
-	barrels[6].init(&brick, 2.0f, Vector3(-85, 0, 800),	1,	1,		3.5,  1);
-	barrels[7].init(&brick, 2.0f, Vector3(85, 0, 775),	1,	1,		3.5,  1);
-	barrels[8].init(&brick, 2.0f, Vector3(-85, 0, 500),	1,	1,		3.5,  1);
-	barrels[9].init(&brick, 2.0f, Vector3(85, 0, 475),	1,	1,		3.5,  1);
+	barrels[5].init(&brick, 2.0f, Vector3(85, 0, 1075),		1,	1,		3.5,  1);
+	barrels[6].init(&brick, 2.0f, Vector3(-85, 0, 800),		1,	1,		3.5,  1);
+	barrels[7].init(&brick, 2.0f, Vector3(85, 0, 775),		1,	1,		3.5,  1);
+	barrels[8].init(&brick, 2.0f, Vector3(-85, 0, 500),		1,	1,		3.5,  1);
+	barrels[9].init(&brick, 2.0f, Vector3(85, 0, 475),		1,	1,		3.5,  1);
 	barrels[10].init(&brick, 2.0f, Vector3(-85, 0, 300),	1,	1,		3.5,  1);
-	barrels[11].init(&brick, 2.0f, Vector3(85, 0, 275),	1,	1,		3.5,  1);
+	barrels[11].init(&brick, 2.0f, Vector3(85, 0, 275),		1,	1,		3.5,  1);
+
+	barrels[12].init(&brick, 2.0f, Vector3(-85, 0, -275),	1,	1,		3.5,  1);
+	barrels[13].init(&brick, 2.0f, Vector3(85, 0, -300),	1,	1,		3.5,  1);
+	barrels[14].init(&brick, 2.0f, Vector3(-85, 0, -475),	1,	1,		3.5,  1);
+	barrels[15].init(&brick, 2.0f, Vector3(85, 0, -500),	1,	1,		3.5,  1);
+	barrels[16].init(&brick, 2.0f, Vector3(-85, 0, -775),	1,	1,		3.5,  1);
+	barrels[17].init(&brick, 2.0f, Vector3(85, 0, -800),	1,	1,		3.5,  1);
+	barrels[18].init(&brick, 2.0f, Vector3(-85, 0, -1075),	1,	1,		3.5,  1);
+	barrels[19].init(&brick, 2.0f, Vector3(85, 0, -1100),	1,	1,		3.5,  1);
+	barrels[20].init(&brick, 2.0f, Vector3(-85, 0, -1275),	1,	1,		3.5,  1);
+	barrels[21].init(&brick, 2.0f, Vector3(85, 0, -1300),	1,	1,		3.5,  1);
+	barrels[22].init(&brick, 2.0f, Vector3(-85, 0, -1475),	1,	1,		3.5,  1);
+	barrels[23].init(&brick, 2.0f, Vector3(85, 0, -1500),	1,	1,		3.5,  1);
 }
 
 void ColoredCubeApp::initEnemies() {
@@ -955,7 +982,7 @@ void ColoredCubeApp::updateWalls(float dt) {
 }
 
 void ColoredCubeApp::updateLamps(float dt) {
-	for (int i = 0; i < lamps.size(); i++) {
+	for (int i = 0; i < gameNS::NUM_LAMPS; i++) {
 		lamps[i].update(dt);
 	}
 }
@@ -1414,6 +1441,7 @@ void ColoredCubeApp::drawScene()
 			drawBuildings();
 			drawWalls();
 			drawBarrels();
+			drawLamps();
 			//Draw particle systems last
 			md3dDevice->OMSetDepthStencilState(0, 0);
 			float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -1675,8 +1703,16 @@ void ColoredCubeApp::drawPickups() {
 void ColoredCubeApp::drawLamps() {
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRVPole);
 	mfxSpecMapVar->SetResource(mSpecMapRVPole);
-	for (int i = 0; i < lamps.size(); i++)
+	if(level1)
+	{
+		for (int i = 0; i < 4; i++)
 		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	}
+	else if(level2)
+	{
+		for (int i = 4; i < 8; i++)
+		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	}
 }
 
 void ColoredCubeApp::drawHUD() {
