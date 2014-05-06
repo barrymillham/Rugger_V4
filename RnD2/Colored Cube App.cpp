@@ -45,6 +45,7 @@ namespace gameNS {
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
 	const int NUM_LIGHTS = 11;
+	const int NUM_FIRES = 12;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
@@ -201,8 +202,8 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVPole;
 	ID3D10ShaderResourceView* mDiffuseMapRVStreet;
 	ID3D10ShaderResourceView* mSpecMapRVStreet;
-	ID3D10ShaderResourceView* mDiffuseMapRVTestStreet;
-	ID3D10ShaderResourceView* mSpecMapRVTestStreet;
+	ID3D10ShaderResourceView* mDiffuseMapRVTheRoad;
+	ID3D10ShaderResourceView* mSpecMapRVTheRoad;
 	ID3D10ShaderResourceView* mDiffuseMapRVBuilding2;
 	ID3D10ShaderResourceView* mSpecMapRVBuilding2;
 	ID3D10ShaderResourceView* mDiffuseMapRVBullet;
@@ -255,7 +256,7 @@ private:
 	Camera camera;
 
 	//PARTICLES
-	PSystem mFire[5];
+	PSystem mFire[gameNS::NUM_FIRES];
 	float gameTime;
 };
 
@@ -360,8 +361,8 @@ void ColoredCubeApp::initApp()
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVPole, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"street test.png", 0, 0, &mDiffuseMapRVTestStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVTestStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"theroad.png", 0, 0, &mDiffuseMapRVTheRoad, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVTheRoad, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"building2.jpg", 0, 0, &mDiffuseMapRVBuilding2, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding2, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
@@ -381,8 +382,18 @@ void ColoredCubeApp::initApp()
 	flares.push_back(L"flare0.dds"); 
 	ID3D10ShaderResourceView* texArray = GetTextureMgr().createTexArray(L"flares", flares);
  
-	for(int i=0; i<5; i++)
-		mFire[i].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(10 * i, 1, 10), &camera); 
+	mFire[0].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1500), &camera); 
+	mFire[1].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1475), &camera); 
+	mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1300), &camera); 
+	mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1275), &camera); 
+	mFire[4].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1100), &camera); 
+	mFire[5].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1075), &camera); 
+	mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 800), &camera); 
+	mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 775), &camera); 
+	mFire[8].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 500), &camera); 
+	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
+	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
+	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
 	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
 }
 
@@ -615,18 +626,18 @@ void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 1625, 500, 1625);
 	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 975, 500, 1625);
 	
-	barrels[0].init(&brick, 2.0f, Vector3(10, 0, 0),	1,	1,		3.5,  1);
-	barrels[1].init(&brick, 2.0f, Vector3(10, 0, 10),	1,	1,		3.5,  1);
-	barrels[2].init(&brick, 2.0f, Vector3(10, 0, 20),	1,	1,		3.5,  1);
-	barrels[3].init(&brick, 2.0f, Vector3(10, 0, 30),	1,	1,		3.5,  1);
-	barrels[4].init(&brick, 2.0f, Vector3(10, 0, 40),	1,	1,		3.5,  1);
-	barrels[5].init(&brick, 2.0f, Vector3(10, 0, 50),	1,	1,		3.5,  1);
-	barrels[6].init(&brick, 2.0f, Vector3(10, 0, 60),	1,	1,		3.5,  1);
-	barrels[7].init(&brick, 2.0f, Vector3(10, 0, 70),	1,	1,		3.5,  1);
-	barrels[8].init(&brick, 2.0f, Vector3(10, 0, 80),	1,	1,		3.5,  1);
-	barrels[9].init(&brick, 2.0f, Vector3(10, 0, 90),	1,	1,		3.5,  1);
-	barrels[10].init(&brick, 2.0f, Vector3(10, 0, 100),	1,	1,		3.5,  1);
-	barrels[11].init(&brick, 2.0f, Vector3(10, 0, 110),	1,	1,		3.5,  1);
+	barrels[0].init(&brick, 2.0f, Vector3(-85, 0, 1500),	1,	1,		3.5,  1);
+	barrels[1].init(&brick, 2.0f, Vector3(85, 0, 1475),	1,	1,		3.5,  1);
+	barrels[2].init(&brick, 2.0f, Vector3(-85, 0, 1300),	1,	1,		3.5,  1);
+	barrels[3].init(&brick, 2.0f, Vector3(85, 0, 1275),	1,	1,		3.5,  1);
+	barrels[4].init(&brick, 2.0f, Vector3(-85, 0, 1100),	1,	1,		3.5,  1);
+	barrels[5].init(&brick, 2.0f, Vector3(85, 0, 1075),	1,	1,		3.5,  1);
+	barrels[6].init(&brick, 2.0f, Vector3(-85, 0, 800),	1,	1,		3.5,  1);
+	barrels[7].init(&brick, 2.0f, Vector3(85, 0, 775),	1,	1,		3.5,  1);
+	barrels[8].init(&brick, 2.0f, Vector3(-85, 0, 500),	1,	1,		3.5,  1);
+	barrels[9].init(&brick, 2.0f, Vector3(85, 0, 475),	1,	1,		3.5,  1);
+	barrels[10].init(&brick, 2.0f, Vector3(-85, 0, 300),	1,	1,		3.5,  1);
+	barrels[11].init(&brick, 2.0f, Vector3(85, 0, 275),	1,	1,		3.5,  1);
 }
 
 void ColoredCubeApp::initEnemies() {
@@ -838,7 +849,7 @@ void ColoredCubeApp::updateScene(float dt)
 		handlePickupCollisions(dt);
 		handleEnemyCollisions(dt);
 
-		for(int i=0; i<5; i++)
+		for(int i=0; i<gameNS::NUM_FIRES; i++)
 			mFire[i].update(dt, gameTime);
 	}
 	if(endScreen){
@@ -1395,8 +1406,8 @@ void ColoredCubeApp::drawScene()
 
 			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
 
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTestStreet);
-			mfxSpecMapVar->SetResource(mSpecMapRVTestStreet);
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTheRoad);
+			mfxSpecMapVar->SetResource(mSpecMapRVTheRoad);
 			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
 			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
@@ -1408,7 +1419,7 @@ void ColoredCubeApp::drawScene()
 			float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 			md3dDevice->OMSetBlendState(0, blendFactor, 0xffffffff);
 		
-			for(int i=0; i<5; i++)
+			for(int i=0; i<gameNS::NUM_FIRES; i++)
 			{
 				mFire[i].setEyePos(camera.getPosition());
 				mFire[i].draw();
