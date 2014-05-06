@@ -43,7 +43,7 @@ void Camera::update(float dt, float playerSpeeed)
 
 	bool rotated = false;
 	//float _speed = 100;
-	float cameraSpeed = 6.0f;
+	float cameraSpeed = 4.0f;
 	speed = cameraSpeed;
 	float playerSpeed = playerSpeeed;
 	float deltaYaw = 0;

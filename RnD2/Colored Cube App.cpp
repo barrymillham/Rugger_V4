@@ -199,6 +199,8 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVStreet;
 	ID3D10ShaderResourceView* mDiffuseMapRVTestStreet;
 	ID3D10ShaderResourceView* mSpecMapRVTestStreet;
+	ID3D10ShaderResourceView* mDiffuseMapRVBuilding2;
+	ID3D10ShaderResourceView* mSpecMapRVBuilding2;
 	ID3D10ShaderResourceView* mDiffuseMapRVBullet;
 	ID3D10ShaderResourceView* mSpecMapRVBullet;
 	ID3D10ShaderResourceView* mDiffuseMapRVBlue;
@@ -330,7 +332,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 20, audio, 1, 1, 1, 5);
+	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -354,6 +356,8 @@ void ColoredCubeApp::initApp()
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"street test.png", 0, 0, &mDiffuseMapRVTestStreet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVTestStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"building2.jpg", 0, 0, &mDiffuseMapRVBuilding2, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding2, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"blue.png", 0, 0, &mDiffuseMapRVBlue, 0 ));
@@ -536,13 +540,13 @@ void ColoredCubeApp::initBuildingPositions() {
 
 	buildings[16].init(&brick, 2.0f, Vector3(300, 0, 700),	1,	95,		70,  120);//Left Side Building 5
 	buildings[17].init(&brick, 2.0f, Vector3(700, 0, 500),	1,	120,	50,  95);//Left Side Building 6
-	buildings[18].init(&brick, 2.0f, Vector3(750, 0, 100),	1,	120,	50,  108);//Left Side Building 7
+	buildings[18].init(&brick, 2.0f, Vector3(700, 0, 150),	1,	120,	50,  108);//Left Side Building 7
 	buildings[19].init(&brick, 2.0f, Vector3(350, 0, 250),	1,	72,		50,  120);//Left Side Building 8
 
 	buildings[20].init(&brick, 2.0f, Vector3(800, 0, -200),	1,	95,		80,  95);//Left Side Building 9
 	buildings[21].init(&brick, 2.0f, Vector3(375, 0, -300),	1,	95,		50,  95);//Left Side Building 10
 	buildings[22].init(&brick, 2.0f, Vector3(850, 0, -550),	1,	95,		50,  95);//Left Side Building 11
-	buildings[23].init(&brick, 2.0f, Vector3(350, 0, -700),	1,	130,	50,  95);//Left Side Building 12
+	buildings[23].init(&brick, 2.0f, Vector3(350, 0, -650),	1,	130,	50,  95);//Left Side Building 12
 	buildings[24].init(&brick, 2.0f, Vector3(800, 0, -1200),1,	120,	50,  250);//Left Side Building 13
 	buildings[25].init(&brick, 2.0f, Vector3(350, 0, -1300),1,	72,		50,  72);//Left Side Building 14
 
@@ -1366,6 +1370,8 @@ void ColoredCubeApp::drawScene()
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTestStreet);
 			mfxSpecMapVar->SetResource(mSpecMapRVTestStreet);
 			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
+			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
 			drawBuildings();
 			drawWalls();
 
@@ -1422,14 +1428,18 @@ void ColoredCubeApp::drawWalls() {
 }
 
 void ColoredCubeApp::drawBuildings() {
-	mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding);
-	mfxSpecMapVar->SetResource(mSpecMapRVBuilding);
-	if(level1)
+	if(level1){
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding);
+		mfxSpecMapVar->SetResource(mSpecMapRVBuilding);
 		for(int i=0; i<13; i++)
 			buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-	else if(level2)
+	}
+	else if(level2){
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
+		mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
 		for(int i=12; i<gameNS::NUM_BUILDINGS; i++)
 			buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	}
 }
 
 void ColoredCubeApp::printText(DebugText text) {
