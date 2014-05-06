@@ -856,7 +856,6 @@ void ColoredCubeApp::updateScene(float dt)
 		menu.update(dt);
 		updateDayNight();
 		camera.update(dt, gameNS::PLAYER_SPEED);
-		player.setPosition(camera.getPosition());
 		updateOrigin(dt);
 		handleUserInput();
 		updatePlayer(dt);
@@ -867,7 +866,6 @@ void ColoredCubeApp::updateScene(float dt)
 		updateBuildings(dt);
 		updateUniqueObjects(dt);
 		updateHUD(dt);
-
 
 		if(level1)
 		{
@@ -1002,17 +1000,17 @@ void ColoredCubeApp::updateBuildings(float dt) {
 }
 
 void ColoredCubeApp::updatePlayer(float dt) {
-	
+
+	player.setPosition(camera.getPosition());
 	D3DXVECTOR3 pos = player.getPosition();
 	//player.setPosition(Vector3(position.x, position.y-2, position.z));
-	player.setPosition(camera.getPosition());
+	
 	player.update(dt, camera.getLookatDirection()); //moveAxis is passed to the bullet
 	if (player.getHealth() <= 0) {
 		Sleep(2000);
 		endScreen = true;
 		input->clearKeyPress(KEY_SPACE);
 	}
-
 
 	//Update shooting
 	if(input->getMouseLButton())
@@ -1032,8 +1030,6 @@ void ColoredCubeApp::updatePlayer(float dt) {
 		//Do something
 	}
 
-
-	
 	//Update walking noises
 	if (walking) {
 		stepTime += 1;
@@ -1049,7 +1045,6 @@ void ColoredCubeApp::updatePlayer(float dt) {
 			stepTime = 0.0f;
 		}
 	}
-
 
 	//update camera a bit
 	if (debugMode) { //Allow flying with space and shift
@@ -1430,11 +1425,7 @@ void ColoredCubeApp::drawScene()
 
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
 			mfxSpecMapVar->SetResource(mSpecMapRVBullet);
-			player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-			printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
-			printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
-			printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
-			printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
+			
 		}
 		else if(level2)
 		{
@@ -1462,6 +1453,11 @@ void ColoredCubeApp::drawScene()
 				mFire[i].draw();
 			}
 		}
+		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
+		printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
+		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
+		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
 	}
 	else if(startScreen)
 	{

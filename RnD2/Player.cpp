@@ -107,6 +107,8 @@ void Player::shoot(D3DXVECTOR3 moveAxis)
 {
 	if(ammo == 0) return;
 	int index = -1;
+	D3DXVec3Normalize(&moveAxis, &moveAxis);
+
 	for (int i = 0; i < bullets.size(); i++) {
 		if (!bullets[i]->getActiveState()) { 
 			index = i;
