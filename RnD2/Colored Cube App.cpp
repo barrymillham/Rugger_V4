@@ -44,7 +44,7 @@ namespace gameNS {
 	const int NUM_BARRELS = 24;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
-	const int NUM_LIGHTS = 11;
+	const int NUM_LIGHTS = 12;
 	const int NUM_FIRES = 24;
 	const int NUM_LAMPS = 8;
 	const float TRANSITIONTIME = 10;
@@ -802,6 +802,15 @@ void ColoredCubeApp::initLights()
 	mLights[10].att.z    = 0.0f;
 	mLights[10].range    = 35.0f;
 	mLights[10].pos = D3DXVECTOR3(0, 10, 200);
+
+	mLights[11].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	mLights[11].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	mLights[11].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	mLights[11].att.x    = 0.0f;
+	mLights[11].att.y    = 0.55f;
+	mLights[11].att.z    = 0.0f;
+	mLights[11].range    = 90.0f;
+	mLights[11].pos = D3DXVECTOR3(85, 0, 275);
 }
 
 void ColoredCubeApp::initHUD() {
