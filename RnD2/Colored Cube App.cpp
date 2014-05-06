@@ -71,6 +71,7 @@ public:
 	void initOrigin();
 	void initPickups();
 	void initBullets();
+	void initBarrels();
 	void initBasicGeometry();
 	void initTextStrings();
 	void initBasicVariables();
@@ -81,6 +82,8 @@ public:
 	void initLamps();
 	void initEnemies();
 	void initHUD();
+	void initShaderResources();
+	void initFire();
 
 	void updateScene(float dt);
 	void updatePickups(float dt);
@@ -266,7 +269,7 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
   mfxWVPVar(0), pitch(0.0f), yaw(0.0f), mfxWorldVar(0), 
   mfxEyePosVar(0), mfxLightVar(0), mfxLightType(0)
 {
-	srand(time(0));
+	srand(static_cast<unsigned int>(time(0)));
 	D3DXMatrixIdentity(&mView);
 	D3DXMatrixIdentity(&mProj);
 	D3DXMatrixIdentity(&mWVP); 
@@ -313,12 +316,13 @@ void ColoredCubeApp::initApp()
 	initBasicVariables(); //Like shotTimer, etc.
 	audio->playCue(INTROMUSIC);
 	startScreen = true;
-	level1 = false;
-	level2 = true;
+	level1 = true;
+	level2 = false;
 	position = D3DXVECTOR3(0, 5, 0); 
 	initBasicGeometry();
 	initTextStrings(); //Like start/end screen text
 	initUniqueObjects(); //Like the floor
+	initBarrels();
 
 	initOrigin();
 	initBullets();
@@ -332,9 +336,9 @@ void ColoredCubeApp::initApp()
 
 	menu.init(md3dDevice, 1.0f, WHITE);
 	menu.setPosition(position);
-	menu.setRotYAngle(ToRadian(90));
-	menu.setRotZAngle(ToRadian(0));
-	menu.setRotXAngle(ToRadian(-90));
+	menu.setRotYAngle((float)ToRadian(90));
+	menu.setRotZAngle((float)ToRadian(0));
+	menu.setRotXAngle((float)ToRadian(-90));
 
 	//mClearColor = D3DXCOLOR(0.15f, 0.15f, 0.15f, 1.0f);
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
@@ -352,62 +356,10 @@ void ColoredCubeApp::initApp()
 	mRedMesh.init(md3dDevice, 1.0f, mFX);
 	mYellowMesh.init(md3dDevice, 1.0f, mFX);
 
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"skyscraper.jpg", 0, 0, &mDiffuseMapRVBuilding, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"Robot.png", 0, 0, &mDiffuseMapRVEnemy, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVEnemy, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"pole.png", 0, 0, &mDiffuseMapRVPole, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVPole, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"theroad.png", 0, 0, &mDiffuseMapRVTheRoad, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVTheRoad, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"building2.jpg", 0, 0, &mDiffuseMapRVBuilding2, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding2, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"barrel.png", 0, 0, &mDiffuseMapRVBarrel, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBarrel, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"blue.png", 0, 0, &mDiffuseMapRVBlue, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBlue, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"red.png", 0, 0, &mDiffuseMapRVRed, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVRed, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"yellow.png", 0, 0, &mDiffuseMapRVYellow, 0 ));
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVYellow, 0 ));
-
+	initShaderResources();
 	camera.init(input, position, Vector3(1, 0, 0), player.getPosition() + Vector3(1, 0, 0));
+	initFire();
 
-	vector<std::wstring> flares;
-	flares.push_back(L"flare0.dds"); 
-	ID3D10ShaderResourceView* texArray = GetTextureMgr().createTexArray(L"flares", flares);
- 
-	mFire[0].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1500), &camera); 
-	mFire[1].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1475), &camera); 
-	mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1300), &camera); 
-	mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1275), &camera); 
-	mFire[4].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1100), &camera); 
-	mFire[5].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1075), &camera); 
-	mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 800), &camera); 
-	mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 775), &camera); 
-	mFire[8].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 500), &camera); 
-	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
-	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
-	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
-
-	mFire[12].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -275), &camera); 
-	mFire[13].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -300), &camera); 
-	mFire[14].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -475), &camera); 
-	mFire[15].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -500), &camera); 
-	mFire[16].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -775), &camera); 
-	mFire[17].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -800), &camera); 
-	mFire[18].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1075), &camera); 
-	mFire[19].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1100), &camera); 
-	mFire[20].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1275), &camera); 
-	mFire[21].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1300), &camera); 
-	mFire[22].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1475), &camera); 
-	mFire[23].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1500), &camera);
 	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
 }
 
@@ -415,14 +367,14 @@ void ColoredCubeApp::initLamps() {
 	for (int i = 0; i < gameNS::NUM_LAMPS; i++)
 		lamps.push_back(LampPost());
 	
-	lamps[0].init(&brick, Vector3(58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
-	lamps[1].init(&brick, Vector3(-58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
-	lamps[2].init(&brick, Vector3(58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
-	lamps[3].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
-	lamps[4].init(&brick, Vector3(-100,0.1,100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
-	lamps[5].init(&brick, Vector3(100,0.1,100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
-	lamps[6].init(&brick, Vector3(-100,0.1,-100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
-	lamps[7].init(&brick, Vector3(100,0.1,-100), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
+	lamps[0].init(&brick, Vector3(58.5f,0.1f,58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
+	lamps[1].init(&brick, Vector3(-58.5f,0.1f,-58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
+	lamps[2].init(&brick, Vector3(58.5f,0.1f,-58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
+	lamps[3].init(&brick, Vector3(-58.5f,0.1f,58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+	lamps[4].init(&brick, Vector3(-100.0f,0.1f,100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
+	lamps[5].init(&brick, Vector3(100.0f,0.1f,100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
+	lamps[6].init(&brick, Vector3(-100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
+	lamps[7].init(&brick, Vector3(100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
 }
 
 void ColoredCubeApp::initPickups() {
@@ -639,7 +591,9 @@ void ColoredCubeApp::initWallPositions() {
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 1625, 500, 1625);
 	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 975, 500, 1625);
-	
+}
+
+void ColoredCubeApp::initBarrels() {
 	barrels[0].init(&brick, 2.0f, Vector3(-85, 0, 1500),	1,	1,		3.5,  1);
 	barrels[1].init(&brick, 2.0f, Vector3(85, 0, 1475),		1,	1,		3.5,  1);
 	barrels[2].init(&brick, 2.0f, Vector3(-85, 0, 1300),	1,	1,		3.5,  1);
@@ -824,7 +778,64 @@ void ColoredCubeApp::initHUD() {
 	}
 }
 
+void ColoredCubeApp::initShaderResources() {
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bricks.png", 0, 0, &mDiffuseMapRV, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"skyscraper.jpg", 0, 0, &mDiffuseMapRVBuilding, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"Robot.png", 0, 0, &mDiffuseMapRVEnemy, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVEnemy, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"pole.png", 0, 0, &mDiffuseMapRVPole, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVPole, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"street.png", 0, 0, &mDiffuseMapRVStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVStreet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"theroad.png", 0, 0, &mDiffuseMapRVTheRoad, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVTheRoad, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"building2.jpg", 0, 0, &mDiffuseMapRVBuilding2, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding2, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"barrel.png", 0, 0, &mDiffuseMapRVBarrel, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBarrel, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"blue.png", 0, 0, &mDiffuseMapRVBlue, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBlue, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"red.png", 0, 0, &mDiffuseMapRVRed, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVRed, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"yellow.png", 0, 0, &mDiffuseMapRVYellow, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVYellow, 0 ));
+}
 
+void ColoredCubeApp::initFire() {
+	vector<std::wstring> flares;
+	flares.push_back(L"flare0.dds"); 
+	ID3D10ShaderResourceView* texArray = GetTextureMgr().createTexArray(L"flares", flares);
+	
+	mFire[0].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1500), &camera); 
+	mFire[1].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1475), &camera); 
+	mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1300), &camera); 
+	mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1275), &camera); 
+	mFire[4].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1100), &camera); 
+	mFire[5].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1075), &camera); 
+	mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 800), &camera); 
+	mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 775), &camera); 
+	mFire[8].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 500), &camera); 
+	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
+	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
+	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
+
+	mFire[12].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -275), &camera); 
+	mFire[13].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -300), &camera); 
+	mFire[14].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -475), &camera); 
+	mFire[15].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -500), &camera); 
+	mFire[16].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -775), &camera); 
+	mFire[17].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -800), &camera); 
+	mFire[18].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1075), &camera); 
+	mFire[19].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1100), &camera); 
+	mFire[20].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1275), &camera); 
+	mFire[21].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1300), &camera); 
+	mFire[22].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1475), &camera); 
+	mFire[23].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1500), &camera);
+}
 
 
 void ColoredCubeApp::updateScene(float dt)
