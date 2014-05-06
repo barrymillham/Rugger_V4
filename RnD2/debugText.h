@@ -25,7 +25,7 @@ public:
 	void addLine(string s, int x = -1, int y = -1);
 	int getSize(){return lines.size();}
 	vector<DebugTextLine> lines;
-	void funClear(){for (int i = 0; i < lines.size(); i++)lines.erase(lines.begin());}
+	void funClear(){for (unsigned int i = 0; i < lines.size(); i++)lines.erase(lines.begin());}
 
 private:
 

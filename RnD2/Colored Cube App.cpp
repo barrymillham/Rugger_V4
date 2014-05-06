@@ -52,7 +52,7 @@ namespace gameNS {
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	const int MAX_NUM_ENEMIES = 20;
 	bool PLAY_MUSIC = true;
-	const float FOOTSTEP_GAP = 0.45;
+	const float FOOTSTEP_GAP = 0.45f;
 	const int GRASSY_AREA_WIDTH = 110;
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_WIN = 4;
@@ -413,11 +413,11 @@ void ColoredCubeApp::initPickups() {
 	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio));
 	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio));
 
-	for (int i = 0; i < dayPickups.size(); i++) {
+	for (unsigned int i = 0; i < dayPickups.size(); i++) {
 	//	dayPickups[i].startGlowing();
 		dayPickups[i].setInActive();
 	}
-	for (int i = 0; i < nightPickups.size(); i++) {
+	for (unsigned int i = 0; i < nightPickups.size(); i++) {
 	//	nightPickups[i].startGlowing();
 		nightPickups[i].setInActive();
 	}
@@ -490,7 +490,7 @@ void ColoredCubeApp::initBasicVariables() {
 	found = false;
 	timect = 0.0f;
 	timeOfDay = "Day";
-	srand(time(0));
+	srand(static_cast<unsigned int>(time(0)));
 	debugMode = false;
 	nightCount = 0;
 	stepTime = 0.0f;
@@ -594,36 +594,36 @@ void ColoredCubeApp::initUniqueObjects() {
 }
 
 void ColoredCubeApp::initBarrels() {
-	barrels[0].init(&brick, 2.0f, Vector3(-85, 0, 1500),	1,	1,		3.5,  1);
-	barrels[1].init(&brick, 2.0f, Vector3(85, 0, 1475),		1,	1,		3.5,  1);
-	barrels[2].init(&brick, 2.0f, Vector3(-85, 0, 1300),	1,	1,		3.5,  1);
-	barrels[3].init(&brick, 2.0f, Vector3(85, 0, 1275),		1,	1,		3.5,  1);
-	barrels[4].init(&brick, 2.0f, Vector3(-85, 0, 1100),	1,	1,		3.5,  1);
-	barrels[5].init(&brick, 2.0f, Vector3(85, 0, 1075),		1,	1,		3.5,  1);
-	barrels[6].init(&brick, 2.0f, Vector3(-85, 0, 800),		1,	1,		3.5,  1);
-	barrels[7].init(&brick, 2.0f, Vector3(85, 0, 775),		1,	1,		3.5,  1);
-	barrels[8].init(&brick, 2.0f, Vector3(-85, 0, 500),		1,	1,		3.5,  1);
-	barrels[9].init(&brick, 2.0f, Vector3(85, 0, 475),		1,	1,		3.5,  1);
-	barrels[10].init(&brick, 2.0f, Vector3(-85, 0, 300),	1,	1,		3.5,  1);
-	barrels[11].init(&brick, 2.0f, Vector3(85, 0, 275),		1,	1,		3.5,  1);
+	barrels[0].init(&brick, 2.0f, Vector3(-85, 0, 1500),	1.0f,	1,		3,  1);
+	barrels[1].init(&brick, 2.0f, Vector3(85, 0, 1475),		1.0f,	1,		3,  1);
+	barrels[2].init(&brick, 2.0f, Vector3(-85, 0, 1300),	1.0f,	1,		3,  1);
+	barrels[3].init(&brick, 2.0f, Vector3(85, 0, 1275),		1.0f,	1,		3,  1);
+	barrels[4].init(&brick, 2.0f, Vector3(-85, 0, 1100),	1.0f,	1,		3,  1);
+	barrels[5].init(&brick, 2.0f, Vector3(85, 0, 1075),		1.0f,	1,		3,  1);
+	barrels[6].init(&brick, 2.0f, Vector3(-85, 0, 800),		1.0f,	1,		3,  1);
+	barrels[7].init(&brick, 2.0f, Vector3(85, 0, 775),		1.0f,	1,		3,  1);
+	barrels[8].init(&brick, 2.0f, Vector3(-85, 0, 500),		1.0f,	1,		3,  1);
+	barrels[9].init(&brick, 2.0f, Vector3(85, 0, 475),		1.0f,	1,		3,  1);
+	barrels[10].init(&brick, 2.0f, Vector3(-85, 0, 300),	1.0f,	1,		3,  1);
+	barrels[11].init(&brick, 2.0f, Vector3(85, 0, 275),		1.0f,	1,		3,  1);
 
-	barrels[12].init(&brick, 2.0f, Vector3(-85, 0, -275),	1,	1,		3.5,  1);
-	barrels[13].init(&brick, 2.0f, Vector3(85, 0, -300),	1,	1,		3.5,  1);
-	barrels[14].init(&brick, 2.0f, Vector3(-85, 0, -475),	1,	1,		3.5,  1);
-	barrels[15].init(&brick, 2.0f, Vector3(85, 0, -500),	1,	1,		3.5,  1);
-	barrels[16].init(&brick, 2.0f, Vector3(-85, 0, -775),	1,	1,		3.5,  1);
-	barrels[17].init(&brick, 2.0f, Vector3(85, 0, -800),	1,	1,		3.5,  1);
-	barrels[18].init(&brick, 2.0f, Vector3(-85, 0, -1075),	1,	1,		3.5,  1);
-	barrels[19].init(&brick, 2.0f, Vector3(85, 0, -1100),	1,	1,		3.5,  1);
-	barrels[20].init(&brick, 2.0f, Vector3(-85, 0, -1275),	1,	1,		3.5,  1);
-	barrels[21].init(&brick, 2.0f, Vector3(85, 0, -1300),	1,	1,		3.5,  1);
-	barrels[22].init(&brick, 2.0f, Vector3(-85, 0, -1475),	1,	1,		3.5,  1);
-	barrels[23].init(&brick, 2.0f, Vector3(85, 0, -1500),	1,	1,		3.5,  1);
+	barrels[12].init(&brick, 2.0f, Vector3(-85, 0, -275),	1.0f,	1,		3,  1);
+	barrels[13].init(&brick, 2.0f, Vector3(85, 0, -300),	1.0f,	1,		3,  1);
+	barrels[14].init(&brick, 2.0f, Vector3(-85, 0, -475),	1.0f,	1,		3,  1);
+	barrels[15].init(&brick, 2.0f, Vector3(85, 0, -500),	1.0f,	1,		3,  1);
+	barrels[16].init(&brick, 2.0f, Vector3(-85, 0, -775),	1.0f,	1,		3,  1);
+	barrels[17].init(&brick, 2.0f, Vector3(85, 0, -800),	1.0f,	1,		3,  1);
+	barrels[18].init(&brick, 2.0f, Vector3(-85, 0, -1075),	1.0f,	1,		3,  1);
+	barrels[19].init(&brick, 2.0f, Vector3(85, 0, -1100),	1.0f,	1,		3,  1);
+	barrels[20].init(&brick, 2.0f, Vector3(-85, 0, -1275),	1.0f,	1,		3,  1);
+	barrels[21].init(&brick, 2.0f, Vector3(85, 0, -1300),	1.0f,	1,		3,  1);
+	barrels[22].init(&brick, 2.0f, Vector3(-85, 0, -1475),	1.0f,	1,		3,  1);
+	barrels[23].init(&brick, 2.0f, Vector3(85, 0, -1500),	1.0f,	1,		3,  1);
 }
 
 void ColoredCubeApp::initEnemies() {
 	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++) {
-		enemy[i].init(&mBox, 2.0f, Vector3(rand()%50,0,rand()%50), Vector3(0,0,0), 1, 1, 1, 2, 1);
+		enemy[i].init(&mBox, 2.0f, Vector3((float)(rand()%50),0.f,(float)(rand()%50)), Vector3(0.f,0.f,0.f), 1.f, 1.f, 1, 2, 1);
 		enemy[i].faceObject(&player);
 	}
 }
@@ -633,10 +633,10 @@ void ColoredCubeApp::initOrigin() {
 	xLine.setPosition(Vector3(0,0,0));
 	yLine.init(&bLine, Vector3(0,0,0), 5);
 	yLine.setPosition(Vector3(0,0,0));
-	yLine.setRotationZ(ToRadian(90));
+	yLine.setRotationZ(static_cast<float>(ToRadian(90)));
 	zLine.init(&gLine, Vector3(0,0,0), 5);
 	zLine.setPosition(Vector3(0,0,0));
-	zLine.setRotationY(ToRadian(90));
+	zLine.setRotationY(static_cast<float>(ToRadian(90)));
 }
 
 void ColoredCubeApp::initLights()
@@ -772,7 +772,7 @@ void ColoredCubeApp::initHUD() {
 
 	hudObjects[0].init(&blueBox, 1.0f, Vector3(0,0,0), Vector3(0,0,0), 1, 1);
 
-	for (int i = 0; i < hudObjects.size(); i++) {
+	for (unsigned int i = 0; i < hudObjects.size(); i++) {
 		hudObjects[i].faceObject(&player);
 		hudObjects[i].setActive();
 	}
@@ -866,7 +866,7 @@ void ColoredCubeApp::updateScene(float dt)
 		updateMusic();
 		menu.update(dt);
 		updateDayNight();
-		camera.update(dt, gameNS::PLAYER_SPEED);
+		camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED));
 		updateOrigin(dt);
 		handleUserInput();
 		updatePlayer(dt);
@@ -1122,7 +1122,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 			position = pos;
 		}
 
-		for (int j = 0; j < pBullets.size(); j++) {
+		for (unsigned int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&walls[i])) {
 				pBullets[j]->setInActive();
 				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
@@ -1139,7 +1139,7 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 		if (buildings[i].getActiveState() == false) continue;
 		if(player.collided(&buildings[i]))
 			position = pos;
-		for (int j = 0; j < pBullets.size(); j++) {
+		for (unsigned int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&buildings[i])) {
 				pBullets[j]->setInActive();
 				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
@@ -1156,7 +1156,7 @@ void ColoredCubeApp::handleLampCollisions(Vector3 pos) {
 		if(player.collided(&lamps[i]))
 			player.setPosition(pos);
 
-		for (int j = 0; j < pBullets.size(); j++) {
+		for (unsigned int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&lamps[i])) {
 				pBullets[j]->setInActive();
 				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
@@ -1177,7 +1177,7 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 	
 	for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 	{
-		for(int j=0; j<pBullets.size(); j++)
+		for(unsigned int j=0; j<pBullets.size(); j++)
 		{
 			if(pBullets[j]->collided(&enemy[i]))
 			{
@@ -1219,7 +1219,7 @@ void ColoredCubeApp::placePickups() {
 				for (int i = 0; i < maxDayPickups; i++) {
 					bool add = true;
 					int choice = rand()%dayPickups.size();
-					for (int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
+					for (unsigned int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
 						if (tempUsedIndices[j] == dayPickups[choice].getMapIndex())
 							add = false; //there is already a pickup in the spot of the chosen day pickup
 					}
@@ -1235,7 +1235,7 @@ void ColoredCubeApp::placePickups() {
 				for (int i = 0; i < maxNightPickups; i++) {
 					bool add = true;
 					int choice = rand()%nightPickups.size();
-					for (int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
+					for (unsigned int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
 						if (tempUsedIndices[j] == nightPickups[choice].getMapIndex())
 							add = false; //there is already a pickup in the spot of the chosen night pickup
 					}
@@ -1247,16 +1247,16 @@ void ColoredCubeApp::placePickups() {
 			}
 		}
 	
-		for (int i = 0; i < nightPickups.size(); i++)
+		for (unsigned int i = 0; i < nightPickups.size(); i++)
 			nightPickups[i].setInActive();
-		for (int i = 0; i < dayPickups.size(); i++)
+		for (unsigned int i = 0; i < dayPickups.size(); i++)
 			dayPickups[i].setInActive();
 
 		if (day)
-			for (int i = 0; i < choices.size(); i++) 
+			for (unsigned int i = 0; i < choices.size(); i++) 
 				dayPickups[choices[i]].setActive();
 		else if (night) 
-			for (int i = 0; i < choices.size(); i++) 
+			for (unsigned int i = 0; i < choices.size(); i++) 
 				nightPickups[choices[i]].setActive();
 
 		placedPickups = true;
@@ -1264,13 +1264,13 @@ void ColoredCubeApp::placePickups() {
 }
 
 void ColoredCubeApp::updatePickups(float dt) {
-	for (int i = 0; i < dayPickups.size(); i++) {
+	for (unsigned int i = 0; i < dayPickups.size(); i++) {
 			if (player.collided(&dayPickups[i])) {
 				dayPickups[i].activate();
 			}
 			dayPickups[i].update(dt);
 	}
-	for (int i = 0; i < nightPickups.size(); i++) {
+	for (unsigned int i = 0; i < nightPickups.size(); i++) {
 			if (player.collided(&nightPickups[i])) {
 				nightPickups[i].activate();
 			}
@@ -1306,16 +1306,16 @@ void ColoredCubeApp::updateDayNight() {
 						switch(x%4)
 						{
 						case 0:
-							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,5,-250));
+							enemy[i].setPosition(D3DXVECTOR3(50.f-rand()%100,5.f,-250.f));
 							break;
 						case 1:
-							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,5,250));
+							enemy[i].setPosition(D3DXVECTOR3(50.f-rand()%100,5.f,250.f));
 							break;
 						case 2:
-							enemy[i].setPosition(D3DXVECTOR3(250, 5, 50-rand()%100));
+							enemy[i].setPosition(D3DXVECTOR3(250.f, 5.f, 50.f-rand()%100));
 							break;
 						case 3:
-							enemy[i].setPosition(D3DXVECTOR3(-250, 5, 50-rand()%100));
+							enemy[i].setPosition(D3DXVECTOR3(-250.f, 5.f, 50.f-rand()%100));
 							break;
 						}
 						x++;
@@ -1356,29 +1356,29 @@ void ColoredCubeApp::updateDayNight() {
 			timeOfDay = "Dawn";
 			mClearColor += D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
 			//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-			mLights[0].diffuse += D3DXCOLOR(((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			mLights[3].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[4].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[5].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[6].att.y    += ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[0].diffuse += D3DXCOLOR(((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			mLights[3].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[4].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[5].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[6].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
 		}
 		else 
 		{
 			timeOfDay = "Evening";
 			mClearColor -= D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
 			//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-			mLights[0].diffuse -= D3DXCOLOR(((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			mLights[3].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[4].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[5].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[6].att.y    -= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[0].diffuse -= D3DXCOLOR(((1.0f-0.1f)/(float)(gameNS::TRANSITIONTIME*dt)), ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			mLights[3].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
+			mLights[4].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
+			mLights[5].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
+			mLights[6].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
 		}
 	}
 	
 }
 
 void ColoredCubeApp::updateHUD(float dt) {
-	for (int i = 0; i < hudObjects.size(); i++) {
+	for (unsigned int i = 0; i < hudObjects.size(); i++) {
 		//hudObjects[i].setPosition(camera.getPosition() + camera.getLookatDirection());
 		hudObjects[i].update(dt);
 	}
@@ -1681,7 +1681,7 @@ void ColoredCubeApp::drawOrigin() {
 void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
 	
-	for (int i = 0; i < dayPickups.size(); i++)
+	for (unsigned int i = 0; i < dayPickups.size(); i++)
 
 		if (dayPickups[i].getActiveState()) {
 			if(dayPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
@@ -1698,7 +1698,7 @@ void ColoredCubeApp::drawPickups() {
 			}
 			dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		}	
-	for (int i = 0; i < nightPickups.size(); i++) 
+	for (unsigned int i = 0; i < nightPickups.size(); i++) 
 		if (nightPickups[i].getActiveState()) {
 			if(nightPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
 				mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
@@ -1736,7 +1736,7 @@ void ColoredCubeApp::drawHUD() {
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
 	mfxSpecMapVar->SetResource(mSpecMapRV);
 	
-	for(int i=0; i<hudObjects.size(); i++)
+	for(unsigned int i=0; i<hudObjects.size(); i++)
 		hudObjects[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
 
