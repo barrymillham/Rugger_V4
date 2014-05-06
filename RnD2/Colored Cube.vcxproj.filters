@@ -79,6 +79,9 @@
     <ClCompile Include="InputLayouts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Barrel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h">
@@ -175,6 +178,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="InputLayouts.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Barrel.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

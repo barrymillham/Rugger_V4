@@ -17,6 +17,7 @@
 #include "LineObject.h"
 #include "Wall.h"
 #include "Building.h"
+#include "Barrel.h"
 #include "gameError.h"
 #include "Player.h"
 #include "Bullet.h"
@@ -40,6 +41,7 @@ namespace gameNS {
 	const float DAYLEN = 40;
 	const int NUM_WALLS = 20;
 	const int NUM_BUILDINGS = 39;
+	const int NUM_BARRELS = 12;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 50;
 	const int NUM_LIGHTS = 11;
@@ -109,6 +111,7 @@ public:
 	void drawLamps();
 	void drawBuildings();
 	void drawHUD();
+	void drawBarrels();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
@@ -140,6 +143,7 @@ private:
 	LineObject xLine, yLine, zLine;
 	Wall walls[gameNS::NUM_WALLS];
 	Building buildings[gameNS::NUM_BUILDINGS];
+	Barrel barrels[gameNS::NUM_BARRELS];
 	Wall floor;
 	Wall floor2;
 	vector<LampPost> lamps;
@@ -203,6 +207,8 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVBuilding2;
 	ID3D10ShaderResourceView* mDiffuseMapRVBullet;
 	ID3D10ShaderResourceView* mSpecMapRVBullet;
+	ID3D10ShaderResourceView* mDiffuseMapRVBarrel;
+	ID3D10ShaderResourceView* mSpecMapRVBarrel;
 	ID3D10ShaderResourceView* mDiffuseMapRVBlue;
 	ID3D10ShaderResourceView* mSpecMapRVBlue;
 	ID3D10ShaderResourceView* mDiffuseMapRVRed;
@@ -360,6 +366,8 @@ void ColoredCubeApp::initApp()
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBuilding2, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"bullet.png", 0, 0, &mDiffuseMapRVBullet, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBullet, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"barrel.png", 0, 0, &mDiffuseMapRVBarrel, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBarrel, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"blue.png", 0, 0, &mDiffuseMapRVBlue, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVBlue, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"red.png", 0, 0, &mDiffuseMapRVRed, 0 ));
@@ -379,13 +387,17 @@ void ColoredCubeApp::initApp()
 }
 
 void ColoredCubeApp::initLamps() {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 		lamps.push_back(LampPost());
 	
 	lamps[0].init(&brick, Vector3(58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
 	lamps[1].init(&brick, Vector3(-58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
 	lamps[2].init(&brick, Vector3(58.5,0.1,-58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
 	lamps[3].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+	lamps[4].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+	lamps[5].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+	lamps[6].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+	lamps[7].init(&brick, Vector3(-58.5,0.1,58.5), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
 }
 
 void ColoredCubeApp::initPickups() {
@@ -602,6 +614,19 @@ void ColoredCubeApp::initWallPositions() {
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 1625, 500, 1625);
 	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 975, 500, 1625);
+	
+	barrels[0].init(&brick, 2.0f, Vector3(10, 0, 0),	1,	1,		3.5,  1);
+	barrels[1].init(&brick, 2.0f, Vector3(10, 0, 10),	1,	1,		3.5,  1);
+	barrels[2].init(&brick, 2.0f, Vector3(10, 0, 20),	1,	1,		3.5,  1);
+	barrels[3].init(&brick, 2.0f, Vector3(10, 0, 30),	1,	1,		3.5,  1);
+	barrels[4].init(&brick, 2.0f, Vector3(10, 0, 40),	1,	1,		3.5,  1);
+	barrels[5].init(&brick, 2.0f, Vector3(10, 0, 50),	1,	1,		3.5,  1);
+	barrels[6].init(&brick, 2.0f, Vector3(10, 0, 60),	1,	1,		3.5,  1);
+	barrels[7].init(&brick, 2.0f, Vector3(10, 0, 70),	1,	1,		3.5,  1);
+	barrels[8].init(&brick, 2.0f, Vector3(10, 0, 80),	1,	1,		3.5,  1);
+	barrels[9].init(&brick, 2.0f, Vector3(10, 0, 90),	1,	1,		3.5,  1);
+	barrels[10].init(&brick, 2.0f, Vector3(10, 0, 100),	1,	1,		3.5,  1);
+	barrels[11].init(&brick, 2.0f, Vector3(10, 0, 110),	1,	1,		3.5,  1);
 }
 
 void ColoredCubeApp::initEnemies() {
@@ -908,6 +933,9 @@ void ColoredCubeApp::updateUniqueObjects(float dt) {
 	floor.update(dt);
 	floor2.update(dt);
 	//big floor update must also be added here for it to show.
+
+	for(int i=0; i <gameNS::NUM_BARRELS; i++)
+		barrels[i].update(dt);
 }
 
 void ColoredCubeApp::updateWalls(float dt) {
@@ -1374,17 +1402,17 @@ void ColoredCubeApp::drawScene()
 			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
 			drawBuildings();
 			drawWalls();
-
-		}
-		//Draw particle systems last
-		md3dDevice->OMSetDepthStencilState(0, 0);
-		float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
-		md3dDevice->OMSetBlendState(0, blendFactor, 0xffffffff);
+			drawBarrels();
+			//Draw particle systems last
+			md3dDevice->OMSetDepthStencilState(0, 0);
+			float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+			md3dDevice->OMSetBlendState(0, blendFactor, 0xffffffff);
 		
-		for(int i=0; i<5; i++)
-		{
-			mFire[i].setEyePos(camera.getPosition());
-			mFire[i].draw();
+			for(int i=0; i<5; i++)
+			{
+				mFire[i].setEyePos(camera.getPosition());
+				mFire[i].draw();
+			}
 		}
 	}
 	else if(startScreen)
@@ -1646,4 +1674,13 @@ void ColoredCubeApp::drawHUD() {
 	
 	for(int i=0; i<hudObjects.size(); i++)
 		hudObjects[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+}
+
+void ColoredCubeApp::drawBarrels()
+{
+	mfxDiffuseMapVar->SetResource(mDiffuseMapRVBarrel);
+	mfxSpecMapVar->SetResource(mSpecMapRVBarrel);
+	for(int i = 0; i < gameNS::NUM_BARRELS; i++)
+		barrels[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 }
