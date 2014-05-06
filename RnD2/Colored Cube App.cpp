@@ -1000,7 +1000,6 @@ void ColoredCubeApp::updateBuildings(float dt) {
 }
 
 void ColoredCubeApp::updatePlayer(float dt) {
-
 	player.setPosition(camera.getPosition());
 	D3DXVECTOR3 pos = player.getPosition();
 	//player.setPosition(Vector3(position.x, position.y-2, position.z));
@@ -1296,16 +1295,16 @@ void ColoredCubeApp::updateDayNight() {
 						switch(x%4)
 						{
 						case 0:
-							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,0,-250));
+							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,5,-250));
 							break;
 						case 1:
-							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,0,250));
+							enemy[i].setPosition(D3DXVECTOR3(50-rand()%100,5,250));
 							break;
 						case 2:
-							enemy[i].setPosition(D3DXVECTOR3(250, 0, 50-rand()%100));
+							enemy[i].setPosition(D3DXVECTOR3(250, 5, 50-rand()%100));
 							break;
 						case 3:
-							enemy[i].setPosition(D3DXVECTOR3(-250, 0, 50-rand()%100));
+							enemy[i].setPosition(D3DXVECTOR3(-250, 5, 50-rand()%100));
 							break;
 						}
 						x++;
@@ -1368,8 +1367,10 @@ void ColoredCubeApp::updateDayNight() {
 }
 
 void ColoredCubeApp::updateHUD(float dt) {
-	for (int i = 0; i < hudObjects.size(); i++) 
+	for (int i = 0; i < hudObjects.size(); i++) {
+		//hudObjects[i].setPosition(camera.getPosition() + camera.getLookatDirection());
 		hudObjects[i].update(dt);
+	}
 }
 
 
