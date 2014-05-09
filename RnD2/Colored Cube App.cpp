@@ -43,7 +43,7 @@ namespace gameNS {
 	const int NUM_BUILDINGS = 39;
 	const int NUM_BARRELS = 24;
 	const int PERIMETER = 4;
-	const int NUM_BULLETS = 50;
+	const int NUM_BULLETS = 100;
 	const int NUM_LIGHTS = 12;
 	const int NUM_FIRES = 24;
 	const int NUM_LAMPS = 8;
@@ -58,6 +58,7 @@ namespace gameNS {
 	const int NUM_NIGHTS_TO_WIN = 4;
 	const float FAR_CLIP = 10000.0f;
 	const int PLAYER_SPEED = 40;
+	int shotgun = true; 
 }
 
 
@@ -924,16 +925,7 @@ void ColoredCubeApp::updateScene(float dt)
 		updateBuildings(dt);
 		updateUniqueObjects(dt);
 		updateHUD(dt);
-
-		if(level1)
-		{
-			placePickups();
-
-		}
-		else if(level2)
-		{
-			placePickups();
-		}
+		placePickups();
 
 		//Handle Collisions
 		handleWallCollisions(oldPos);
@@ -1062,7 +1054,7 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	D3DXVECTOR3 pos = player.getPosition();
 	//player.setPosition(Vector3(position.x, position.y-2, position.z));
 	
-	player.update(dt, camera.getLookatDirection()); //moveAxis is passed to the bullet
+	player.update(dt, camera.getLookatDirection(), gameNS::shotgun); //moveAxis is passed to the bullet
 	if (player.getHealth() <= 0) {
 		Sleep(2000);
 		endScreen = true;
