@@ -154,6 +154,8 @@ private:
 	vector<LampPost> lamps;
 	vector<Pickup> dayPickups;
 	vector<Pickup> nightPickups;
+	vector<Pickup> dayPickupsL2;
+	vector<Pickup> nightPickupsL2;
 	vector<HudObject> hudObjects;
 	Quad menu;
 
@@ -316,8 +318,8 @@ void ColoredCubeApp::initApp()
 	initBasicVariables(); //Like shotTimer, etc.
 	audio->playCue(INTROMUSIC);
 	startScreen = true;
-	level1 = true;
-	level2 = false;
+	level1 = false;
+	level2 = true;
 	position = D3DXVECTOR3(0, 5, 0); 
 	initBasicGeometry();
 	initTextStrings(); //Like start/end screen text
@@ -379,39 +381,76 @@ void ColoredCubeApp::initLamps() {
 
 void ColoredCubeApp::initPickups() {
 	//define the pickups
+	unsigned int level;
+	if(level1)
+		level = 1;
+	else if(level2)
+		level = 2;
 
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio));
+
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level));
+	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level));
+	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level));
 
 	
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level));
+	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level));
+
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level));
+	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level));
+	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level));
+	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level));
+	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level));
+
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level));
+	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level));
+	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
+	
+
 
 	for (unsigned int i = 0; i < dayPickups.size(); i++) {
 	//	dayPickups[i].startGlowing();
@@ -422,7 +461,15 @@ void ColoredCubeApp::initPickups() {
 		nightPickups[i].setInActive();
 	}
 
+	for(unsigned int i = 0; i < dayPickupsL2.size(); i++){
+		
+		dayPickupsL2[i].setInActive();
+	}
 
+	for(unsigned int i=0; i < nightPickupsL2.size(); i++){
+
+		nightPickupsL2[i].setInActive();
+	}
 
 }
 
@@ -885,7 +932,7 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 		else if(level2)
 		{
-
+			placePickups();
 		}
 
 		//Handle Collisions
@@ -1209,72 +1256,104 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 
 void ColoredCubeApp::placePickups() {
 	if (!placedPickups) {
-		int maxNightPickups = 5; //Locations: 0, 13, 14, 15, 16
-		int maxDayPickups = 17; //All locations
-		vector<int> choices;
-		bool day = !night;
-		if (day) {
-			if (dayPickups.size() > 0) { //otherwise divide by zero when I mod by size
-				vector<int> tempUsedIndices;
-				for (int i = 0; i < maxDayPickups; i++) {
-					bool add = true;
-					int choice = rand()%dayPickups.size();
-					for (unsigned int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
-						if (tempUsedIndices[j] == dayPickups[choice].getMapIndex())
-							add = false; //there is already a pickup in the spot of the chosen day pickup
+		if(level1)
+		{
+			int maxNightPickups = 5; //Locations: 0, 13, 14, 15, 16
+			int maxDayPickups = 17; //All locations
+			vector<int> choices;
+			bool day = !night;
+			if (day) {
+				if (dayPickups.size() > 0) { //otherwise divide by zero when I mod by size
+					vector<int> tempUsedIndices;
+					for (int i = 0; i < maxDayPickups; i++) {
+						bool add = true;
+						int choice = rand()%dayPickups.size();
+						for (unsigned int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
+							if (tempUsedIndices[j] == dayPickups[choice].getMapIndex())
+								add = false; //there is already a pickup in the spot of the chosen day pickup
+						}
+						if (add) {
+							choices.push_back(choice); //add that to displayed pickups
+							tempUsedIndices.push_back(dayPickups[choice].getMapIndex()); //record that mapIndex as used
+						}
 					}
-					if (add) {
-						choices.push_back(choice); //add that to displayed pickups
-						tempUsedIndices.push_back(dayPickups[choice].getMapIndex()); //record that mapIndex as used
+				}
+			} else {
+				if (nightPickups.size() > 0) {
+					vector<int> tempUsedIndices;
+					for (int i = 0; i < maxNightPickups; i++) {
+						bool add = true;
+						int choice = rand()%nightPickups.size();
+						for (unsigned int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
+							if (tempUsedIndices[j] == nightPickups[choice].getMapIndex())
+								add = false; //there is already a pickup in the spot of the chosen night pickup
+						}
+						if (add) {
+								choices.push_back(choice); //add that to displayed pickups
+								tempUsedIndices.push_back(nightPickups[choice].getMapIndex()); //record that mapIndex as used
+						}
 					}
 				}
 			}
-		} else {
-			if (nightPickups.size() > 0) {
-				vector<int> tempUsedIndices;
-				for (int i = 0; i < maxNightPickups; i++) {
-					bool add = true;
-					int choice = rand()%nightPickups.size();
-					for (unsigned int j = 0; j < tempUsedIndices.size(); j++) { //check that chosen dayPickup mapIndex isn't in the usedMapIndices
-						if (tempUsedIndices[j] == nightPickups[choice].getMapIndex())
-							add = false; //there is already a pickup in the spot of the chosen night pickup
-					}
-					if (add) {
-							choices.push_back(choice); //add that to displayed pickups
-							tempUsedIndices.push_back(nightPickups[choice].getMapIndex()); //record that mapIndex as used
-					}
+	
+			for (unsigned int i = 0; i < nightPickups.size(); i++)
+				nightPickups[i].setInActive();
+			for (unsigned int i = 0; i < dayPickups.size(); i++)
+				dayPickups[i].setInActive();
+
+			if (day)
+				for (unsigned int i = 0; i < choices.size(); i++) 
+					dayPickups[choices[i]].setActive();
+			else if (night) 
+				for (unsigned int i = 0; i < choices.size(); i++) 
+					nightPickups[choices[i]].setActive();
+
+
+		}
+		else if(level2){
+			bool day = !night;
+			if(day)
+				for(int i = 0; i < dayPickupsL2.size(); i++){
+					dayPickupsL2[i].setActive();
+				}
+			else if(!day){
+				for(int i = 0; i < nightPickupsL2.size(); i++){
+					nightPickupsL2[i].setActive();
 				}
 			}
 		}
-	
-		for (unsigned int i = 0; i < nightPickups.size(); i++)
-			nightPickups[i].setInActive();
-		for (unsigned int i = 0; i < dayPickups.size(); i++)
-			dayPickups[i].setInActive();
-
-		if (day)
-			for (unsigned int i = 0; i < choices.size(); i++) 
-				dayPickups[choices[i]].setActive();
-		else if (night) 
-			for (unsigned int i = 0; i < choices.size(); i++) 
-				nightPickups[choices[i]].setActive();
-
 		placedPickups = true;
 	}
 }
 
 void ColoredCubeApp::updatePickups(float dt) {
-	for (unsigned int i = 0; i < dayPickups.size(); i++) {
+	if(level1){
+		for (unsigned int i = 0; i < dayPickups.size(); i++) {
 			if (player.collided(&dayPickups[i])) {
 				dayPickups[i].activate();
 			}
 			dayPickups[i].update(dt);
-	}
-	for (unsigned int i = 0; i < nightPickups.size(); i++) {
+		}
+		for (unsigned int i = 0; i < nightPickups.size(); i++) {
 			if (player.collided(&nightPickups[i])) {
 				nightPickups[i].activate();
 			}
 			nightPickups[i].update(dt);
+		}
+	}
+	else if(level2){
+		for (unsigned int i = 0; i < dayPickupsL2.size(); i++) {
+			if (player.collided(&dayPickupsL2[i])) {
+				dayPickupsL2[i].activate();
+			}
+			dayPickupsL2[i].update(dt);
+		}
+		for (unsigned int i = 0; i < nightPickupsL2.size(); i++) {
+			if (player.collided(&nightPickupsL2[i])) {
+				nightPickupsL2[i].activate();
+			}
+			nightPickupsL2[i].update(dt);
+		}
 	}
 }
 
@@ -1451,6 +1530,7 @@ void ColoredCubeApp::drawScene()
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
 			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
 			drawBuildings();
+			drawPickups();
 			drawWalls();
 			drawBarrels();
 			drawLamps();
@@ -1680,40 +1760,74 @@ void ColoredCubeApp::drawOrigin() {
 
 void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
-	
-	for (unsigned int i = 0; i < dayPickups.size(); i++)
-
-		if (dayPickups[i].getActiveState()) {
-			if(dayPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
-				mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
-				mfxSpecMapVar->SetResource(mSpecMapRVRed);
+	if(level1){
+		for (unsigned int i = 0; i < dayPickups.size(); i++)
+			if (dayPickups[i].getActiveState()) {
+				if(dayPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+					mfxSpecMapVar->SetResource(mSpecMapRVRed);
+				}
+				else if(dayPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+				}
+				else if(dayPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+				}
+				dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			}	
+		for (unsigned int i = 0; i < nightPickups.size(); i++) 
+			if (nightPickups[i].getActiveState()) {
+				if(nightPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+					mfxSpecMapVar->SetResource(mSpecMapRVRed);
+				}
+				else if(nightPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+				}
+				else if(nightPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+				}
+				nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 			}
-			else if(dayPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
-				mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
-				mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+	}
+	else if(level2){
+		for (unsigned int i = 0; i < dayPickupsL2.size(); i++)
+			if (dayPickupsL2[i].getActiveState()) {
+				if(dayPickupsL2[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+					mfxSpecMapVar->SetResource(mSpecMapRVRed);
+				}
+				else if(dayPickupsL2[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+				}
+				else if(dayPickupsL2[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+				}
+				dayPickupsL2[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			}	
+		for (unsigned int i = 0; i < nightPickupsL2.size(); i++) 
+			if (nightPickupsL2[i].getActiveState()) {
+				if(nightPickupsL2[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+					mfxSpecMapVar->SetResource(mSpecMapRVRed);
+				}
+				else if(nightPickupsL2[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+				}
+				else if(nightPickupsL2[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+				}
+				nightPickupsL2[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 			}
-			else if(dayPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
-				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
-				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
-			}
-			dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		}	
-	for (unsigned int i = 0; i < nightPickups.size(); i++) 
-		if (nightPickups[i].getActiveState()) {
-			if(nightPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
-				mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
-				mfxSpecMapVar->SetResource(mSpecMapRVRed);
-			}
-			else if(nightPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
-				mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
-				mfxSpecMapVar->SetResource(mSpecMapRVBlue);
-			}
-			else if(nightPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
-				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
-				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
-			}
-			nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-		}
+	}
 
 }
 

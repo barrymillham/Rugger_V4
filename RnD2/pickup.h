@@ -10,7 +10,7 @@ class Pickup : public GameObject
 {
 public:
 	Pickup(){}
-	Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const char* sound, Audio* a);
+	Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level);
 	~Pickup();
 
 	//Width and height in integral number of boxes(bricks)

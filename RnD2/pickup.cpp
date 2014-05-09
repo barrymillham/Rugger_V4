@@ -1,6 +1,6 @@
 #include "pickup.h"
 
-Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const char* sound, Audio* a) {
+Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level) {
 	radius = 1;
 	radius *= 1.01f; //fudge factor
 	active = true;
@@ -16,27 +16,60 @@ Pickup::Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const cha
 	rotZ = 0.0f;
 	radiusSquared = radius * radius;
 	box = b;
-	mapLocations.push_back(Vector3(20,0,0));
-	mapLocations.push_back(Vector3(-40,0,40));
-	mapLocations.push_back(Vector3(40,0,40));
-	mapLocations.push_back(Vector3(40,0,-40));
-	mapLocations.push_back(Vector3(-40,0,-40));
 
-	mapLocations.push_back(Vector3(0,0,80));
-	mapLocations.push_back(Vector3(80,0,0));
-	mapLocations.push_back(Vector3(0,0,-80));
-	mapLocations.push_back(Vector3(-80,0,0));
+	if(level == 1){
+		mapLocations.push_back(Vector3(20,0,0));
+		mapLocations.push_back(Vector3(-40,0,40));
+		mapLocations.push_back(Vector3(40,0,40));
+		mapLocations.push_back(Vector3(40,0,-40));
+		mapLocations.push_back(Vector3(-40,0,-40));
+
+		mapLocations.push_back(Vector3(0,0,80));
+		mapLocations.push_back(Vector3(80,0,0));
+		mapLocations.push_back(Vector3(0,0,-80));
+		mapLocations.push_back(Vector3(-80,0,0));
 	
-	mapLocations.push_back(Vector3(-100,0,100));
-	mapLocations.push_back(Vector3(100,0,100));
-	mapLocations.push_back(Vector3(100,0,-100));
-	mapLocations.push_back(Vector3(-100,0,-100));
+		mapLocations.push_back(Vector3(-100,0,100));
+		mapLocations.push_back(Vector3(100,0,100));
+		mapLocations.push_back(Vector3(100,0,-100));
+		mapLocations.push_back(Vector3(-100,0,-100));
 
-	mapLocations.push_back(Vector3(-230,0,230));
-	mapLocations.push_back(Vector3(230,0,230));
-	mapLocations.push_back(Vector3(230,0,-230));
-	mapLocations.push_back(Vector3(-230,0,-230));
+		mapLocations.push_back(Vector3(-230,0,230));
+		mapLocations.push_back(Vector3(230,0,230));
+		mapLocations.push_back(Vector3(230,0,-230));
+		mapLocations.push_back(Vector3(-230,0,-230));
+	}
+	else if(level == 2){
+		mapLocations.push_back(Vector3(0,5,0));
+		mapLocations.push_back(Vector3(0,10,0));
+		mapLocations.push_back(Vector3(0,15,0));
+		mapLocations.push_back(Vector3(0,20,0));
 
+		mapLocations.push_back(Vector3(0,25,0));
+		mapLocations.push_back(Vector3(0,30,0));
+		mapLocations.push_back(Vector3(0,35,0));
+		mapLocations.push_back(Vector3(0,40,0));
+
+		mapLocations.push_back(Vector3(0,45,0));
+		mapLocations.push_back(Vector3(0,50,0));
+		mapLocations.push_back(Vector3(0,55,0));
+		mapLocations.push_back(Vector3(0,60,0));
+
+		mapLocations.push_back(Vector3(0,65,0));
+		mapLocations.push_back(Vector3(0,70,0));
+		mapLocations.push_back(Vector3(0,75,0));
+		mapLocations.push_back(Vector3(0,80,0));
+
+		mapLocations.push_back(Vector3(0,85,0));
+		mapLocations.push_back(Vector3(0,90,0));
+		mapLocations.push_back(Vector3(0,95,0));
+		mapLocations.push_back(Vector3(0,100,0));
+
+		mapLocations.push_back(Vector3(0,105,0));
+		mapLocations.push_back(Vector3(0,110,0));
+		mapLocations.push_back(Vector3(0,115,0));
+
+	}
 	position = mapLocations[mapIndex];
 	Pickup::mapIndex = mapIndex;
 	Pickup::value = value;
