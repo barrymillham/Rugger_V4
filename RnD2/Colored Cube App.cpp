@@ -44,8 +44,8 @@ namespace gameNS {
 	const int NUM_BARRELS = 24;
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 100;
-	const int NUM_LIGHTS = 30;
-	const int NUM_FIRES = 24;
+	const int NUM_LIGHTS = 15;
+	const int NUM_FIRES = 12;
 	const int NUM_LAMPS = 8;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
@@ -332,8 +332,10 @@ void ColoredCubeApp::initApp()
 	initPickups();
 	initWallPositions();
 	initBuildingPositions();
-	initLights();
+
 	initLamps();
+	initLights();
+	
 	initEnemies();
 	initHUD();
 
@@ -830,7 +832,7 @@ void ColoredCubeApp::initLights()
 	else if (level2)
 	{
 		// Pointlight--position is changed every frame to animate.
-		//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+		mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
 		mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
 		//mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
@@ -854,55 +856,117 @@ void ColoredCubeApp::initLights()
 		mLights[2].spotPow  = 128.0f;
 		mLights[2].range    = 0.0f;
 
-		//Inner corner lights
-		mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		mLights[3].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-		mLights[3].att.x    = 0.0f;
-		mLights[3].att.y    = 0.55f;
-		mLights[3].att.z    = 0.0f;
-		mLights[3].range    = 90.0f;
-		mLights[3].pos = D3DXVECTOR3(30, 10, 30);
-	
-		mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[4].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		mLights[4].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-		mLights[4].att.x    = 0.0f;
-		mLights[4].att.y    = 0.55f;
-		mLights[4].att.z    = 0.0f;
-		mLights[4].range    = 90.0f;
-		mLights[4].pos = D3DXVECTOR3(-30, 10, 30);
 
-		mLights[5].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[5].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		mLights[5].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-		mLights[5].att.x    = 0.0f;
-		mLights[5].att.y    = 0.55f;
-		mLights[5].att.z    = 0.0f;
-		mLights[5].range    = 90.0f;
-		mLights[5].pos = D3DXVECTOR3(30, 10, -30);
-
-		mLights[6].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[6].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		mLights[6].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-		mLights[6].att.x    = 0.0f;
-		mLights[6].att.y    = 0.55f;
-		mLights[6].att.z    = 0.0f;
-		mLights[6].range    = 90.0f;
-		mLights[6].pos = D3DXVECTOR3(-30, 10, -30);
-
-		for(int i=7; i<gameNS::NUM_LIGHTS; i++)
+		for(int i=3; i<7; i++)
 		{
-			mLights[i].ambient	= D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-			mLights[i].diffuse	= D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-			mLights[i].specular	= D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+			mLights[i].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			mLights[i].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			mLights[i].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
 			mLights[i].att.x    = 0.0f;
 			mLights[i].att.y    = 0.55f;
 			mLights[i].att.z    = 0.0f;
-			mLights[i].range	= 90.0f;
-			mLights[i].pos		= D3DXVECTOR3((rand()%2000) - 1000, 10, (rand()%1000)-500);
+			mLights[i].range    = 90.0f;
+			mLights[i].pos = lamps[i].getPosition();
+			mLights[i].pos.y = 10;
+		}
+
+		mLights[7].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[7].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[7].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[7].att.x    = 0.0f;
+		mLights[7].att.y    = 0.55f;
+		mLights[7].att.z    = 0.0f;
+		mLights[7].range    = 90.0f;
+		mLights[7].pos = D3DXVECTOR3(450, 10, 75);
+
+		mLights[8].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[8].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[8].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[8].att.x    = 0.0f;
+		mLights[8].att.y    = 0.55f;
+		mLights[8].att.z    = 0.0f;
+		mLights[8].range    = 90.0f;
+		mLights[8].pos = D3DXVECTOR3(300, 10, 75);
+
+		mLights[9].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[9].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[9].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[9].att.x    = 0.0f;
+		mLights[9].att.y    = 0.55f;
+		mLights[9].att.z    = 0.0f;
+		mLights[9].range    = 90.0f;
+		mLights[9].pos = D3DXVECTOR3(450, 10, -100);
+
+		mLights[10].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[10].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[10].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[10].att.x    = 0.0f;
+		mLights[10].att.y    = 0.55f;
+		mLights[10].att.z    = 0.0f;
+		mLights[10].range    = 90.0f;
+		mLights[10].pos = D3DXVECTOR3(300, 10, -100);
+
+		for(int i= 11; i < gameNS::NUM_LIGHTS; i++)
+		{
+			mLights[i].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			mLights[i].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			mLights[i].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+			mLights[i].att.x    = 0.0f;
+			mLights[i].att.y    = 0.55f;
+			mLights[i].att.z    = 0.0f;
+			mLights[i].range    = 90.0f;
+			mLights[i].pos = D3DXVECTOR3(rand() % 1000, 10, rand()%100);
 		}
 	}
+	//	//Inner corner lights
+	//	mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//	mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	//	mLights[3].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	//	mLights[3].att.x    = 0.0f;
+	//	mLights[3].att.y    = 0.55f;
+	//	mLights[3].att.z    = 0.0f;
+	//	mLights[3].range    = 90.0f;
+	//	mLights[3].pos = D3DXVECTOR3(30, 10, 30);
+	//
+	//	mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//	mLights[4].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	//	mLights[4].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	//	mLights[4].att.x    = 0.0f;
+	//	mLights[4].att.y    = 0.55f;
+	//	mLights[4].att.z    = 0.0f;
+	//	mLights[4].range    = 90.0f;
+	//	mLights[4].pos = D3DXVECTOR3(-30, 10, 30);
+
+	//	mLights[5].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//	mLights[5].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	//	mLights[5].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	//	mLights[5].att.x    = 0.0f;
+	//	mLights[5].att.y    = 0.55f;
+	//	mLights[5].att.z    = 0.0f;
+	//	mLights[5].range    = 90.0f;
+	//	mLights[5].pos = D3DXVECTOR3(30, 10, -30);
+
+	//	mLights[6].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//	mLights[6].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	//	mLights[6].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	//	mLights[6].att.x    = 0.0f;
+	//	mLights[6].att.y    = 0.55f;
+	//	mLights[6].att.z    = 0.0f;
+	//	mLights[6].range    = 90.0f;
+	//	mLights[6].pos = D3DXVECTOR3(-30, 10, -30);
+
+	//	for(int i=7; i<gameNS::NUM_LIGHTS; i++)
+	//	{
+	//		mLights[i].ambient	= D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//		mLights[i].diffuse	= D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	//		mLights[i].specular	= D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+	//		mLights[i].att.x    = 0.0f;
+	//		mLights[i].att.y    = 0.55f;
+	//		mLights[i].att.z    = 0.0f;
+	//		mLights[i].range	= 90.0f;
+	//		mLights[i].pos		= D3DXVECTOR3((rand()%2000) - 1000, 10, (rand()%1000)-500);
+	//	}
+	//}
 }
 
 void ColoredCubeApp::initHUD() {
@@ -950,29 +1014,29 @@ void ColoredCubeApp::initFire() {
 	
 	mFire[0].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1500), &camera); 
 	mFire[1].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1475), &camera); 
-	mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1300), &camera); 
-	mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1275), &camera); 
-	mFire[4].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1100), &camera); 
-	mFire[5].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1075), &camera); 
-	mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 800), &camera); 
-	mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 775), &camera); 
-	mFire[8].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 500), &camera); 
-	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
-	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
-	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
+	//mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1300), &camera); 
+	//mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1275), &camera); 
+	mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1100), &camera); 
+	mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1075), &camera); 
+	//mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 800), &camera); 
+	//mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 775), &camera); 
+	mFire[4].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 500), &camera); 
+	mFire[5].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
+	//mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
+	//mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
 
-	mFire[12].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -275), &camera); 
-	mFire[13].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -300), &camera); 
-	mFire[14].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -475), &camera); 
-	mFire[15].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -500), &camera); 
-	mFire[16].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -775), &camera); 
-	mFire[17].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -800), &camera); 
-	mFire[18].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1075), &camera); 
-	mFire[19].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1100), &camera); 
-	mFire[20].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1275), &camera); 
-	mFire[21].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1300), &camera); 
-	mFire[22].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1475), &camera); 
-	mFire[23].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1500), &camera);
+	mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -275), &camera); 
+	mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -300), &camera); 
+	//mFire[14].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -475), &camera); 
+	//mFire[15].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -500), &camera); 
+	mFire[8].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -775), &camera); 
+	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -800), &camera); 
+	//mFire[18].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1075), &camera); 
+	//mFire[19].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1100), &camera); 
+	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1275), &camera); 
+	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1300), &camera); 
+	//mFire[22].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1475), &camera); 
+	//mFire[23].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1500), &camera);
 }
 
 
@@ -1049,11 +1113,13 @@ void ColoredCubeApp::updateDebugMode() {
 	if(input->wasKeyPressed(KEY_K)) {
 		debugMode = true;
 		input->clear(KEY_K);
+		player.setSpeed(500);
 	} 
 	if (input->wasKeyPressed(KEY_L)) {
 		position = D3DXVECTOR3(position.x, 5, position.z);
 		debugMode = false;
 		input->clear(KEY_L);
+		player.setSpeed(200);
 	}
 	if (input->wasKeyPressed(KEY_M)) {
 		gameNS::PLAY_MUSIC = false;
@@ -1464,21 +1530,7 @@ void ColoredCubeApp::updateDayNight() {
 					{
 						enemy[i].setActive();
 						enemy[i].setHealth(100);
-						switch(x%4)
-						{
-						case 0:
-							enemy[i].setPosition(D3DXVECTOR3(50.f-rand()%100,5.f,-250.f));
-							break;
-						case 1:
-							enemy[i].setPosition(D3DXVECTOR3(50.f-rand()%100,5.f,250.f));
-							break;
-						case 2:
-							enemy[i].setPosition(D3DXVECTOR3(250.f, 5.f, 50.f-rand()%100));
-							break;
-						case 3:
-							enemy[i].setPosition(D3DXVECTOR3(-250.f, 5.f, 50.f-rand()%100));
-							break;
-						}
+						enemy[i].setPosition(enemy[i].waypointPositions()[rand()%enemy[i].waypointPositions().size()]);
 						x++;
 					}
 				}
@@ -1487,10 +1539,10 @@ void ColoredCubeApp::updateDayNight() {
 			timeOfDay = "Night";
 			mClearColor = gameNS::NIGHT_SKY_COLOR;
 			mLights[0].diffuse  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
-			mLights[3].att.y    = 0.05f;
-			mLights[4].att.y    = 0.05f;
-			mLights[5].att.y    = 0.05f;
-			mLights[6].att.y    = 0.05f;
+			for(int i=3; i<gameNS::NUM_LIGHTS; i++)
+			{
+				mLights[i].att.y	= 0.05f;
+			}
 		}
 		else
 		{
@@ -1502,10 +1554,10 @@ void ColoredCubeApp::updateDayNight() {
 			timeOfDay = "Day";
 			mClearColor = gameNS::DAY_SKY_COLOR;
 			mLights[0].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			mLights[3].att.y    = 0.55f;
-			mLights[4].att.y    = 0.55f;
-			mLights[5].att.y    = 0.55f;
-			mLights[6].att.y    = 0.55f;
+			for(int i=3; i<gameNS::NUM_LIGHTS; i++)
+			{
+				mLights[i].att.y	= 0.55f;
+			}
 			dayCount++;
 		}
 	}
@@ -1518,10 +1570,10 @@ void ColoredCubeApp::updateDayNight() {
 			mClearColor += D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
 			//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
 			mLights[0].diffuse	+= D3DXCOLOR(((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			mLights[3].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[4].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[5].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
-			mLights[6].att.y    += ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			for(int i=3; i<gameNS::NUM_LIGHTS; i++)
+			{
+				mLights[i].att.y	+= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			}
 		}
 		else 
 		{
@@ -1529,10 +1581,10 @@ void ColoredCubeApp::updateDayNight() {
 			mClearColor -= D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
 			//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
 			mLights[0].diffuse	-= D3DXCOLOR(((1.0f-0.1f)/(float)(gameNS::TRANSITIONTIME*dt)), ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			mLights[3].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
-			mLights[4].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
-			mLights[5].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
-			mLights[6].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
+			for(int i=3; i<gameNS::NUM_LIGHTS; i++)
+			{
+				mLights[i].att.y	-= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			}
 		}
 	}
 }
@@ -1562,16 +1614,15 @@ void ColoredCubeApp::drawScene()
 		{
 			//mVP = mView*mProj;
 			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
-
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
 			mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
-			
 			
 			//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 			//drawOrigin();
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
 			mfxSpecMapVar->SetResource(mSpecMapRVStreet);
 			floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 			drawWalls();
 			drawBuildings();
 			drawPickups();
@@ -1608,9 +1659,11 @@ void ColoredCubeApp::drawScene()
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTheRoad);
 			mfxSpecMapVar->SetResource(mSpecMapRVTheRoad);
 			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
 			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
 			drawBuildings();
+
 			drawPickups();
 			drawWalls();
 			drawBarrels();
@@ -1631,6 +1684,8 @@ void ColoredCubeApp::drawScene()
 		printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
 		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
 		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
+		printText("playerX = ", 20, 65, 0, 0, WHITE, player.getPosition().x);
+		printText("playerZ = ", 20, 85, 0, 0, WHITE, player.getPosition().z);
 	}
 	else if(startScreen)
 	{
