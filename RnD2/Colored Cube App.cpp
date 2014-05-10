@@ -45,7 +45,7 @@ namespace gameNS {
 	const int PERIMETER = 4;
 	const int NUM_BULLETS = 100;
 	const int NUM_LIGHTS = 12;
-	const int NUM_FIRES = 24;
+	const int NUM_FIRES = 12;
 	const int NUM_LAMPS = 8;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
@@ -860,29 +860,29 @@ void ColoredCubeApp::initFire() {
 	
 	mFire[0].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1500), &camera); 
 	mFire[1].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1475), &camera); 
-	mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1300), &camera); 
-	mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1275), &camera); 
-	mFire[4].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1100), &camera); 
-	mFire[5].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1075), &camera); 
-	mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 800), &camera); 
-	mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 775), &camera); 
-	mFire[8].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 500), &camera); 
-	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
-	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
-	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
+	//mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1300), &camera); 
+	//mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1275), &camera); 
+	mFire[2].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 1100), &camera); 
+	mFire[3].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 1075), &camera); 
+	//mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 800), &camera); 
+	//mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 775), &camera); 
+	mFire[4].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 500), &camera); 
+	mFire[5].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 475), &camera); 
+	//mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, 300), &camera); 
+	//mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, 275), &camera); 
 
-	mFire[12].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -275), &camera); 
-	mFire[13].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -300), &camera); 
-	mFire[14].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -475), &camera); 
-	mFire[15].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -500), &camera); 
-	mFire[16].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -775), &camera); 
-	mFire[17].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -800), &camera); 
-	mFire[18].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1075), &camera); 
-	mFire[19].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1100), &camera); 
-	mFire[20].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1275), &camera); 
-	mFire[21].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1300), &camera); 
-	mFire[22].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1475), &camera); 
-	mFire[23].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1500), &camera);
+	mFire[6].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -275), &camera); 
+	mFire[7].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -300), &camera); 
+	//mFire[14].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -475), &camera); 
+	//mFire[15].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -500), &camera); 
+	mFire[8].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -775), &camera); 
+	mFire[9].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -800), &camera); 
+	//mFire[18].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1075), &camera); 
+	//mFire[19].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1100), &camera); 
+	mFire[10].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1275), &camera); 
+	mFire[11].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1300), &camera); 
+	//mFire[22].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(-85, 0, -1475), &camera); 
+	//mFire[23].init(md3dDevice, fx::FireFX, texArray, 125, D3DXVECTOR3(85, 0, -1500), &camera);
 }
 
 
@@ -1533,8 +1533,8 @@ void ColoredCubeApp::drawScene()
 		
 			for(int i=0; i<gameNS::NUM_FIRES; i++)
 			{
-				mFire[i].setEyePos(camera.getPosition());
-				mFire[i].draw();
+				//mFire[i].setEyePos(camera.getPosition());
+				//mFire[i].draw();
 			}
 		}
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
