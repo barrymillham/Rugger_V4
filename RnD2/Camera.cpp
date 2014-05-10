@@ -43,7 +43,7 @@ void Camera::update(float dt, float playerSpeeed)
 
 	bool rotated = false;
 	//float _speed = 100;
-	float cameraSpeed = 4.0f;
+	float cameraSpeed = 2.0f;
 	speed = cameraSpeed;
 	float playerSpeed = playerSpeeed;
 	float deltaYaw = 0;
@@ -79,7 +79,7 @@ void Camera::update(float dt, float playerSpeeed)
 	if(dy < 0)
 	{
 		rotated = true;
-		deltaPitch += cameraSpeed*dt;
+		deltaPitch += cameraSpeed*dt * 0.9;
 		if (deltaPitch > 1) 
 			deltaPitch = 1;
 		pitch += deltaPitch;
@@ -88,7 +88,7 @@ void Camera::update(float dt, float playerSpeeed)
 	if(dy > 0)
 	{
 		rotated = true;
-		deltaPitch -= cameraSpeed*dt;
+		deltaPitch -= cameraSpeed*dt * 0.9;
 		if (deltaPitch < -1) 
 			deltaPitch = -1;
 		pitch += deltaPitch;

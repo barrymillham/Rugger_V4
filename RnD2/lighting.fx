@@ -8,7 +8,7 @@
  
 cbuffer cbPerFrame
 {
-	Light gLight[11];
+	Light gLight[30];
 	int gLightType; 
 	float3 gEyePosW;
 	int gLightNum;
