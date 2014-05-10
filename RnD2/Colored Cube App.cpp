@@ -1421,7 +1421,7 @@ void ColoredCubeApp::updateDayNight() {
 	}
 	if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
 	{
-		//mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
+		mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
 		if(night) 
 		{
 			timeOfDay = "Dawn";
@@ -1438,11 +1438,11 @@ void ColoredCubeApp::updateDayNight() {
 			timeOfDay = "Evening";
 			mClearColor -= D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
 			//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-			mLights[0].diffuse -= D3DXCOLOR(((1.0f-0.1f)/(float)(gameNS::TRANSITIONTIME*dt)), ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
-			mLights[3].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
-			mLights[4].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
-			mLights[5].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
-			mLights[6].att.y    -= ((0.55f-0.05f)/(float)((gameNS::TRANSITIONTIME)*dt));
+			mLights[0].diffuse -= D3DXCOLOR(((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			mLights[3].att.y    -= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[4].att.y    -= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[5].att.y    -= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+			mLights[6].att.y    -= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
 		}
 	}
 	
@@ -1467,19 +1467,14 @@ void ColoredCubeApp::drawScene()
 
 	if(playing) {	
 		if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
+		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
 		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
 		if(level1)
 		{
 			//mVP = mView*mProj;
 			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
-
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
-			mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
-			
-			
-			//for(int i=0; i<gameNS::WAYPT_SIZE; i++) for(int j=0; j<gameNS::WAYPT_SIZE; j++) if(waypoints[i][j]->isActive())wayLine[i][j].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-			//drawOrigin();
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
 			mfxSpecMapVar->SetResource(mSpecMapRVStreet);
 			floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
@@ -1505,9 +1500,6 @@ void ColoredCubeApp::drawScene()
 				mTech->GetPassByIndex( p )->Apply(0);
 				//menu.draw();
 			}
-
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
-			mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 			
 		}
 		else if(level2)
@@ -1519,13 +1511,32 @@ void ColoredCubeApp::drawScene()
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTheRoad);
 			mfxSpecMapVar->SetResource(mSpecMapRVTheRoad);
 			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
-			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
+			drawWalls();
 			drawBuildings();
 			drawPickups();
-			drawWalls();
-			drawBarrels();
 			drawLamps();
+
+			D3D10_TECHNIQUE_DESC techDesc;
+			mTech->GetDesc( &techDesc );
+			for(UINT p = 0; p < techDesc.Passes; ++p)
+			{
+				mWallMesh.draw();
+			}
+
+			Matrix mWVP = menu.getWorld() * (mVP);
+			mfxWVPVar->SetMatrix((float*)&mWVP);
+			mfxWorldVar->SetMatrix((float*)&menu.getWorld());
+			//D3D10_TECHNIQUE_DESC techDesc;
+			mTech->GetDesc( &techDesc );
+			for(UINT p = 0; p < techDesc.Passes; ++p)
+			{
+				mTech->GetPassByIndex( p )->Apply(0);
+				//menu.draw();
+			}
+
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
+			mfxSpecMapVar->SetResource(mSpecMapRVBullet);
+
 			//Draw particle systems last
 			md3dDevice->OMSetDepthStencilState(0, 0);
 			float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -1537,7 +1548,10 @@ void ColoredCubeApp::drawScene()
 				//mFire[i].draw();
 			}
 		}
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
+		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+
 		printText("Score: ", 20, 5, 0, 0, WHITE, player.getScore()); //This has to be the last thing in the draw function.
 		printText("Health: ", 20, 25, 0, 0, RED, player.getHealth());
 		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
