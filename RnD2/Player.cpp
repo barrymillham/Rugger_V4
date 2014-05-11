@@ -83,15 +83,13 @@ void Player::grunt() {
 
 void Player::update(float dt, D3DXVECTOR3 axis)
 {
-	D3DXVec3Normalize(&velocity, &velocity);
+	if(velocity != D3DXVECTOR3(0, 0, 0)) D3DXVec3Normalize(&velocity, &velocity);
 	velocity *= speed;
 	position += velocity*dt;
 	Identity(&world);
 	D3DXMatrixScaling(&mScale, width, height, depth);
 	D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
 	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
-	
-	
 
 	gun->update(dt);
 	if(fired) shoot(axis);

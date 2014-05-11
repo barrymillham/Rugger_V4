@@ -115,6 +115,8 @@ public:
 	void handlePickupCollisions(float dt);
 	void handleEnemyCollisions(float dt);
 
+	void collisionSlide(GameObject* mobile, GameObject* still);
+
 	void drawScene(); 
 	void drawLine(LineObject*);
 	void drawOrigin();
@@ -1068,11 +1070,9 @@ void ColoredCubeApp::updateScene(float dt)
 	ColoredCubeApp::dt = dt;
 	gameTime += dt;
 	bool playing = (!endScreen && !startScreen);
-	Vector3 oldPos = position;
 	
-	//Restricting the mouse movement
-	RECT restrict = {639, 399, 640, 400};
-	ClipCursor(&restrict);
+	
+	
 
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
@@ -1084,6 +1084,12 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	}
 	if(playing){
+		//Restricting the mouse movement
+		RECT restrict = {639, 399, 640, 400};
+		ClipCursor(&restrict);
+
+		Vector3 oldPos = camera.getPosition();
+
 		timect += dt;
 		D3DApp::updateScene(dt);
 		menu.update(dt);
@@ -1092,6 +1098,7 @@ void ColoredCubeApp::updateScene(float dt)
 		menu.update(dt);
 		updateDayNight();
 		camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED));
+		player.setVelocity(camera.getDirection());
 		updateOrigin(dt);
 		handleUserInput();
 		updatePlayer(dt);
@@ -1341,7 +1348,57 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 	{
 		if(player.collided(&walls[i]))
 		{
-			position = pos;
+			//Player position before collision
+			D3DXVECTOR3 pPos = pos;
+			D3DXVECTOR3 pVel = player.getVelocity();
+			//D3DXVec3Normalize(&pVel, &pVel);
+			D3DXVECTOR3 wallPos = walls[i].getPosition();
+			D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
+			float depth = walls[i].getDepth();
+			float width = walls[i].getWidth();
+			float t = 0;
+			
+			//Get the normal of the plane that the player collided with
+			//If the player's velocity in the x direction is 0, then it can't intersect the x-aligned planes
+			if(pVel.x == 0) 
+			{
+				//If we know we are going to intersect with the z-planes, then the normal will be pointing opposite our z velocity
+				//so make a unit vector out of that
+				wNormal = D3DXVECTOR3(0, 0, pVel.z/abs(pVel.z));
+				D3DXVECTOR3 D(wallPos.x, wallPos.y, wallPos.z /*+ (wNormal.z*2)*/ + (wNormal.z*depth));
+				t = D3DXVec3Dot(&wNormal, &(D-pPos))/D3DXVec3Dot(&wNormal, &pVel);
+			}
+			else if (pVel.z == 0)
+			{
+				//Same as above for the x planes
+				wNormal = D3DXVECTOR3(pVel.x/abs(pVel.x), 0, 0);
+				D3DXVECTOR3 D(wallPos.x/* + (wNormal.x*2)*/ + (wNormal.x*width), wallPos.y, wallPos.z);
+				t = D3DXVec3Dot(&wNormal, &(D-pPos))/D3DXVec3Dot(&wNormal, &pVel);
+			}
+			else
+			{
+				//So if we could potentially collide with any of the planes, we need to find the find plane we intersect
+				
+				//D1-4 represent points on each of the planes we want to check for intersection with
+				//We are just donig ray-plane intersection here, with the ray origin being at the 
+				D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2)};
+				D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
+
+				//find the minimum intersection time and the normal of the surface that we intersect with
+				for(int i=0; i<4; i++)
+				{
+					float time = D3DXVec3Dot(&N[i], &(D[i]-pPos))/D3DXVec3Dot(&N[i], &pVel);
+					if(time > 0 ){
+						if(t <= 0 || time < t){
+							t = time;
+							wNormal = N[i];
+						}
+					}
+				}
+			}
+			D3DXVec3Normalize(&pVel, &pVel);
+			camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			//position = pos;
 		}
 
 		for (unsigned int j = 0; j < pBullets.size(); j++) {
@@ -1359,8 +1416,60 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 	for(int i=0; i<buildings.size(); i++)
 	{
 		if (buildings[i].getActiveState() == false) continue;
-		if(player.collided(&buildings[i]))
-			position = pos;
+		if(player.collided(&buildings[i])){
+			//Player position before collision
+			D3DXVECTOR3 pPos = pos;
+			D3DXVECTOR3 pVel = player.getVelocity();
+			//D3DXVec3Normalize(&pVel, &pVel);
+			D3DXVECTOR3 buildPos = buildings[i].getPosition();
+			D3DXVECTOR3 wNormal(0, 0, 0); //normal of the build surface where the player intersects
+			float depth = buildings[i].getDepth();
+			float width = buildings[i].getWidth();
+			float t = 0;
+			
+			//Get the normal of the plane that the player collided with
+			//If the player's velocity in the x direction is 0, then it can't intersect the x-aligned planes
+			if(pVel.x == 0) 
+			{
+				//If we know we are going to intersect with the z-planes, then the normal will be pointing opposite our z velocity
+				//so make a unit vector out of that
+				wNormal = D3DXVECTOR3(0, 0, pVel.z/abs(pVel.z));
+				D3DXVECTOR3 D(buildPos.x, buildPos.y, buildPos.z /*+ (wNormal.z*2)*/ + (wNormal.z*depth));
+				t = D3DXVec3Dot(&wNormal, &(D-pPos))/D3DXVec3Dot(&wNormal, &pVel);
+			}
+			else if (pVel.z == 0)
+			{
+				//Same as above for the x planes
+				wNormal = D3DXVECTOR3(pVel.x/abs(pVel.x), 0, 0);
+				D3DXVECTOR3 D(buildPos.x/* + (wNormal.x*2)*/ + (wNormal.x*width), buildPos.y, buildPos.z);
+				t = D3DXVec3Dot(&wNormal, &(D-pPos))/D3DXVec3Dot(&wNormal, &pVel);
+			}
+			else
+			{
+				//So if we could potentially collide with any of the planes, we need to find the find plane we intersect
+				
+				//D1-4 represent points on each of the planes we want to check for intersection with
+				//We are just donig ray-plane intersection here, with the ray origin being at the 
+				D3DXVECTOR3 D[4] = {D3DXVECTOR3(buildPos.x + width + 2, buildPos.y, buildPos.z), D3DXVECTOR3(buildPos.x - width - 2, buildPos.y, buildPos.z), D3DXVECTOR3(buildPos.x, buildPos.y, buildPos.z+depth + 2), D3DXVECTOR3(buildPos.x, buildPos.y, buildPos.z-depth - 2)};
+				D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
+
+				//find the minimum intersection time and the normal of the surface that we intersect with
+				for(int i=0; i<4; i++)
+				{
+					float time = D3DXVec3Dot(&N[i], &(D[i]-pPos))/D3DXVec3Dot(&N[i], &pVel);
+					if(time > 0 ){
+						if(t <= 0 || time < t){
+							t = time;
+							wNormal = N[i];
+						}
+					}
+				}
+			}
+			D3DXVec3Normalize(&pVel, &pVel);
+			camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			//position = pos;
+
+		}
 		for (unsigned int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&buildings[i])) {
 				pBullets[j]->setInActive();
@@ -1414,64 +1523,7 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 		{
 			if(enemy[i].collided(&walls[j]))
 			{
-				D3DXVECTOR3 enPos = enemy[i].getOldPos();
-				D3DXVECTOR3 wPos = walls[j].getPosition();
-				D3DXVECTOR3 wNormal(0, 0, 0);
-				D3DXVECTOR3 D; //D is a point on the plane
-
-				D3DXVECTOR3 S = enPos;
-				D3DXVECTOR3 L = wNormal;
-				D3DXVECTOR3 V = enemy[i].getVelocity();
-				float t;
-				D3DXVECTOR3 Q;
-				//We know that the enemy will collide after the update
-				//So we want to find out how the enemy collides with the wall
-				if(enPos.x < walls[j].getWidth() + wPos.x && enPos.x > walls[j].getWidth() - wPos.x)
-				{
-					//Then we know that it will collide along the +- z normal
-					if(enPos.z < wPos.z)
-					{
-						wNormal = D3DXVECTOR3(0, 0, -1);
-						D = D3DXVECTOR3(wPos.x - 1.25, wPos.y, wPos.z - walls[j].getDepth());
-					}
-					else
-					{
-						wNormal = D3DXVECTOR3(0, 0, 1);
-						D = D3DXVECTOR3(wPos.x + 1.25, wPos.y, wPos.z + walls[j].getDepth());
-					}
-
-					//Assume that a bounding sphere around the enemy is ~2.25
-					t = D3DXVec3Dot(&wNormal, &(D - enPos)) / D3DXVec3Dot(&wNormal, &(D - enemy[i].getPosition()));
-					
-				}
-				else if (enPos.z < walls[j].getDepth() + wPos.z && enPos.z > walls[j].getDepth() - wPos.z)
-				{
-					if(enPos.x < wPos.x)
-					{
-						wNormal = D3DXVECTOR3(-1, 0, 0);
-						D = D3DXVECTOR3(wPos.x - walls[j].getWidth(), wPos.y, wPos.z - 1.25);
-					}
-					else
-					{
-						wNormal = D3DXVECTOR3(1, 0, 0);
-						D = D3DXVECTOR3(wPos.x + walls[j].getWidth(), wPos.y, wPos.z + 1.25);
-					}
-					t = D3DXVec3Dot(&wNormal, &(D - enPos)) / D3DXVec3Dot(&wNormal, &(D - enemy[i].getPosition()));
-				}
-				else
-				{
-					//enemy[i].setPosition(enemy[i].getOldPos());
-					t = 0;
-
-				}
-
-				if(wNormal != D3DXVECTOR3(0, 0, 0))
-				{
-					Q = enPos + t*enemy[i].getPosition();
-					D3DXVECTOR3 P3 = enemy[i].getPosition() - (D3DXVec3Dot(&(enemy[i].getPosition() - Q), &wNormal))*wNormal;
-					enemy[i].setPosition(P3);
-				}
-				
+								
 				
 			}
 		}
@@ -1721,6 +1773,8 @@ void ColoredCubeApp::drawScene()
 		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
 		printText("playerX = ", 20, 65, 0, 0, WHITE, player.getPosition().x);
 		printText("playerZ = ", 20, 85, 0, 0, WHITE, player.getPosition().z);
+		printText("|", mClientWidth/2, mClientHeight/2, 0, 0, WHITE);
+		printText("--", (mClientWidth/2) - 4, mClientHeight/2, 0, 0, WHITE);
 	}
 	else if(startScreen)
 	{
