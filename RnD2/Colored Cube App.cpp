@@ -720,7 +720,7 @@ void ColoredCubeApp::initLights()
 	mLights[0].att.y = 0.01f;
 	mLights[0].att.z = 0.0f;
 	
-	if(level1)
+	if(level == 1)
 	{
 		// Pointlight--position is changed every frame to animate.
 		//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
@@ -840,7 +840,7 @@ void ColoredCubeApp::initLights()
 		}
 	}
 
-	else if (level2)
+	else if (level == 2)
 	{
 		// Pointlight--position is changed every frame to animate.
 		mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
@@ -868,7 +868,7 @@ void ColoredCubeApp::initLights()
 		mLights[2].range    = 0.0f;
 
 
-		for(int i=3; i<7; i++)
+		/*for(int i=3; i<7; i++)
 		{
 			mLights[i].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			mLights[i].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -880,7 +880,7 @@ void ColoredCubeApp::initLights()
 			mLights[i].pos = lamps[i].getPosition();
 			mLights[i].pos.y = 10;
 		}
-
+*/
 		mLights[7].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[7].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		mLights[7].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
@@ -1584,8 +1584,6 @@ void ColoredCubeApp::drawScene()
 		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
 		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
-		
-		drawHUD();
 
 		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
 
@@ -1599,11 +1597,11 @@ void ColoredCubeApp::drawScene()
 			mfxSpecMapVar->SetResource(mSpecMapRVTheRoad);
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
 			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
-				
 			
 			drawBarrels();
 		}
 		
+		drawHUD();
 		drawFloor();
 		drawBuildings();
 		drawPickups();
