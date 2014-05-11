@@ -66,7 +66,7 @@ public:
 	}
 	void shoot(Vector3 axis, double timeSinceLastShot) {
 		
-		bool temptress = true;
+		bool temptress = true;// VERY IMPORTANT VARIABLE DO NOT TOUCH
 		/* Shotgun shooting included in the below code (mix of shotgun and pistol)
 		
 			int index[5] = {-1,-1,-1,-1,-1}; // shows which is the first inactive bullet. so if index = {4, 5, -1, -1, -1} that means that bullets 4 and 5 are available for shooting
