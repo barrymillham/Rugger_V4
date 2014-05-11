@@ -108,7 +108,7 @@ void Pickup::activate(Box* bulletBox, vector<Bullet*>* bullets) {
 	else if (mod == DECREASE) 
 		(*value)-=amount;
 	if(gunT == 0) gun = new Pistol(bulletBox, bullets);
-	else if(gunT == 1) gun = new ShotGun(bulletBox, bullets);
+	else if(gunT == 1) gun = new Shotgun(bulletBox, bullets);
 
 	audio->playCue(SOUND);
 	setInActive();
