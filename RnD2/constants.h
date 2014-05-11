@@ -42,6 +42,7 @@ const UCHAR KEY_K	= 'K';
 const UCHAR KEY_M	= 'M';
 const UCHAR KEY_F	= 'F';
 const UCHAR KEY_SPACE = ' ';
+const UCHAR KEY_0	= '0';
 
 #define COLOR_ARGB DWORD
 #define SETCOLOR_ARGB(a,r,g,b) \
@@ -87,6 +88,10 @@ const char INTROMUSIC[] = "introMusic";
 const char RELOAD[] = "reload";
 const char ZIPPER[] = "zipper";
 const char WHOOSH[] = "whoosh";
+
+
+enum GameState {INTROSCREEN, INSTRUCTIONS, BEATLV1, WIN, LOSE, PLAYING};
+
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.

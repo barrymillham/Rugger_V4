@@ -47,7 +47,7 @@ Buildings
 using std::time;
 
 namespace gameNS {
-	const float DAYLEN = 40;
+	const float DAYLEN = 10;
 	const int NUM_WALLS = 28;
 	const int NUM_BUILDINGS = 39;
 	const int NUM_BARRELS = 24;
@@ -61,13 +61,16 @@ namespace gameNS {
 	const int MAX_NUM_ENEMIES = 20;
 	bool PLAY_MUSIC = true;
 	const float FOOTSTEP_GAP = 0.45f;
-	const int GRASSY_AREA_WIDTH = 110;
+	int GRASSY_AREA_WIDTH = 110;
 	const int FLASHLIGHT_NUM = 2;
-	const int NUM_NIGHTS_TO_WIN = 4;
+	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
 	const int PLAYER_SPEED = 40;
+	//const int ROAD_LENGTH = 891;
+	//const int ROAD_WIDTH = 77;
+	const int ROAD_LENGTH = 4000;
+	const int ROAD_WIDTH = 170;
 }
-
 
 class ColoredCubeApp : public D3DApp
 {
@@ -107,12 +110,12 @@ public:
 	void updateDebugMode();
 	void updateMusic();
 	void updateHUD(float dt);
+	void updateGameState();
 
 	void handleUserInput();
 	void handleBuildingCollisions(Vector3 pos);
 	void handleWallCollisions(Vector3 pos);
 	void handleLampCollisions(Vector3 pos);
-	void handlePickupCollisions(float dt);
 	void handleEnemyCollisions(float dt);
 
 	void collisionSlide(GameObject* mobile, GameObject* still);
@@ -268,6 +271,7 @@ private:
 	bool step1;
 	bool flashChanged, flashOn;
 	float flashChangeTime;
+	GameState gameState;
 
 	Camera camera;
 
@@ -322,13 +326,14 @@ void ColoredCubeApp::initApp()
 
 	buildFX();
 	buildVertexLayouts();
+	gameState = GameState::INTROSCREEN;
 
 	SetCursorPos(0,0);
 	ShowCursor(false);
 	initBasicVariables(); //Like shotTimer, etc.
 	audio->playCue(INTROMUSIC);
 	startScreen = true;
-	level = 2;
+	level = 1;
 	position = D3DXVECTOR3(0, 5, 0); 
 	initBasicGeometry(); //must happen before init player
 	initTextStrings(); //Like start/end screen text
@@ -403,69 +408,68 @@ void ColoredCubeApp::initPickups() {
 	
 	dayPickups.clear();
 	nightPickups.clear();
-
 	if (level == 1) {
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level, 0, player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level, 0, player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level, 0,  player.gun));
 
 	
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level, 0,  player.gun));
 	} else if (level == 2) {
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level, 0,  player.gun));
 
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  player.gun));
 	}
 
 
@@ -664,7 +668,7 @@ void ColoredCubeApp::initWallPositions() {
 }
 
 void ColoredCubeApp::initUniqueObjects() {
-	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 1625, 500, 1625);
+	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 250, 500, 250);
 	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 975, 500, 1625);
 }
 
@@ -1070,35 +1074,39 @@ void ColoredCubeApp::updateScene(float dt)
 	ColoredCubeApp::dt = dt;
 	gameTime += dt;
 	bool playing = (!endScreen && !startScreen);
-	
-	
+	//bool playing = (!endScreen && !startScreen);
 	
 
 	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
 
-	if (startScreen){
+	if (gameState == GameState::INTROSCREEN){
 		if(input->isKeyDown(VK_SPACE)){
-			startScreen = false;
-			playing = true;
-			audio->stopCue(INTROMUSIC);
+			gameState = GameState::INSTRUCTIONS;
 		}
 	}
-	if(playing){
+	if (gameState == GameState::INSTRUCTIONS) {
+		gameState = GameState::PLAYING;
+		audio->stopCue(INTROMUSIC);
+		input->setMouseLButton(false);
+	}
+	if(gameState == GameState::PLAYING){
 		//Restricting the mouse movement
 		RECT restrict = {639, 399, 640, 400};
 		ClipCursor(&restrict);
-
 		Vector3 oldPos = camera.getPosition();
-
 		timect += dt;
+		updateGameState(); //Checks for win/lose/levelTransition conditions
+
 		D3DApp::updateScene(dt);
 		menu.update(dt);
 		updateDebugMode();
 		updateMusic();
 		menu.update(dt);
 		updateDayNight();
-		camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED));
+
+		camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED), &walking);
 		player.setVelocity(camera.getDirection());
+
 		updateOrigin(dt);
 		handleUserInput();
 		updatePlayer(dt);
@@ -1110,18 +1118,36 @@ void ColoredCubeApp::updateScene(float dt)
 		updateUniqueObjects(dt);
 		updateHUD(dt);
 		placePickups();
-
+		
 		//Handle Collisions
 		handleWallCollisions(oldPos);
 		handleBuildingCollisions(oldPos);
-		handlePickupCollisions(dt);
 		handleEnemyCollisions(dt);
 
 		for(int i=0; i<gameNS::NUM_FIRES; i++)
 			mFire[i].update(dt, gameTime);
 	}
-	if(endScreen){
-		doEndScreen();
+	if (gameState == GameState::BEATLV1) {
+		if (level == 1) {
+			level = 2;
+			ColoredCubeApp::initLamps();
+			ColoredCubeApp::initPickups();
+			ColoredCubeApp::initWallPositions();
+			ColoredCubeApp::initBuildingPositions();
+		}
+		//lock the screen at a certain spot and render the cube with the transition graphic and then...
+		if(input->isKeyDown(VK_SPACE))
+			gameState = GameState::PLAYING;
+	}
+	if(gameState == GameState::LOSE){
+		//lock the screen at a certain spot and render the cube with the transition graphic and then...
+		if(input->isKeyDown(VK_SPACE))
+			PostQuitMessage(0);
+	}
+	if (gameState == GameState::WIN) {
+		//Lock the screen at a certain spot and render the cube with the transition graphic and then...
+		if (input->isKeyDown(VK_SPACE))
+			PostQuitMessage(0);
 	}
 	
 	// The spotlight takes on the camera position and is aimed in the
@@ -1135,7 +1161,10 @@ void ColoredCubeApp::updateMusic() {
 	if (hasntPlayedYet || nightDayTrans) {
 		hasntPlayedYet = false;
 		nightDayTrans = false;
-		if (gameNS::PLAY_MUSIC) audio->playCue(MUSIC);
+		if (gameNS::PLAY_MUSIC) {
+			audio->stopCue(MUSIC);
+			audio->playCue(MUSIC);
+		}
 	}
 }
 
@@ -1158,56 +1187,52 @@ void ColoredCubeApp::updateDebugMode() {
 }
 
 void ColoredCubeApp::updateCamera() {
-	int dx = input->getMouseRawX();
-	int dy = input->getMouseRawY();
-	float _speed = 6.0;
+	//int dx = input->getMouseRawX();
+	//int dy = input->getMouseRawY();
+	//float _speed = 6.0;
 
-	D3DXVECTOR3 transformRef(1, 0, 0); 
-	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
-	Vector3 direction = Vector3(0,0,0);
+	//D3DXVECTOR3 transformRef(1, 0, 0); 
+	//D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	//Vector3 direction = Vector3(0,0,0);
 
-	bool yawUpdate = (dx != 0)?true:false;
-	bool pitchUpdate = (dy != 0)?true:false;
-	
-	if(dx < 0) yaw -= _speed*dt;
-	if(dx > 0) yaw += _speed*dt;
-	if(dy < 0) pitch += (_speed/2)*dt;
-	if(dy > 0) pitch -= (_speed/2)*dt;
-	// Restrict the angle pitch and radius mRadius.
-	if( pitch < -(PI/2.0f) + 0.01f)		pitch = -(PI/2.0f) + 0.01f;
-	if( pitch > PI/2.0f - 0.01f)		pitch = (PI/2.0f) - 0.01f;
+	//bool yawUpdate = (dx != 0)?true:false;
+	//bool pitchUpdate = (dy != 0)?true:false;
+	//
+	//if(dx < 0) yaw -= _speed*dt;
+	//if(dx > 0) yaw += _speed*dt;
+	//if(dy < 0) pitch += (_speed/2)*dt;
+	//if(dy > 0) pitch -= (_speed/2)*dt;
+	//// Restrict the angle pitch and radius mRadius.
+	//if( pitch < -(PI/2.0f) + 0.01f)		pitch = -(PI/2.0f) + 0.01f;
+	//if( pitch > PI/2.0f - 0.01f)		pitch = (PI/2.0f) - 0.01f;
 
-	walking = false;
-	if(GetAsyncKeyState('A') & 0x8000) direction.z = 1;
-	if(GetAsyncKeyState('D') & 0x8000) direction.z = -1;
-	if(GetAsyncKeyState('S') & 0x8000) {direction.x = -1; moveAxis.y = 0;}
-	if(GetAsyncKeyState('W') & 0x8000) {direction.x = 1;  moveAxis.y = 0;}
+	//walking = false;
+	//if(GetAsyncKeyState('A') & 0x8000) direction.z = 1;
+	//if(GetAsyncKeyState('D') & 0x8000) direction.z = -1;
+	//if(GetAsyncKeyState('S') & 0x8000) {direction.x = -1; moveAxis.y = 0;}
+	//if(GetAsyncKeyState('W') & 0x8000) {direction.x = 1;  moveAxis.y = 0;}
 
-	//Generate transformation matrices
-	Matrix yawR = *D3DXMatrixRotationY(&yawR, yaw);
-	Matrix pitchR = *D3DXMatrixRotationZ(&pitchR, pitch);
-	Matrix temp = pitchR * yawR; 
+	////Generate transformation matrices
+	//Matrix yawR = *D3DXMatrixRotationY(&yawR, yaw);
+	//Matrix pitchR = *D3DXMatrixRotationZ(&pitchR, pitch);
+	//Matrix temp = pitchR * yawR; 
 
-	if (direction != Vector3(0,0,0)) {
-		walking = true;
-		Transform(&direction, &direction, &yawR);
-		position += direction * player.getSpeed() * dt;
-	}
-	
-	Transform(&transformRef, &transformRef, &temp);
-	Normalize(&transformRef, &transformRef);
-	lookAt = transformRef * player.getSpeed() * dt;
-	lookAt += position;
+	//if (direction != Vector3(0,0,0)) {
+	//	walking = true;
+	//	Transform(&direction, &direction, &yawR);
+	//	position += direction * player.getSpeed() * dt;
+	//}
+	//
+	//Transform(&transformRef, &transformRef, &temp);
+	//Normalize(&transformRef, &transformRef);
+	//lookAt = transformRef * player.getSpeed() * dt;
+	//lookAt += position;
 
-	D3DXMatrixLookAtLH(&mView, &position, &lookAt, &up);
+	//D3DXMatrixLookAtLH(&mView, &position, &lookAt, &up);
 }
 
 void ColoredCubeApp::doEndScreen() {
-	if(input->isKeyDown(VK_SPACE))
-	{
-		endScreen = false;
-		PostQuitMessage(0);
-	}
+	
 }
 
 void ColoredCubeApp::updateUniqueObjects(float dt) {
@@ -1240,11 +1265,6 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	D3DXVECTOR3 pos = player.getPosition();
 	
 	player.update(dt, camera.getLookatDirection()); //bullet should follow camera lookat vector
-	if (player.getHealth() <= 0) {
-		Sleep(2000);
-		endScreen = true;
-		input->clearKeyPress(KEY_SPACE);
-	}
 
 	//Update shooting
 	if(input->getMouseLButton())
@@ -1263,12 +1283,22 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	if (walking) {
 		stepTime += 1;
 		if (stepTime*dt > gameNS::FOOTSTEP_GAP) {
-			if (pos.x < gameNS::GRASSY_AREA_WIDTH/2.0f && pos.x > -gameNS::GRASSY_AREA_WIDTH/2.0f  && pos.z > -gameNS::GRASSY_AREA_WIDTH/2.0f && pos.z < gameNS::GRASSY_AREA_WIDTH/2.0f) { //in grassy area 
-				if (step1) audio->playCue(FOOTSTEP3);
-				else audio->playCue(FOOTSTEP4);
-			} else {
-				if (step1) audio->playCue(FOOTSTEP1);
-				else audio->playCue(FOOTSTEP2);
+			if (level == 1) {
+				if (pos.x < gameNS::GRASSY_AREA_WIDTH/2.0f && pos.x > -gameNS::GRASSY_AREA_WIDTH/2.0f  && pos.z > -gameNS::GRASSY_AREA_WIDTH/2.0f && pos.z < gameNS::GRASSY_AREA_WIDTH/2.0f) { //in grassy area 
+					if (step1) audio->playCue(FOOTSTEP3);
+					else audio->playCue(FOOTSTEP4);
+				} else {
+					if (step1) audio->playCue(FOOTSTEP1);
+					else audio->playCue(FOOTSTEP2);
+				}
+			} else if (level == 2) {
+				if (pos.x < gameNS::ROAD_WIDTH/2.0f && pos.x > -gameNS::ROAD_WIDTH/2.0f && pos.z > -gameNS::ROAD_LENGTH/2.0f && pos.z < gameNS::ROAD_LENGTH/2.0f) {
+					if (step1) audio->playCue(FOOTSTEP1);
+					else audio->playCue(FOOTSTEP2);
+				} else {
+					if (step1) audio->playCue(FOOTSTEP3);
+					else audio->playCue(FOOTSTEP4);
+				}
 			}
 			step1 = !step1;
 			stepTime = 0.0f;
@@ -1499,10 +1529,6 @@ void ColoredCubeApp::handleLampCollisions(Vector3 pos) {
 	}
 }
 
-void ColoredCubeApp::handlePickupCollisions(float dt) {
-	
-}
-
 void ColoredCubeApp::handleEnemyCollisions(float dt)
 {
 	
@@ -1600,13 +1626,13 @@ void ColoredCubeApp::updatePickups(float dt) {
 	
 		for (unsigned int i = 0; i < dayPickups.size(); i++) {
 			if (player.collided(&dayPickups[i])) {
-				dayPickups[i].activate();
+				dayPickups[i].activate(&bulletBox, &pBullets);
 			}
 			dayPickups[i].update(dt);
 		}
 		for (unsigned int i = 0; i < nightPickups.size(); i++) {
 			if (player.collided(&nightPickups[i])) {
-				nightPickups[i].activate();
+				nightPickups[i].activate(&bulletBox, &pBullets);
 			}
 			nightPickups[i].update(dt);
 		}
@@ -1704,17 +1730,45 @@ void ColoredCubeApp::updateHUD(float dt) {
 	}
 }
 
+void ColoredCubeApp::updateGameState() {
+	//Handle possible transitions from the PLAYING state
+	if (gameState == GameState::PLAYING) {
+		if (player.getHealth() <= 0) {
+			Sleep(2000);
+			gameState = GameState::LOSE;
+			input->keyUp(KEY_SPACE);
+		}
+		if (nightCount == gameNS::NUM_NIGHTS_TO_ADVANCE && level == 1) {
+			Sleep(2000);
+			gameState = GameState::BEATLV1;
+			input->keyUp(KEY_SPACE);
+			input->keyUp(KEY_0);
+			nightCount = 0;
+		}
+		if (nightCount == gameNS::NUM_NIGHTS_TO_ADVANCE && level == 2) {
+			Sleep(2000);
+			gameState = GameState::WIN;
+			input->keyUp(KEY_SPACE);
+		}
+		if (input->isKeyDown(KEY_0)) {
+			nightCount = gameNS::NUM_NIGHTS_TO_ADVANCE;
+			input->keyUp(KEY_SPACE);
+			input->keyUp(KEY_0);
+		}
+	}
+
+}
+
 
 void ColoredCubeApp::drawScene()
 {
 	D3DApp::drawScene();
 	incrementedYMargin = 5;
 	lineHeight = 20;
-	bool playing = (!startScreen && !endScreen);
 
 	setDeviceAndShaderInformation();
 
-	if(playing) {	
+	if(gameState == PLAYING) {	
 		if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
 		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
@@ -1776,7 +1830,7 @@ void ColoredCubeApp::drawScene()
 		printText("|", mClientWidth/2, mClientHeight/2, 0, 0, WHITE);
 		printText("--", (mClientWidth/2) - 4, mClientHeight/2, 0, 0, WHITE);
 	}
-	else if(startScreen)
+	else if(gameState == INTROSCREEN)
 	{
 		D3D10_TECHNIQUE_DESC techDesc;
 		mTech->GetDesc( &techDesc );
@@ -1786,15 +1840,16 @@ void ColoredCubeApp::drawScene()
 		}
 		printText(sText);
 	}
-	else { // End Screen 
-		if(!won){
-			printText(lText);
-			printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
-		}
-		else {
-			printText(wText);
-			printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
-		}
+	else if (gameState == INSTRUCTIONS) {
+
+	}
+	else if (gameState == LOSE) { // End Screen 
+		printText(lText);
+		printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
+	}
+	else if (gameState == WIN) {
+		printText(wText);
+		printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
 	}
 	
 	// We specify DT_NOCLIP, so we do not care about width/height of the rect.
@@ -2031,11 +2086,12 @@ void ColoredCubeApp::drawHUD() {
 
 void ColoredCubeApp::drawBarrels()
 {
-	mfxDiffuseMapVar->SetResource(mDiffuseMapRVBarrel);
-	mfxSpecMapVar->SetResource(mSpecMapRVBarrel);
-	for(int i = 0; i < gameNS::NUM_BARRELS; i++)
-		barrels[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-
+	if (level == 2) {
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBarrel);
+		mfxSpecMapVar->SetResource(mSpecMapRVBarrel);
+		for(int i = 0; i < gameNS::NUM_BARRELS; i++)
+			barrels[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	}
 }
 
 void ColoredCubeApp::drawFloor() {

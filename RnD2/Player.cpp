@@ -31,6 +31,7 @@ void Player::init(Box* bulletBox, vector<Bullet*>* bullets, Box* b, float r, Vec
 	depth = s*d;
 	timeSinceLastShot = 0;
 	score = 0;
+	fired = false;
 	health = 100;
 }
 
