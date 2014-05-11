@@ -1,9 +1,9 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(void) : GameObject()
-{
+Bullet::Bullet(Box* b, float r, Vector3 pos, Vector3 vel, float sp, float s) {
 	active = false;
+	init(b, r, pos, vel, sp, s);
 }
 
 
@@ -43,12 +43,14 @@ void Bullet::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectTechnique* 
 
 void Bullet::update(float dt)
 {
+	timeShot += dt;
+	if (timeShot >= 3.0f) {
+		setInActive();
+	}
 	Normalize(&velocity, &velocity);
 	velocity *= bulletNS::SPEED;
 	position += velocity*dt;
 	Identity(&world);
 	Translate(&world, position.x, position.y, position.z);
-	//D3DXMatrixScaling(&mScale, width, height, depth);
-	//D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
-	//D3DXMatrixMultiply(&world, &mScale, &mTranslate);
+
 }

@@ -8,6 +8,15 @@
 //=============================================================================
 
 
+/*
+Things to reinit
+Lamps
+pickups
+Walls
+Buildings
+
+*/
+
 #include "d3dApp.h"
 #include "Box.h"
 #include "GameObject.h"
@@ -46,7 +55,6 @@ namespace gameNS {
 	const int NUM_BULLETS = 100;
 	const int NUM_LIGHTS = 15;
 	const int NUM_FIRES = 12;
-	const int NUM_LAMPS = 8;
 	const float TRANSITIONTIME = 10;
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
@@ -58,7 +66,6 @@ namespace gameNS {
 	const int NUM_NIGHTS_TO_WIN = 4;
 	const float FAR_CLIP = 10000.0f;
 	const int PLAYER_SPEED = 40;
-	int shotgun = true; 
 }
 
 
@@ -71,7 +78,6 @@ public:
 	void initApp();
 	void initOrigin();
 	void initPickups();
-	void initBullets();
 	void initBarrels();
 	void initBasicGeometry();
 	void initTextStrings();
@@ -118,6 +124,7 @@ public:
 	void drawBuildings();
 	void drawHUD();
 	void drawBarrels();
+	void drawFloor();
 
 	void onResize();
 	Vector3 moveRuggerDirection();
@@ -145,19 +152,18 @@ private:
 	Box mBox, redBox, brick, bulletBox, eBulletBox, yellowGreenBox, goldBox, blueBox, tealBox, maroonBox, clearBox, whiteBox;
 	Box testBox;
 	Player player;
-	vector<Bullet*> pBullets;
 	LineObject xLine, yLine, zLine;
-	Wall walls[gameNS::NUM_WALLS];
-	Building buildings[gameNS::NUM_BUILDINGS];
+	
 	Barrel barrels[gameNS::NUM_BARRELS];
-	Wall floor;
-	Wall floor2;
+	Wall floor;	//Walls?
+	Wall floor2; //Walls?
+	vector<Building> buildings;
+	vector<Wall> walls;
 	vector<LampPost> lamps;
 	vector<Pickup> dayPickups;
 	vector<Pickup> nightPickups;
-	vector<Pickup> dayPickupsL2;
-	vector<Pickup> nightPickupsL2;
 	vector<HudObject> hudObjects;
+	vector<Bullet*> pBullets;
 	Quad menu;
 
 	//Lighting and Camera-specific declarations
@@ -228,6 +234,7 @@ private:
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
 	D3DXMATRIX mCompCubeWorld;
 
+	int level;
 	bool night;
 	//my addition
 	ID3D10EffectVariable* mfxFLIPVar;
@@ -247,7 +254,7 @@ private:
 	int score;
 	int lineHeight;
 	bool firstpass;
-	bool startScreen, endScreen, level1, level2;
+	bool startScreen, endScreen;
 	float dt;
 	DebugText sText, lText, wText;
 
@@ -319,16 +326,14 @@ void ColoredCubeApp::initApp()
 	initBasicVariables(); //Like shotTimer, etc.
 	audio->playCue(INTROMUSIC);
 	startScreen = true;
-	level1 = false;
-	level2 = true;
+	level = 2;
 	position = D3DXVECTOR3(0, 5, 0); 
-	initBasicGeometry();
+	initBasicGeometry(); //must happen before init player
 	initTextStrings(); //Like start/end screen text
 	initUniqueObjects(); //Like the floor
 	initBarrels();
 
 	initOrigin();
-	initBullets();
 	initPickups();
 	initWallPositions();
 	initBuildingPositions();
@@ -349,7 +354,7 @@ void ColoredCubeApp::initApp()
 	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	mClearColor = gameNS::DAY_SKY_COLOR;
 
-	player.init(&mBox, pBullets, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
+	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -369,90 +374,97 @@ void ColoredCubeApp::initApp()
 }
 
 void ColoredCubeApp::initLamps() {
-	for (int i = 0; i < gameNS::NUM_LAMPS; i++)
-		lamps.push_back(LampPost());
-	
-	lamps[0].init(&brick, Vector3(58.5f,0.1f,58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
-	lamps[1].init(&brick, Vector3(-58.5f,0.1f,-58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
-	lamps[2].init(&brick, Vector3(58.5f,0.1f,-58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
-	lamps[3].init(&brick, Vector3(-58.5f,0.1f,58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
-	lamps[4].init(&brick, Vector3(-100.0f,0.1f,100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
-	lamps[5].init(&brick, Vector3(100.0f,0.1f,100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
-	lamps[6].init(&brick, Vector3(-100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
-	lamps[7].init(&brick, Vector3(100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
+	lamps.clear();
+	if (level == 1) 
+		for (int i = 0; i < 4; i++)
+			lamps.push_back(LampPost());
+	else if (level == 2) 
+		for (int i = 0; i < 4; i++) 
+			lamps.push_back(LampPost());
+
+
+	if (level == 1) {
+		lamps[0].init(&brick, Vector3(58.5f,0.1f,58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
+		lamps[1].init(&brick, Vector3(-58.5f,0.1f,-58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
+		lamps[2].init(&brick, Vector3(58.5f,0.1f,-58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
+		lamps[3].init(&brick, Vector3(-58.5f,0.1f,58.5f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+	} else if (level == 2) {
+		lamps[0].init(&brick, Vector3(-100.0f,0.1f,100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
+		lamps[1].init(&brick, Vector3(100.0f,0.1f,100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
+		lamps[2].init(&brick, Vector3(-100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
+		lamps[3].init(&brick, Vector3(100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
+	}
 }
 
 void ColoredCubeApp::initPickups() {
 	//define the pickups
-	unsigned int level;
-	if(level1)
-		level = 1;
-	else if(level2)
-		level = 2;
+	
+	dayPickups.clear();
+	nightPickups.clear();
 
-
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level));
-	dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level));
-	dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level));
+	if (level == 1) {
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level));
 
 	
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level));
-	nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level));
+	} else if (level == 2) {
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level));
 
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level));
-	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level));
-	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level));
-	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level));
-	dayPickupsL2.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level));
-
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level));
-	nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level));
-	nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
-	
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level));
+	}
 
 
 	for (unsigned int i = 0; i < dayPickups.size(); i++) {
@@ -463,25 +475,6 @@ void ColoredCubeApp::initPickups() {
 	//	nightPickups[i].startGlowing();
 		nightPickups[i].setInActive();
 	}
-
-	for(unsigned int i = 0; i < dayPickupsL2.size(); i++){
-		
-		dayPickupsL2[i].setInActive();
-	}
-
-	for(unsigned int i=0; i < nightPickupsL2.size(); i++){
-
-		nightPickupsL2[i].setInActive();
-	}
-
-}
-
-void ColoredCubeApp::initBullets() {
-	for (int i = 0; i < gameNS::NUM_BULLETS; i++) {
-		pBullets.push_back(new Bullet());
-		pBullets[i]->init(&bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1);
-	}
-	
 }
 
 void ColoredCubeApp::initBasicGeometry() {	
@@ -554,100 +547,118 @@ void ColoredCubeApp::initBasicVariables() {
 }
 
 void ColoredCubeApp::initBuildingPositions() {
-//					geom,  rad,  position,					sc,	w,		h,	d    //Level 1 Buildings
-	buildings[0].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
-	buildings[1].init(&brick, 2.0f, Vector3(150, 0, -50),	1,	20,		50,  20);
-	buildings[2].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
+	//clear old buildings if any and make new ones.
+	buildings.clear();
+	if (level == 1) {
+		for (int i = 0; i < 12; i++) 
+			buildings.push_back(Building());
+	} else if (level == 2) {
+		for (int i = 0; i < 27; i++) 
+			buildings.push_back(Building());
+	}
+	
+	if (level == 1) {
+		//					geom,  rad,  position,					sc,	w,		h,	d    //Level 1 Buildings
+		buildings[0].init(&brick, 2.0f, Vector3(150, 0, -150),	1,	20,		50,  20);// Front right corner buildings
+		buildings[1].init(&brick, 2.0f, Vector3(150, 0, -50),	1,	20,		50,  20);
+		buildings[2].init(&brick, 2.0f, Vector3(50, 0, -150),	1,	20,		50,  20);
 
-	buildings[3].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
-	buildings[4].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
-	buildings[5].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
+		buildings[3].init(&brick, 2.0f, Vector3(150, 0, 150),	1,	20,		50,  20);// Front left corner buildings
+		buildings[4].init(&brick, 2.0f, Vector3(150, 0, 50),	1,	20,		50,  20);
+		buildings[5].init(&brick, 2.0f, Vector3(50, 0, 150),	1,	20,		50,  20);
 
-	buildings[6].init(&brick, 2.0f, Vector3(-150, 0, -150), 1,	20,		50,  20);// Back right corner buildings
-	buildings[7].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
-	buildings[8].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
+		buildings[6].init(&brick, 2.0f, Vector3(-150, 0, -150), 1,	20,		50,  20);// Back right corner buildings
+		buildings[7].init(&brick, 2.0f, Vector3(-150, 0, -50),	1,	20,		50,  20);
+		buildings[8].init(&brick, 2.0f, Vector3(-50, 0, -150),	1,	20,		50,  20);
 
-	buildings[9].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
-	buildings[10].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
-	buildings[11].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
+		buildings[9].init(&brick, 2.0f, Vector3(-150, 0, 150),	1,	20,		50,  20);// Back left corner buildings
+		buildings[10].init(&brick, 2.0f, Vector3(-150, 0, 50),	1,	20,		50,  20);
+		buildings[11].init(&brick, 2.0f, Vector3(-50, 0, 150),	1,	20,		50,  20);
+	} else if (level == 2) {
+		buildings[0].init(&brick, 2.0f, Vector3(700, 0, 1300),1,	190,	50,  190);//Left Side Building 1
+		buildings[1].init(&brick, 2.0f, Vector3(370, 0, 1020),1,	50,		50,  95);//Left Side Building 2
+		buildings[2].init(&brick, 2.0f, Vector3(300, 0, 1350),1,	95,		50,  95);//Left Side Building 3
+		buildings[3].init(&brick, 2.0f, Vector3(700, 0, 925),1,	95,		50,  95);//Left Side Building 4
 
-																				 //Level 2 Buildings
-	buildings[12].init(&brick, 2.0f, Vector3(700, 0, 1300),1,	190,	50,  190);//Left Side Building 1
-	buildings[13].init(&brick, 2.0f, Vector3(370, 0, 1020),1,	50,		50,  95);//Left Side Building 2
-	buildings[14].init(&brick, 2.0f, Vector3(300, 0, 1350),1,	95,		50,  95);//Left Side Building 3
-	buildings[15].init(&brick, 2.0f, Vector3(700, 0, 925),1,	95,		50,  95);//Left Side Building 4
+		buildings[4].init(&brick, 2.0f, Vector3(300, 0, 700),	1,	95,		70,  90);//Left Side Building 5
+		buildings[5].init(&brick, 2.0f, Vector3(700, 0, 500),	1,	120,	50,  95);//Left Side Building 6
+		buildings[6].init(&brick, 2.0f, Vector3(700, 0, 150),	1,	120,	50,  108);//Left Side Building 7
+		buildings[7].init(&brick, 2.0f, Vector3(350, 0, 250),	1,	72,		50,  120);//Left Side Building 8
 
-	buildings[16].init(&brick, 2.0f, Vector3(300, 0, 700),	1,	95,		70,  90);//Left Side Building 5
-	buildings[17].init(&brick, 2.0f, Vector3(700, 0, 500),	1,	120,	50,  95);//Left Side Building 6
-	buildings[18].init(&brick, 2.0f, Vector3(700, 0, 150),	1,	120,	50,  108);//Left Side Building 7
-	buildings[19].init(&brick, 2.0f, Vector3(350, 0, 250),	1,	72,		50,  120);//Left Side Building 8
+		buildings[8].init(&brick, 2.0f, Vector3(800, 0, -200),	1,	95,		80,  95);//Left Side Building 9
+		buildings[9].init(&brick, 2.0f, Vector3(375, 0, -300),	1,	95,		50,  95);//Left Side Building 10
+		buildings[10].init(&brick, 2.0f, Vector3(850, 0, -550),	1,	95,		50,  95);//Left Side Building 11
+		buildings[11].init(&brick, 2.0f, Vector3(350, 0, -650),	1,	130,	50,  95);//Left Side Building 12
+		buildings[12].init(&brick, 2.0f, Vector3(800, 0, -1200),1,	120,	50,  250);//Left Side Building 13
+		buildings[13].init(&brick, 2.0f, Vector3(350, 0, -1300),1,	72,		50,  72);//Left Side Building 14
 
-	buildings[20].init(&brick, 2.0f, Vector3(800, 0, -200),	1,	95,		80,  95);//Left Side Building 9
-	buildings[21].init(&brick, 2.0f, Vector3(375, 0, -300),	1,	95,		50,  95);//Left Side Building 10
-	buildings[22].init(&brick, 2.0f, Vector3(850, 0, -550),	1,	95,		50,  95);//Left Side Building 11
-	buildings[23].init(&brick, 2.0f, Vector3(350, 0, -650),	1,	130,	50,  95);//Left Side Building 12
-	buildings[24].init(&brick, 2.0f, Vector3(800, 0, -1200),1,	120,	50,  250);//Left Side Building 13
-	buildings[25].init(&brick, 2.0f, Vector3(350, 0, -1300),1,	72,		50,  72);//Left Side Building 14
+		buildings[14].init(&brick, 2.0f, Vector3(-700, 0, 1150),1,	95,		50,  320);//Right Side Building 15
+		buildings[15].init(&brick, 2.0f, Vector3(-300, 0, 1100),1,	110,	50,  130);//Right Side Building 16
+		buildings[16].init(&brick, 2.0f, Vector3(-600, 0, 450),	1,	100,	50,  90);//Right Side Building 17
+		buildings[17].init(&brick, 2.0f, Vector3(-300, 0, 550),	1,	50,		30,  150);//Right Side Building 18
+		buildings[18].init(&brick, 2.0f, Vector3(-370, 0, 195),1,	95,		50,  95);//Right Side Building 19
 
-	buildings[26].init(&brick, 2.0f, Vector3(-700, 0, 1150),1,	95,		50,  320);//Right Side Building 15
-	buildings[27].init(&brick, 2.0f, Vector3(-300, 0, 1100),1,	110,	50,  130);//Right Side Building 16
-	buildings[28].init(&brick, 2.0f, Vector3(-600, 0, 450),	1,	100,	50,  90);//Right Side Building 17
-	buildings[29].init(&brick, 2.0f, Vector3(-300, 0, 550),	1,	50,		30,  150);//Right Side Building 18
-	buildings[30].init(&brick, 2.0f, Vector3(-370, 0, 195),1,	95,		50,  95);//Right Side Building 19
+		buildings[19].init(&brick, 2.0f, Vector3(-615, 0, -10),	1,	150,	50,  110);//Right Side Building 20
+		buildings[20].init(&brick, 2.0f, Vector3(-370, 0, -215),1,	95,		50,  95);//Right Side Building 21
+		buildings[21].init(&brick, 2.0f, Vector3(-700, 0, -275),1,	95,		50,  95);//Right Side Building 22
+		buildings[22].init(&brick, 2.0f, Vector3(-250, 0, -700),1,	50,		90,  50);//Right Side Building 23
 
-	buildings[31].init(&brick, 2.0f, Vector3(-615, 0, -10),	1,	150,	50,  110);//Right Side Building 20
-	buildings[32].init(&brick, 2.0f, Vector3(-370, 0, -215),1,	95,		50,  95);//Right Side Building 21
-	buildings[33].init(&brick, 2.0f, Vector3(-700, 0, -275),1,	95,		50,  95);//Right Side Building 22
-	buildings[34].init(&brick, 2.0f, Vector3(-250, 0, -700),1,	50,		90,  50);//Right Side Building 23
-
-	buildings[35].init(&brick, 2.0f, Vector3(-650, 0, -800), 1,	110,	50,  200);//Right Side Building 24
-	buildings[36].init(&brick, 2.0f, Vector3(-225, 0, -1000),1,	50,		60,  50);//Right Side Building 25
-	buildings[37].init(&brick, 2.0f, Vector3(-650, 0, -1300),1,	110,	50,  200);//Right Side Building 26
-	buildings[38].init(&brick, 2.0f, Vector3(-200, 0, -1300),1,	50,		30,  50);//Right Side Building 27
-
+		buildings[23].init(&brick, 2.0f, Vector3(-650, 0, -800), 1,	110,	50,  200);//Right Side Building 24
+		buildings[24].init(&brick, 2.0f, Vector3(-225, 0, -1000),1,	50,		60,  50);//Right Side Building 25
+		buildings[25].init(&brick, 2.0f, Vector3(-650, 0, -1300),1,	110,	50,  200);//Right Side Building 26
+		buildings[26].init(&brick, 2.0f, Vector3(-200, 0, -1300),1,	50,		30,  50);//Right Side Building 27
+	}	
 }
 
 void ColoredCubeApp::initWallPositions() {
+	walls.clear();
+	//create number of walls per level.
+	if (level == 1) 
+		for (int i = 0; i < 16; i++) 
+			walls.push_back(Wall());
+	else if (level == 2) 
+		for (int i = 0; i < 12; i++) 
+			walls.push_back(Wall());
 	
-//				   geom,  rad,  position,								sc,	w,			h,	d
-	walls[0].init(&brick, 2.0f, Vector3(125, 0, 250), Vector3(0,0,0),	1, 	1,	125,	10,		10);//	Left/Front wall 
-	walls[1].init(&brick, 2.0f, Vector3(-125, 0, -250), Vector3(0,0,0), 1,	1,	125,	10,		10);//	Right/back wall
-	walls[2].init(&brick, 2.0f, Vector3(250, 0, 125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Front/Left wall
-	walls[3].init(&brick, 2.0f, Vector3(-250, 0, -125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Back/Right wall
+	if (level == 1)  {
+		//				   geom,  rad,  position,								sc,	w,			h,	d
+		walls[0].init(&brick, 2.0f, Vector3(125, 0, 250), Vector3(0,0,0),	1, 	1,	125,	10,		10);//	Left/Front wall 
+		walls[1].init(&brick, 2.0f, Vector3(-125, 0, -250), Vector3(0,0,0), 1,	1,	125,	10,		10);//	Right/back wall
+		walls[2].init(&brick, 2.0f, Vector3(250, 0, 125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Front/Left wall
+		walls[3].init(&brick, 2.0f, Vector3(-250, 0, -125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Back/Right wall
 
-	walls[4].init(&brick, 2.0f, Vector3(-125, 0, 250),	 Vector3(0,0,0), 1,	1,	125,	10,		10);//	Left/Back wall 
-	walls[5].init(&brick, 2.0f, Vector3(125, 0, -250),	 Vector3(0,0,0), 1,	1,	125,	10,		10);//	Right/Front wall
-	walls[6].init(&brick, 2.0f, Vector3(250, 0, -125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Front/Right wall
-	walls[7].init(&brick, 2.0f, Vector3(-250, 0, 125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Back/Left wall
+		walls[4].init(&brick, 2.0f, Vector3(-125, 0, 250),	 Vector3(0,0,0), 1,	1,	125,	10,		10);//	Left/Back wall 
+		walls[5].init(&brick, 2.0f, Vector3(125, 0, -250),	 Vector3(0,0,0), 1,	1,	125,	10,		10);//	Right/Front wall
+		walls[6].init(&brick, 2.0f, Vector3(250, 0, -125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Front/Right wall
+		walls[7].init(&brick, 2.0f, Vector3(-250, 0, 125),	 Vector3(0,0,0), 1,	1,	10,		10,		125);//	Back/Left wall
 
-	walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Left/Front inner wall 
-	walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Right/Back inner wall
-	walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Front/Left inner wall
-	walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Back/Right inner wall
+		walls[8].init(&brick, 2.0f, Vector3(36, 0, 55),		 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Left/Front inner wall 
+		walls[9].init(&brick, 2.0f, Vector3(-36, 0, -55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Right/Back inner wall
+		walls[10].init(&brick, 2.0f, Vector3(55, 0, 36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Front/Left inner wall
+		walls[11].init(&brick, 2.0f, Vector3(-55, 0, -36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Back/Right inner wall
 
-	walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Left/Back inner wall 
-	walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Right/Front inner wall
-	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Front/Right inner wall
-	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Back/Left inner wall
+		walls[12].init(&brick, 2.0f, Vector3(-36, 0, 55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Left/Back inner wall 
+		walls[13].init(&brick, 2.0f, Vector3(36, 0, -55),	 Vector3(0,0,0), 1,	1,	20,		2.5,	1);//	Right/Front inner wall
+		walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Front/Right inner wall
+		walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Back/Left inner wall
+	} else if (level == 2) {
+		//Level 2
+		walls[0].init(&brick, 2.0f, Vector3(0, 0, -1625),	Vector3(0,0,0), 1,	1,	980,	20,	10);// Far Wall
+		walls[1].init(&brick, 2.0f, Vector3(0, 0, 1625),	Vector3(0,0,0), 1,	1,	980,	20,	10);// Back Wall
+		walls[2].init(&brick, 2.0f, Vector3(-980, 0, 0),	Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
+		walls[3].init(&brick, 2.0f, Vector3(980, 0, 0),		Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
 
+		//Safe zone - level 2
+		walls[4].init(&brick, 2.0f, Vector3(482.5, 0, 50),	Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+		walls[5].init(&brick, 2.0f, Vector3(417.5, 0, 50),	Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+		walls[6].init(&brick, 2.0f, Vector3(500, 0, 32.5),	Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
+		walls[7].init(&brick, 2.0f, Vector3(400, 0, 32.5),	Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
 
-	//Level 2
-	walls[16].init(&brick, 2.0f, Vector3(0, 0, -1625),	 Vector3(0,0,0), 1,	1,	980,	20,	10);// Far Wall
-	walls[17].init(&brick, 2.0f, Vector3(0, 0, 1625),	 Vector3(0,0,0), 1,	1,	980,	20,	10);// Back Wall
-	walls[18].init(&brick, 2.0f, Vector3(-980, 0, 0),	 Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
-	walls[19].init(&brick, 2.0f, Vector3(980, 0, 0),	 Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
-
-	//Safe zone - level 2
-	walls[20].init(&brick, 2.0f, Vector3(482.5, 0, 50),	Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
-	walls[21].init(&brick, 2.0f, Vector3(417.5, 0, 50),	Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
-	walls[22].init(&brick, 2.0f, Vector3(500, 0, 32.5),	Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
-	walls[23].init(&brick, 2.0f, Vector3(400, 0, 32.5),	Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
-
-	walls[24].init(&brick, 2.0f, Vector3(482.5, 0, -50),Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
-	walls[25].init(&brick, 2.0f, Vector3(417.5, 0, -50),Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
-	walls[26].init(&brick, 2.0f, Vector3(500, 0, -32.5),Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
-	walls[27].init(&brick, 2.0f, Vector3(400, 0, -32.5),Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
-
+		walls[8].init(&brick, 2.0f, Vector3(482.5, 0, -50),Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+		walls[9].init(&brick, 2.0f, Vector3(417.5, 0, -50),Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+		walls[10].init(&brick, 2.0f, Vector3(500, 0, -32.5),Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
+		walls[11].init(&brick, 2.0f, Vector3(400, 0, -32.5),Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
+	}
 }
 
 void ColoredCubeApp::initUniqueObjects() {
@@ -721,7 +732,7 @@ void ColoredCubeApp::initLights()
 	mLights[0].att.y = 0.01f;
 	mLights[0].att.z = 0.0f;
 	
-	if(level1)
+	if(level == 1)
 	{
 		// Pointlight--position is changed every frame to animate.
 		//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
@@ -840,7 +851,8 @@ void ColoredCubeApp::initLights()
 			mLights[i].pos		= D3DXVECTOR3(0, 0, 0);
 		}
 	}
-	else if (level2)
+
+	else if (level == 2)
 	{
 		// Pointlight--position is changed every frame to animate.
 		mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
@@ -951,55 +963,6 @@ void ColoredCubeApp::initLights()
 			mLights[i].pos = D3DXVECTOR3(rand() % 1000, 10, rand()%100);
 		}
 	}
-	//	//Inner corner lights
-	//	mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	//	mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//	mLights[3].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-	//	mLights[3].att.x    = 0.0f;
-	//	mLights[3].att.y    = 0.55f;
-	//	mLights[3].att.z    = 0.0f;
-	//	mLights[3].range    = 90.0f;
-	//	mLights[3].pos = D3DXVECTOR3(30, 10, 30);
-	//
-	//	mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	//	mLights[4].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//	mLights[4].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-	//	mLights[4].att.x    = 0.0f;
-	//	mLights[4].att.y    = 0.55f;
-	//	mLights[4].att.z    = 0.0f;
-	//	mLights[4].range    = 90.0f;
-	//	mLights[4].pos = D3DXVECTOR3(-30, 10, 30);
-
-	//	mLights[5].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	//	mLights[5].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//	mLights[5].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-	//	mLights[5].att.x    = 0.0f;
-	//	mLights[5].att.y    = 0.55f;
-	//	mLights[5].att.z    = 0.0f;
-	//	mLights[5].range    = 90.0f;
-	//	mLights[5].pos = D3DXVECTOR3(30, 10, -30);
-
-	//	mLights[6].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	//	mLights[6].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//	mLights[6].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-	//	mLights[6].att.x    = 0.0f;
-	//	mLights[6].att.y    = 0.55f;
-	//	mLights[6].att.z    = 0.0f;
-	//	mLights[6].range    = 90.0f;
-	//	mLights[6].pos = D3DXVECTOR3(-30, 10, -30);
-
-	//	for(int i=7; i<gameNS::NUM_LIGHTS; i++)
-	//	{
-	//		mLights[i].ambient	= D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	//		mLights[i].diffuse	= D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//		mLights[i].specular	= D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-	//		mLights[i].att.x    = 0.0f;
-	//		mLights[i].att.y    = 0.55f;
-	//		mLights[i].att.z    = 0.0f;
-	//		mLights[i].range	= 90.0f;
-	//		mLights[i].pos		= D3DXVECTOR3((rand()%2000) - 1000, 10, (rand()%1000)-500);
-	//	}
-	//}
 }
 
 void ColoredCubeApp::initHUD() {
@@ -1223,27 +1186,26 @@ void ColoredCubeApp::updateUniqueObjects(float dt) {
 }
 
 void ColoredCubeApp::updateWalls(float dt) {
-	for(int i=0; i<gameNS::NUM_WALLS; i++)
+	for(int i=0; i<walls.size(); i++)
 		walls[i].update(dt);
 }
 
 void ColoredCubeApp::updateLamps(float dt) {
-	for (int i = 0; i < gameNS::NUM_LAMPS; i++) {
+	for (int i = 0; i < lamps.size(); i++) {
 		lamps[i].update(dt);
 	}
 }
 
 void ColoredCubeApp::updateBuildings(float dt) {
-	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+	for(int i=0; i<buildings.size(); i++)
 		buildings[i].update(dt);
 }
 
 void ColoredCubeApp::updatePlayer(float dt) {
 	player.setPosition(camera.getPosition());
 	D3DXVECTOR3 pos = player.getPosition();
-	//player.setPosition(Vector3(position.x, position.y-2, position.z));
 	
-	player.update(dt, camera.getLookatDirection(), gameNS::shotgun); //moveAxis is passed to the bullet
+	player.update(dt, camera.getLookatDirection()); //bullet should follow camera lookat vector
 	if (player.getHealth() <= 0) {
 		Sleep(2000);
 		endScreen = true;
@@ -1253,20 +1215,15 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	//Update shooting
 	if(input->getMouseLButton())
 	{
-		if(!player.firedLastFrame){
-			player.fired = true;
-			if(player.getAmmo() > 0) audio->playCue(FIRE);
-			//else audio->playCue(OUT_OF_AMMO);
-		}
+		if(!player.firedLastFrame) 
+			player.fired = true; //this player value being set dictates whether the player shoots the next time player.update() is called
 		player.firedLastFrame = true; 
+		
 	} else {
 		player.firedLastFrame = false;
 		player.fired = false;
 	}
-	if(input->getMouseRButton())
-	{
-		//Do something
-	}
+
 
 	//Update walking noises
 	if (walking) {
@@ -1284,7 +1241,6 @@ void ColoredCubeApp::updatePlayer(float dt) {
 		}
 	}
 
-	//update camera a bit
 	if (debugMode) { //Allow flying with space and shift
 		if(input->isKeyDown(VK_SPACE)) camera.flying(true);
 		else camera.flying(false);
@@ -1301,11 +1257,22 @@ void ColoredCubeApp::updateEnemies(float dt)
 		{
 			if(night)
 			{
-				if(D3DXVec3LengthSq(&(enemy[i].getPosition() - D3DXVECTOR3(0,0,0))) < 55*55)
-				{
-					enemy[i].setSpeed(enemyNS::DAY_SPEED);
+				if(level == 1){
+					if(D3DXVec3LengthSq(&(enemy[i].getPosition() - D3DXVECTOR3(0,0,0))) < 55*55)
+					{
+						enemy[i].setSpeed(enemyNS::DAY_SPEED);
+					}
+					else enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
 				}
-				else enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
+				else if (level == 2)
+				{
+					if(D3DXVec3LengthSq(&(enemy[i].getPosition() - D3DXVECTOR3(450,0,0))) < 55*55)
+					{
+						enemy[i].setSpeed(enemyNS::DAY_SPEED);
+					}
+					else enemy[i].setSpeed(enemyNS::NIGHT_SPEED);
+				}
+				
 			}
 			else enemy[i].setSpeed(enemyNS::DAY_SPEED);		
 			
@@ -1343,7 +1310,7 @@ void ColoredCubeApp::handleUserInput() {
 }
 
 void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
-	for(int i=0; i<gameNS::NUM_WALLS; i++)
+	for(int i=0; i<walls.size(); i++)
 	{
 		if(player.collided(&walls[i]))
 		{
@@ -1362,7 +1329,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 }
 
 void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
-	for(int i=0; i<gameNS::NUM_BUILDINGS; i++)
+	for(int i=0; i<buildings.size(); i++)
 	{
 		if (buildings[i].getActiveState() == false) continue;
 		if(player.collided(&buildings[i]))
@@ -1379,7 +1346,7 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 }
 
 void ColoredCubeApp::handleLampCollisions(Vector3 pos) {
-		for(int i=0; i<gameNS::NUM_WALLS; i++)
+		for(int i=0; i<walls.size(); i++)
 	{
 		if(player.collided(&lamps[i]))
 			player.setPosition(pos);
@@ -1416,7 +1383,7 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 				enemy[i].damage(50);
 			}
 		}
-		for(int j=0; j<gameNS::NUM_WALLS; j++)
+		for(int j=0; j<walls.size(); j++)
 		{
 			if(enemy[i].collided(&walls[j]))
 			{
@@ -1481,25 +1448,18 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 				
 			}
 		}
-		for(int j=0; j<gameNS::NUM_BUILDINGS; j++)
+		for(int j=0; j<buildings.size(); j++)
 		{
 			if(enemy[i].collided(&buildings[j])) 
 			{
 				enemy[i].setPosition(enemy[i].getOldPos());
 			}
 		}
-		//for(int j=0; j<gameNS::MAX_NUM_ENEMIES; j++)
-		//{
-		//	if(enemy[j].getActiveState())
-		//		if(enemy[i].collided(&enemy[j])) enemy[i].setPosition(enemy[i].getOldPos());
-		//}
 	}
 }
 
 void ColoredCubeApp::placePickups() {
 	if (!placedPickups) {
-		if(level1)
-		{
 			int maxNightPickups = 5; //Locations: 0, 13, 14, 15, 16
 			int maxDayPickups = 17; //All locations
 			vector<int> choices;
@@ -1551,25 +1511,14 @@ void ColoredCubeApp::placePickups() {
 					nightPickups[choices[i]].setActive();
 
 
-		}
-		else if(level2){
-			bool day = !night;
-			if(day)
-				for(int i = 0; i < dayPickupsL2.size(); i++){
-					dayPickupsL2[i].setActive();
-				}
-			else if(!day){
-				for(int i = 0; i < nightPickupsL2.size(); i++){
-					nightPickupsL2[i].setActive();
-				}
-			}
-		}
+		
+
 		placedPickups = true;
 	}
 }
 
 void ColoredCubeApp::updatePickups(float dt) {
-	if(level1){
+	
 		for (unsigned int i = 0; i < dayPickups.size(); i++) {
 			if (player.collided(&dayPickups[i])) {
 				dayPickups[i].activate();
@@ -1582,21 +1531,6 @@ void ColoredCubeApp::updatePickups(float dt) {
 			}
 			nightPickups[i].update(dt);
 		}
-	}
-	else if(level2){
-		for (unsigned int i = 0; i < dayPickupsL2.size(); i++) {
-			if (player.collided(&dayPickupsL2[i])) {
-				dayPickupsL2[i].activate();
-			}
-			dayPickupsL2[i].update(dt);
-		}
-		for (unsigned int i = 0; i < nightPickupsL2.size(); i++) {
-			if (player.collided(&nightPickupsL2[i])) {
-				nightPickupsL2[i].activate();
-			}
-			nightPickupsL2[i].update(dt);
-		}
-	}
 }
 
 void ColoredCubeApp::updateOrigin(float dt) {
@@ -1707,87 +1641,62 @@ void ColoredCubeApp::drawScene()
 		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
 		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)enemy[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
-		if(level1)
-		{
-			//mVP = mView*mProj;
-			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
 
+		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
+
+		if (level == 1) {
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
+			mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
 			mfxSpecMapVar->SetResource(mSpecMapRVStreet);
-			floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-
-			drawWalls();
-			drawBuildings();
-			drawPickups();
-			drawLamps();
-
-			D3D10_TECHNIQUE_DESC techDesc;
-			mTech->GetDesc( &techDesc );
-			for(UINT p = 0; p < techDesc.Passes; ++p)
-			{
-				mWallMesh.draw();
-			}
-
-			Matrix mWVP = menu.getWorld() * (mVP);
-			mfxWVPVar->SetMatrix((float*)&mWVP);
-			mfxWorldVar->SetMatrix((float*)&menu.getWorld());
-			//D3D10_TECHNIQUE_DESC techDesc;
-			mTech->GetDesc( &techDesc );
-			for(UINT p = 0; p < techDesc.Passes; ++p)
-			{
-				mTech->GetPassByIndex( p )->Apply(0);
-				//menu.draw();
-			}
-			
-		}
-		else if(level2)
-		{
-			drawHUD();
-
-			mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
-
+		} else if (level == 2) {
 			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTheRoad);
 			mfxSpecMapVar->SetResource(mSpecMapRVTheRoad);
-			floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
+			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
+			
+			drawBarrels();
+		}
+		
+		drawHUD();
+		drawFloor();
+		drawBuildings();
+		drawPickups();
+		drawWalls();
+		drawLamps();
+		
+		//Commenting this out because I think it does nothing. I think it's supposed to be drawing a menu.
+		//D3D10_TECHNIQUE_DESC techDesc;
+		//mTech->GetDesc( &techDesc );
+		//for(UINT p = 0; p < techDesc.Passes; ++p) mWallMesh.draw();
+		//Matrix mWVP = menu.getWorld() * (mVP);
+		//mfxWVPVar->SetMatrix((float*)&mWVP);
+		//mfxWorldVar->SetMatrix((float*)&menu.getWorld());
+		//	
+		//mTech->GetDesc( &techDesc );
+		//for(UINT p = 0; p < techDesc.Passes; ++p) {
+		//	mTech->GetPassByIndex( p )->Apply(0);
+		//	//menu.draw();
+		//}
+			
 
-			drawWalls();
-			drawBuildings();
+		//What are these and should they be doing this every frame? Probably not...
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
+		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
+		
+		//Draw particle systems last besides text
+		if (level == 2) {	
 
-			drawPickups();
-			drawLamps();
-
-			D3D10_TECHNIQUE_DESC techDesc;
-			mTech->GetDesc( &techDesc );
-			for(UINT p = 0; p < techDesc.Passes; ++p)
-			{
-				mWallMesh.draw();
-			}
-
-			Matrix mWVP = menu.getWorld() * (mVP);
-			mfxWVPVar->SetMatrix((float*)&mWVP);
-			mfxWorldVar->SetMatrix((float*)&menu.getWorld());
-			//D3D10_TECHNIQUE_DESC techDesc;
-			mTech->GetDesc( &techDesc );
-			for(UINT p = 0; p < techDesc.Passes; ++p)
-			{
-				mTech->GetPassByIndex( p )->Apply(0);
-				//menu.draw();
-			}
-
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
-			mfxSpecMapVar->SetResource(mSpecMapRVBullet);
-
-			//Draw particle systems last
 			md3dDevice->OMSetDepthStencilState(0, 0);
 			float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 			md3dDevice->OMSetBlendState(0, blendFactor, 0xffffffff);
-		
 			for(int i=0; i<gameNS::NUM_FIRES; i++)
 			{
 				mFire[i].setEyePos(camera.getPosition());
 				mFire[i].draw();
 			}
 		}
+
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
 		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		player.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
@@ -1824,34 +1733,28 @@ void ColoredCubeApp::drawScene()
 	RECT R = {5, 5, 0, 0};
 	md3dDevice->RSSetState(0);
 	mFont->DrawText(0, mFrameStats.c_str(), -1, &R, DT_NOCLIP, BLACK);
-
 	mSwapChain->Present(0, 0); //Comment this out for expert mode
 }
 
 void ColoredCubeApp::drawWalls() {
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
 	mfxSpecMapVar->SetResource(mSpecMapRV);
-	if(level1)
-		for(int i=0; i<17; i++)
-			walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-	else if(level2)
-		for(int i=16; i<gameNS::NUM_WALLS; i++)
-			walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	for(int i=0; i<walls.size(); i++)
+		walls[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
 
 void ColoredCubeApp::drawBuildings() {
-	if(level1){
+	//Set correct shader stuff
+	if(level == 1) {
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding);
 		mfxSpecMapVar->SetResource(mSpecMapRVBuilding);
-		for(int i=0; i<13; i++)
-			buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-	}
-	else if(level2){
+	} else if (level == 2) {
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
 		mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
-		for(int i=12; i<gameNS::NUM_BUILDINGS; i++)
-			buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 	}
+	//draw
+	for(int i=0; i<buildings.size(); i++)
+		buildings[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 }
 
 void ColoredCubeApp::printText(DebugText text) {
@@ -2008,90 +1911,46 @@ void ColoredCubeApp::drawOrigin() {
 
 void ColoredCubeApp::drawPickups() {
 	//Set mVP to be view*projection, so we can pass that into GO::draw(..)
-	if(level1){
-		for (unsigned int i = 0; i < dayPickups.size(); i++)
-			if (dayPickups[i].getActiveState()) {
-				if(dayPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
-					mfxSpecMapVar->SetResource(mSpecMapRVRed);
-				}
-				else if(dayPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
-					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
-				}
-				else if(dayPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
-					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
-				}
-				dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-			}	
-		for (unsigned int i = 0; i < nightPickups.size(); i++) 
-			if (nightPickups[i].getActiveState()) {
-				if(nightPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
-					mfxSpecMapVar->SetResource(mSpecMapRVRed);
-				}
-				else if(nightPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
-					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
-				}
-				else if(nightPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
-					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
-				}
-				nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	
+	for (unsigned int i = 0; i < dayPickups.size(); i++)
+		if (dayPickups[i].getActiveState()) {
+			if(dayPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+				mfxSpecMapVar->SetResource(mSpecMapRVRed);
 			}
-	}
-	else if(level2){
-		for (unsigned int i = 0; i < dayPickupsL2.size(); i++)
-			if (dayPickupsL2[i].getActiveState()) {
-				if(dayPickupsL2[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
-					mfxSpecMapVar->SetResource(mSpecMapRVRed);
-				}
-				else if(dayPickupsL2[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
-					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
-				}
-				else if(dayPickupsL2[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
-					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
-				}
-				dayPickupsL2[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-			}	
-		for (unsigned int i = 0; i < nightPickupsL2.size(); i++) 
-			if (nightPickupsL2[i].getActiveState()) {
-				if(nightPickupsL2[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
-					mfxSpecMapVar->SetResource(mSpecMapRVRed);
-				}
-				else if(nightPickupsL2[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
-					mfxSpecMapVar->SetResource(mSpecMapRVBlue);
-				}
-				else if(nightPickupsL2[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
-					mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
-					mfxSpecMapVar->SetResource(mSpecMapRVYellow);
-				}
-				nightPickupsL2[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+			else if(dayPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+				mfxSpecMapVar->SetResource(mSpecMapRVBlue);
 			}
-	}
-
+			else if(dayPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+			}
+			dayPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		}	
+	for (unsigned int i = 0; i < nightPickups.size(); i++) 
+		if (nightPickups[i].getActiveState()) {
+			if(nightPickups[i].getColor() == Vector3(RED.r, RED.g, RED.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVRed);
+				mfxSpecMapVar->SetResource(mSpecMapRVRed);
+			}
+			else if(nightPickups[i].getColor() == Vector3(BLUE.r, BLUE.g, BLUE.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVBlue);
+				mfxSpecMapVar->SetResource(mSpecMapRVBlue);
+			}
+			else if(nightPickups[i].getColor() == Vector3(YELLOW.r, YELLOW.g, YELLOW.b)){
+				mfxDiffuseMapVar->SetResource(mDiffuseMapRVYellow);
+				mfxSpecMapVar->SetResource(mSpecMapRVYellow);
+			}
+			nightPickups[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+		}
 }
 
 void ColoredCubeApp::drawLamps() {
 	mfxDiffuseMapVar->SetResource(mDiffuseMapRVPole);
 	mfxSpecMapVar->SetResource(mSpecMapRVPole);
-	if(level1)
-	{
-		for (int i = 0; i < 4; i++)
+	for (int i = 0; i < lamps.size(); i++)
 		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-	}
-	else if(level2)
-	{
-		for (int i = 4; i < 8; i++)
-		lamps[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-	}
 }
 
 void ColoredCubeApp::drawHUD() {
@@ -2109,4 +1968,12 @@ void ColoredCubeApp::drawBarrels()
 	for(int i = 0; i < gameNS::NUM_BARRELS; i++)
 		barrels[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 
+}
+
+void ColoredCubeApp::drawFloor() {
+	if (level == 1) 
+		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	else if (level == 2) 
+		floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	
 }
