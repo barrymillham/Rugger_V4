@@ -39,7 +39,7 @@ using std::time;
 
 namespace gameNS {
 	const float DAYLEN = 40;
-	const int NUM_WALLS = 20;
+	const int NUM_WALLS = 28;
 	const int NUM_BUILDINGS = 39;
 	const int NUM_BARRELS = 24;
 	const int PERIMETER = 4;
@@ -500,7 +500,7 @@ void ColoredCubeApp::initBasicGeometry() {
 	rLine.init(md3dDevice, 10.0f, RED);
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
-	activeLine.init(md3dDevice, 5.0f, RED, mFX);
+	activeLine.init(md3dDevice, 2.0f, RED, mFX);
 }
 
 void ColoredCubeApp::initTextStrings() {
@@ -573,11 +573,11 @@ void ColoredCubeApp::initBuildingPositions() {
 
 																				 //Level 2 Buildings
 	buildings[12].init(&brick, 2.0f, Vector3(700, 0, 1300),1,	190,	50,  190);//Left Side Building 1
-	buildings[13].init(&brick, 2.0f, Vector3(420, 0, 1020),1,	95,		50,  95);//Left Side Building 2
+	buildings[13].init(&brick, 2.0f, Vector3(370, 0, 1020),1,	50,		50,  95);//Left Side Building 2
 	buildings[14].init(&brick, 2.0f, Vector3(300, 0, 1350),1,	95,		50,  95);//Left Side Building 3
 	buildings[15].init(&brick, 2.0f, Vector3(700, 0, 925),1,	95,		50,  95);//Left Side Building 4
 
-	buildings[16].init(&brick, 2.0f, Vector3(300, 0, 700),	1,	95,		70,  120);//Left Side Building 5
+	buildings[16].init(&brick, 2.0f, Vector3(300, 0, 700),	1,	95,		70,  90);//Left Side Building 5
 	buildings[17].init(&brick, 2.0f, Vector3(700, 0, 500),	1,	120,	50,  95);//Left Side Building 6
 	buildings[18].init(&brick, 2.0f, Vector3(700, 0, 150),	1,	120,	50,  108);//Left Side Building 7
 	buildings[19].init(&brick, 2.0f, Vector3(350, 0, 250),	1,	72,		50,  120);//Left Side Building 8
@@ -589,9 +589,9 @@ void ColoredCubeApp::initBuildingPositions() {
 	buildings[24].init(&brick, 2.0f, Vector3(800, 0, -1200),1,	120,	50,  250);//Left Side Building 13
 	buildings[25].init(&brick, 2.0f, Vector3(350, 0, -1300),1,	72,		50,  72);//Left Side Building 14
 
-	buildings[26].init(&brick, 2.0f, Vector3(-700, 0, 1350),1,	95,		50,  120);//Right Side Building 15
+	buildings[26].init(&brick, 2.0f, Vector3(-700, 0, 1150),1,	95,		50,  320);//Right Side Building 15
 	buildings[27].init(&brick, 2.0f, Vector3(-300, 0, 1100),1,	110,	50,  130);//Right Side Building 16
-	buildings[28].init(&brick, 2.0f, Vector3(-600, 0, 750),	1,	100,	50,  90);//Right Side Building 17
+	buildings[28].init(&brick, 2.0f, Vector3(-600, 0, 450),	1,	100,	50,  90);//Right Side Building 17
 	buildings[29].init(&brick, 2.0f, Vector3(-300, 0, 550),	1,	50,		30,  150);//Right Side Building 18
 	buildings[30].init(&brick, 2.0f, Vector3(-370, 0, 195),1,	95,		50,  95);//Right Side Building 19
 
@@ -600,7 +600,7 @@ void ColoredCubeApp::initBuildingPositions() {
 	buildings[33].init(&brick, 2.0f, Vector3(-700, 0, -275),1,	95,		50,  95);//Right Side Building 22
 	buildings[34].init(&brick, 2.0f, Vector3(-250, 0, -700),1,	50,		90,  50);//Right Side Building 23
 
-	buildings[35].init(&brick, 2.0f, Vector3(-650, 0, -800),	1,	110,	50,  200);//Right Side Building 24
+	buildings[35].init(&brick, 2.0f, Vector3(-650, 0, -800), 1,	110,	50,  200);//Right Side Building 24
 	buildings[36].init(&brick, 2.0f, Vector3(-225, 0, -1000),1,	50,		60,  50);//Right Side Building 25
 	buildings[37].init(&brick, 2.0f, Vector3(-650, 0, -1300),1,	110,	50,  200);//Right Side Building 26
 	buildings[38].init(&brick, 2.0f, Vector3(-200, 0, -1300),1,	50,		30,  50);//Right Side Building 27
@@ -630,11 +630,23 @@ void ColoredCubeApp::initWallPositions() {
 	walls[14].init(&brick, 2.0f, Vector3(55, 0, -36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Front/Right inner wall
 	walls[15].init(&brick, 2.0f, Vector3(-55, 0, 36),	 Vector3(0,0,0), 1,	1,	1,		2.5,	20);//	Back/Left inner wall
 
+
+	//Level 2
 	walls[16].init(&brick, 2.0f, Vector3(0, 0, -1625),	 Vector3(0,0,0), 1,	1,	980,	20,	10);// Far Wall
 	walls[17].init(&brick, 2.0f, Vector3(0, 0, 1625),	 Vector3(0,0,0), 1,	1,	980,	20,	10);// Back Wall
 	walls[18].init(&brick, 2.0f, Vector3(-980, 0, 0),	 Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
 	walls[19].init(&brick, 2.0f, Vector3(980, 0, 0),	 Vector3(0,0,0), 1,	1,	10,		20,	1625);// Back Wall
 
+	//Safe zone - level 2
+	walls[20].init(&brick, 2.0f, Vector3(482.5, 0, 50),	Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+	walls[21].init(&brick, 2.0f, Vector3(417.5, 0, 50),	Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+	walls[22].init(&brick, 2.0f, Vector3(500, 0, 32.5),	Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
+	walls[23].init(&brick, 2.0f, Vector3(400, 0, 32.5),	Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
+
+	walls[24].init(&brick, 2.0f, Vector3(482.5, 0, -50),Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+	walls[25].init(&brick, 2.0f, Vector3(417.5, 0, -50),Vector3(0, 0, 0), 1, 1, 17.5,	2.5, 1);
+	walls[26].init(&brick, 2.0f, Vector3(500, 0, -32.5),Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
+	walls[27].init(&brick, 2.0f, Vector3(400, 0, -32.5),Vector3(0, 0, 0), 1, 1, 1,		2.5, 17.5);
 
 }
 
@@ -828,7 +840,6 @@ void ColoredCubeApp::initLights()
 			mLights[i].pos		= D3DXVECTOR3(0, 0, 0);
 		}
 	}
-
 	else if (level2)
 	{
 		// Pointlight--position is changed every frame to animate.
@@ -856,19 +867,41 @@ void ColoredCubeApp::initLights()
 		mLights[2].spotPow  = 128.0f;
 		mLights[2].range    = 0.0f;
 
+		mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[3].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[3].att.x    = 0.0f;
+		mLights[3].att.y    = 0.55f;
+		mLights[3].att.z    = 0.0f;
+		mLights[3].range    = 90.0f;
+		mLights[3].pos = D3DXVECTOR3(-100, 10, -100);
 
-		for(int i=3; i<7; i++)
-		{
-			mLights[i].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-			mLights[i].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-			mLights[i].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-			mLights[i].att.x    = 0.0f;
-			mLights[i].att.y    = 0.55f;
-			mLights[i].att.z    = 0.0f;
-			mLights[i].range    = 90.0f;
-			mLights[i].pos = lamps[i].getPosition();
-			mLights[i].pos.y = 10;
-		}
+		mLights[4].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[4].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[4].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[4].att.x    = 0.0f;
+		mLights[4].att.y    = 0.55f;
+		mLights[4].att.z    = 0.0f;
+		mLights[4].range    = 90.0f;
+		mLights[4].pos = D3DXVECTOR3(-100, 10, 100);
+
+		mLights[5].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[5].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[5].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[5].att.x    = 0.0f;
+		mLights[5].att.y    = 0.55f;
+		mLights[5].att.z    = 0.0f;
+		mLights[5].range    = 90.0f;
+		mLights[5].pos = D3DXVECTOR3(100, 10, -100);
+
+		mLights[6].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[6].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[6].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[6].att.x    = 0.0f;
+		mLights[6].att.y    = 0.55f;
+		mLights[6].att.z    = 0.0f;
+		mLights[6].range    = 90.0f;
+		mLights[6].pos = D3DXVECTOR3(100, 10, 100);
 
 		mLights[7].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[7].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -877,7 +910,7 @@ void ColoredCubeApp::initLights()
 		mLights[7].att.y    = 0.55f;
 		mLights[7].att.z    = 0.0f;
 		mLights[7].range    = 90.0f;
-		mLights[7].pos = D3DXVECTOR3(450, 10, 75);
+		mLights[7].pos = D3DXVECTOR3(400 + 25, 10, 50 - 25);
 
 		mLights[8].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[8].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -886,7 +919,7 @@ void ColoredCubeApp::initLights()
 		mLights[8].att.y    = 0.55f;
 		mLights[8].att.z    = 0.0f;
 		mLights[8].range    = 90.0f;
-		mLights[8].pos = D3DXVECTOR3(300, 10, 75);
+		mLights[8].pos = D3DXVECTOR3(400 + 25, 10, -50 + 25);
 
 		mLights[9].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[9].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -895,7 +928,7 @@ void ColoredCubeApp::initLights()
 		mLights[9].att.y    = 0.55f;
 		mLights[9].att.z    = 0.0f;
 		mLights[9].range    = 90.0f;
-		mLights[9].pos = D3DXVECTOR3(450, 10, -100);
+		mLights[9].pos = D3DXVECTOR3(500 - 25, 10, 50 - 25);
 
 		mLights[10].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[10].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -904,7 +937,7 @@ void ColoredCubeApp::initLights()
 		mLights[10].att.y    = 0.55f;
 		mLights[10].att.z    = 0.0f;
 		mLights[10].range    = 90.0f;
-		mLights[10].pos = D3DXVECTOR3(300, 10, -100);
+		mLights[10].pos = D3DXVECTOR3(500 - 25, 10, -50 + 25);
 
 		for(int i= 11; i < gameNS::NUM_LIGHTS; i++)
 		{
@@ -1385,14 +1418,75 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 		}
 		for(int j=0; j<gameNS::NUM_WALLS; j++)
 		{
-			if(enemy[i].collided(&walls[j]) && D3DXVec3LengthSq(&(enemy[i].getPosition() - player.getPosition())) < 55*55)
+			if(enemy[i].collided(&walls[j]))
 			{
-				enemy[i].setPosition(enemy[i].getOldPos());
+				D3DXVECTOR3 enPos = enemy[i].getOldPos();
+				D3DXVECTOR3 wPos = walls[j].getPosition();
+				D3DXVECTOR3 wNormal(0, 0, 0);
+				D3DXVECTOR3 D; //D is a point on the plane
+
+				D3DXVECTOR3 S = enPos;
+				D3DXVECTOR3 L = wNormal;
+				D3DXVECTOR3 V = enemy[i].getVelocity();
+				float t;
+				D3DXVECTOR3 Q;
+				//We know that the enemy will collide after the update
+				//So we want to find out how the enemy collides with the wall
+				if(enPos.x < walls[j].getWidth() + wPos.x && enPos.x > walls[j].getWidth() - wPos.x)
+				{
+					//Then we know that it will collide along the +- z normal
+					if(enPos.z < wPos.z)
+					{
+						wNormal = D3DXVECTOR3(0, 0, -1);
+						D = D3DXVECTOR3(wPos.x - 1.25, wPos.y, wPos.z - walls[j].getDepth());
+					}
+					else
+					{
+						wNormal = D3DXVECTOR3(0, 0, 1);
+						D = D3DXVECTOR3(wPos.x + 1.25, wPos.y, wPos.z + walls[j].getDepth());
+					}
+
+					//Assume that a bounding sphere around the enemy is ~2.25
+					t = D3DXVec3Dot(&wNormal, &(D - enPos)) / D3DXVec3Dot(&wNormal, &(D - enemy[i].getPosition()));
+					
+				}
+				else if (enPos.z < walls[j].getDepth() + wPos.z && enPos.z > walls[j].getDepth() - wPos.z)
+				{
+					if(enPos.x < wPos.x)
+					{
+						wNormal = D3DXVECTOR3(-1, 0, 0);
+						D = D3DXVECTOR3(wPos.x - walls[j].getWidth(), wPos.y, wPos.z - 1.25);
+					}
+					else
+					{
+						wNormal = D3DXVECTOR3(1, 0, 0);
+						D = D3DXVECTOR3(wPos.x + walls[j].getWidth(), wPos.y, wPos.z + 1.25);
+					}
+					t = D3DXVec3Dot(&wNormal, &(D - enPos)) / D3DXVec3Dot(&wNormal, &(D - enemy[i].getPosition()));
+				}
+				else
+				{
+					//enemy[i].setPosition(enemy[i].getOldPos());
+					t = 0;
+
+				}
+
+				if(wNormal != D3DXVECTOR3(0, 0, 0))
+				{
+					Q = enPos + t*enemy[i].getPosition();
+					D3DXVECTOR3 P3 = enemy[i].getPosition() - (D3DXVec3Dot(&(enemy[i].getPosition() - Q), &wNormal))*wNormal;
+					enemy[i].setPosition(P3);
+				}
+				
+				
 			}
 		}
 		for(int j=0; j<gameNS::NUM_BUILDINGS; j++)
 		{
-			if(enemy[i].collided(&buildings[j])) enemy[i].setPosition(enemy[i].getOldPos());
+			if(enemy[i].collided(&buildings[j])) 
+			{
+				enemy[i].setPosition(enemy[i].getOldPos());
+			}
 		}
 		//for(int j=0; j<gameNS::MAX_NUM_ENEMIES; j++)
 		//{

@@ -3,7 +3,7 @@
 Camera::Camera()
 {
 	speed = 10;
-	FoV = 0.25*PI;
+	FoV = 0.333*PI;
 	aspectRatio = 480.0f/640.0f;
 	nearClippingPlane = 1.0f;
 	farClippingPlane = 10000.0f;
@@ -79,7 +79,7 @@ void Camera::update(float dt, float playerSpeeed)
 	if(dy < 0)
 	{
 		rotated = true;
-		deltaPitch += cameraSpeed*dt * 0.9;
+		deltaPitch += cameraSpeed * 0.9 * dt;
 		if (deltaPitch > 1) 
 			deltaPitch = 1;
 		pitch += deltaPitch;
@@ -88,7 +88,7 @@ void Camera::update(float dt, float playerSpeeed)
 	if(dy > 0)
 	{
 		rotated = true;
-		deltaPitch -= cameraSpeed*dt * 0.9;
+		deltaPitch -= cameraSpeed * 0.9 * dt;
 		if (deltaPitch < -1) 
 			deltaPitch = -1;
 		pitch += deltaPitch;

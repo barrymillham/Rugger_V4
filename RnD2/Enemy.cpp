@@ -317,10 +317,41 @@ void Enemy::initWaypoints2()
 		for(int j=0; j<WAYPOINT_SIZE; j++)
 		{
 			//Currently just waypoints in the cardinal directions
-			if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
-			if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
-			if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
-			if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			if (i == 0 && j == 2)
+			{
+				if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+				//if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+				if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+				if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			}
+			else if (i == 1 && j == 2)
+			{
+				//if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+				if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+				//if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+				//if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			}
+			else if (i == 1 && j == 1)
+			{
+				if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+				if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+				if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+				//if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			}
+			else if (i == 1 && j == 3)
+			{
+				if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+				if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+				//if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+				if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			}
+			else
+			{
+				if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+				if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+				if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+				if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			}			
 		}
 	}
 }
