@@ -48,7 +48,7 @@ void Enemy::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s, i
 	//Translate(&world, position.x, position.y, position.z);
 
 	destination = D3DXVECTOR3(0, 0, 0);
-	initWaypoints2();
+	initWaypoints();
 }
 
 //Call this after calculating collisions

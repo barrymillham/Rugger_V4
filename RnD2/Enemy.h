@@ -47,6 +47,8 @@ public:
 	//For positioning waypoint indicators
 	vector<D3DXVECTOR3> waypointPositions();
 	void calculatePath(Player*);
+	void initWaypoints();
+	void initWaypoints2();
 
 private:
 	float radius;
@@ -60,8 +62,7 @@ private:
 	float speed;
 
 	Waypoint* waypoints[WAYPOINT_SIZE][WAYPOINT_SIZE];
-	void initWaypoints();
-	void initWaypoints2();
+	
 
 	Waypoint* target;
 
