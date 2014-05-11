@@ -879,6 +879,7 @@ void ColoredCubeApp::initLights()
 		mLights[2].spotPow  = 128.0f;
 		mLights[2].range    = 0.0f;
 
+		//Lamppost lights
 		mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		mLights[3].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
@@ -915,6 +916,7 @@ void ColoredCubeApp::initLights()
 		mLights[6].range    = 90.0f;
 		mLights[6].pos = D3DXVECTOR3(100, 10, 100);
 
+		//Safe zone lights
 		mLights[7].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[7].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		mLights[7].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
@@ -951,17 +953,42 @@ void ColoredCubeApp::initLights()
 		mLights[10].range    = 90.0f;
 		mLights[10].pos = D3DXVECTOR3(500 - 25, 10, -50 + 25);
 
-		for(int i= 11; i < gameNS::NUM_LIGHTS; i++)
-		{
-			mLights[i].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-			mLights[i].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-			mLights[i].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
-			mLights[i].att.x    = 0.0f;
-			mLights[i].att.y    = 0.55f;
-			mLights[i].att.z    = 0.0f;
-			mLights[i].range    = 90.0f;
-			mLights[i].pos = D3DXVECTOR3(rand() % 1000, 10, rand()%100);
-		}
+		//End of road lights
+		mLights[11].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[11].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[11].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[11].att.x    = 0.0f;
+		mLights[11].att.y    = 0.55f;
+		mLights[11].att.z    = 0.0f;
+		mLights[11].range    = 90.0f;
+		mLights[11].pos = D3DXVECTOR3(0, 10, -1500);
+
+		mLights[12].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[12].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[12].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[12].att.x    = 0.0f;
+		mLights[12].att.y    = 0.55f;
+		mLights[12].att.z    = 0.0f;
+		mLights[12].range    = 200.0f;
+		mLights[12].pos = D3DXVECTOR3(-25, 10, -1400);
+
+		mLights[13].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[13].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[13].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[13].att.x    = 0.0f;
+		mLights[13].att.y    = 0.55f;
+		mLights[13].att.z    = 0.0f;
+		mLights[13].range    = 200.0f;
+		mLights[13].pos = D3DXVECTOR3(25, 10, -1400);
+
+		mLights[14].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		mLights[14].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[14].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
+		mLights[14].att.x    = 0.0f;
+		mLights[14].att.y    = 0.55f;
+		mLights[14].att.z    = 0.0f;
+		mLights[14].range    = 200.0f;
+		mLights[14].pos = D3DXVECTOR3(0, 10, -1300);
 	}
 }
 
