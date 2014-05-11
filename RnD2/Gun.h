@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "Bullet.h"
 #include "Box.h"
+#include <ctime>
 #include "Audio.h"
 
 using namespace std;
@@ -58,91 +59,60 @@ public:
 };
 
 
-class ShotGun : public Gun {
+class Shotgun : public Gun {
 public:
-	ShotGun(Box* b, vector<Bullet*>* theBullets) {
-		bullets = theBullets;
+	Shotgun(Box* b, vector<Bullet*>* theBullets) {
+		srand(time(0));
 		bulletBox = b;
+		bullets = theBullets;
+		damage = 6;
 	}
-	void shoot(Vector3 axis, double timeSinceLastShot) {
+	void shoot(Vector3 startingPosition, Vector3 axis, double timeSinceLastShot) {		
+		float shotgunSprayConstant = 0.4; //increase for wider bullet spread
 		
-		bool temptress = true;
-		/* Shotgun shooting included in the below code (mix of shotgun and pistol)
-		
-			int index[5] = {-1,-1,-1,-1,-1}; // shows which is the first inactive bullet. so if index = {4, 5, -1, -1, -1} that means that bullets 4 and 5 are available for shooting
-	int counter = 0;
-	for (int i = 0; i < bullets.size(); i++) {
-		if (!bullets[i]->getActiveState() && counter <= 4) { 
-			index[counter] = i;
-			counter++;
-		}
-	}
-	if(timeSinceLastShot > 3){ //3 seconds
-		for(int i = 0; i < bullets.size(); i++){
-			bullets[i]->setInActive();
-		}
-		timeSinceLastShot = 0;
-	}
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
 
-	//what is this
-	if(shotgun){
-		if((index[0] == -1 || index[1] == -1 || index[2] == -1 || index[3] == -1 || index[4] == -1)) return;
-	}
-	else{
-		if (index[0] == -1) return;
-	}
+		int bullet1 = bullets->size()-1;
+		int bullet2 = bullets->size()-2;
+		int bullet3 = bullets->size()-3;
+		int bullet4 = bullets->size()-4;
+		int bullet5 = bullets->size()-5;
 
-	bullets[index[0]]->setPosition(position);
-	bullets[index[0]]->setSpeed(bulletNS::SPEED);
-	bullets[index[0]]->setVelocity(moveAxis);
-	bullets[index[0]]->setActive();
+		bullets->at(bullet1)->setDamage(damage);
+		bullets->at(bullet1)->setPosition(startingPosition);
+		bullets->at(bullet1)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet1)->setActive();
 
-	if(shotgun){
-		D3DXVECTOR3 moveAxis1;
-		D3DXVECTOR3 moveAxis2;
-		D3DXVECTOR3 moveAxis3;
-		D3DXVECTOR3 moveAxis4;
-		D3DXMATRIX trans[4];
-		double offset[4] = {0.1, 0.1, 0.1, 0.1};
+		bullets->at(bullet2)->setDamage(damage);
+		bullets->at(bullet2)->setPosition(startingPosition);
+		bullets->at(bullet2)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet2)->setActive();
 
-		D3DXMatrixTranslation(&trans[0], 1.0+offset[0], 1.0+offset[0], 1.0+offset[0]);
-		D3DXMatrixTranslation(&trans[1], 1.0+offset[1], 1.0+offset[1], 1.0+offset[1]);
-		D3DXMatrixTranslation(&trans[2], 1.0+offset[2], 1.0+offset[2], 1.0+offset[2]);
-		D3DXMatrixTranslation(&trans[3], 1.0+offset[3], 1.0+offset[3], 1.0+offset[3]);
-		Transform(&moveAxis1, &moveAxis, &trans[0]);
-		Transform(&moveAxis2, &moveAxis, &trans[1]);
-		Transform(&moveAxis3, &moveAxis, &trans[2]);
-		Transform(&moveAxis4, &moveAxis, &trans[3]);
+		bullets->at(bullet3)->setDamage(damage);
+		bullets->at(bullet3)->setPosition(startingPosition);
+		bullets->at(bullet3)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet3)->setActive();
 
-		D3DXVec3Normalize(&moveAxis, &moveAxis);
-		D3DXVec3Normalize(&moveAxis1, &moveAxis1);
-		D3DXVec3Normalize(&moveAxis2, &moveAxis2);
-		D3DXVec3Normalize(&moveAxis3, &moveAxis3);
-		D3DXVec3Normalize(&moveAxis4, &moveAxis4);
+		bullets->at(bullet4)->setDamage(damage);
+		bullets->at(bullet4)->setPosition(startingPosition);
+		bullets->at(bullet4)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet4)->setActive();
 
+		bullets->at(bullet5)->setDamage(damage);
+		bullets->at(bullet5)->setPosition(startingPosition);
+		bullets->at(bullet5)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet5)->setActive();
 
-		bullets[index[1]]->setPosition(position);
-		bullets[index[1]]->setSpeed(bulletNS::SPEED);
-		bullets[index[1]]->setVelocity(moveAxis1);
-		bullets[index[1]]->setActive();
-
-		bullets[index[2]]->setPosition(position);
-		bullets[index[2]]->setSpeed(bulletNS::SPEED);
-		bullets[index[2]]->setVelocity(moveAxis2);
-		bullets[index[2]]->setActive();
-
-		bullets[index[3]]->setPosition(position);
-		bullets[index[3]]->setSpeed(bulletNS::SPEED);
-		bullets[index[3]]->setVelocity(moveAxis3);
-		bullets[index[3]]->setActive();
-
-		bullets[index[4]]->setPosition(position);
-		bullets[index[4]]->setSpeed(bulletNS::SPEED);
-		bullets[index[4]]->setVelocity(moveAxis4);
-		bullets[index[4]]->setActive();
-	}
-		*/
-
+		//Give them different axis to travel
+		bullets->at(bullet1)->setVelocity(axis);
+		bullets->at(bullet2)->setVelocity(Vector3(axis.x + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant,axis.y + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z));
+		bullets->at(bullet3)->setVelocity(Vector3(axis.x - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant,axis.y - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z));
+		bullets->at(bullet4)->setVelocity(Vector3(axis.x, axis.y + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant));
+		bullets->at(bullet5)->setVelocity(Vector3(axis.x, axis.y - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant));
 	}
 };
 

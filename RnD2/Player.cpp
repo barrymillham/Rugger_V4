@@ -16,7 +16,7 @@ Player::~Player(void)
 
 void Player::init(Box* bulletBox, vector<Bullet*>* bullets, Box* b, float r, Vector3 pos, Vector3 vel, float sp, Audio* a, float s, float w, float d, float h)
 { 
-	gun = new Pistol(bulletBox, bullets);
+	gun = new Shotgun(bulletBox, bullets);
 	audio = a;
 	box = b;
 	radius = r;
