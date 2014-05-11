@@ -36,7 +36,7 @@ void Camera::setPerspective()
 	D3DXMatrixPerspectiveFovLH(&mProj, FoV, aspectRatio, nearClippingPlane,farClippingPlane); 
 }
 
-void Camera::update(float dt, float playerSpeeed)
+void Camera::update(float dt, float playerSpeeed, bool* walking)
 {
 	int dx = input->getMouseRawX();
 	int dy = input->getMouseRawY();
@@ -92,7 +92,6 @@ void Camera::update(float dt, float playerSpeeed)
 		if (deltaPitch < -1) 
 			deltaPitch = -1;
 		pitch += deltaPitch;
-
 	}
 
 	if(input->isKeyDown(KEY_A)) direction.z = 1;
@@ -100,6 +99,10 @@ void Camera::update(float dt, float playerSpeeed)
 	if(input->isKeyDown(KEY_S)) direction.x = -1;
 	if(input->isKeyDown(KEY_W)) direction.x = 1;
 	
+	if (direction != Vector3(0,0,0))
+		*walking = true;
+	else *walking = false;
+
 	if (fly)  {
 		float flySpeed = playerSpeed * dt * 8;
 		position.y += flySpeed;

@@ -31,6 +31,7 @@ void Player::init(Box* bulletBox, vector<Bullet*>* bullets, Box* b, float r, Vec
 	depth = s*d;
 	timeSinceLastShot = 0;
 	score = 0;
+	fired = false;
 	health = 100;
 }
 
@@ -90,8 +91,6 @@ void Player::update(float dt, D3DXVECTOR3 axis)
 	D3DXMatrixScaling(&mScale, width, height, depth);
 	D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
 	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
-	
-	
 
 	gun->update(dt);
 	if(fired) shoot(axis);

@@ -13,7 +13,7 @@ public:
 	Camera();
 	~Camera();
 	void init(Input* input, Vector3 position, Vector3 direction, Vector3 _lookAt);
-	void update(float dt, float playerSpeeed);
+	void update(float dt, float playerSpeeed, bool* walking);
 
 	Matrix getViewMatrix() {return mView;}
 	Matrix getProjectionMatrix() {return mProj;}
