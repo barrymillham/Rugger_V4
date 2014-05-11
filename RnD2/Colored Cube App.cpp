@@ -1671,20 +1671,7 @@ void ColoredCubeApp::drawScene()
 
 		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
 
-		if (level == 1) {
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
-			mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
-			mfxSpecMapVar->SetResource(mSpecMapRVStreet);
-		} else if (level == 2) {
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVTheRoad);
-			mfxSpecMapVar->SetResource(mSpecMapRVTheRoad);
-			mfxDiffuseMapVar->SetResource(mDiffuseMapRVBuilding2);
-			mfxSpecMapVar->SetResource(mSpecMapRVBuilding2);
-			
-			drawBarrels();
-		}
-		
+		drawBarrels();
 		drawHUD();
 		drawFloor();
 		drawBuildings();
@@ -1998,9 +1985,15 @@ void ColoredCubeApp::drawBarrels()
 }
 
 void ColoredCubeApp::drawFloor() {
-	if (level == 1) 
+	if (level == 1){
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVStreet);
+		mfxSpecMapVar->SetResource(mSpecMapRVStreet);
 		floor.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
-	else if (level == 2) 
+	}
+	else if (level == 2){
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVTheRoad);
+		mfxSpecMapVar->SetResource(mSpecMapRVTheRoad);
 		floor2.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	}
 	
 }

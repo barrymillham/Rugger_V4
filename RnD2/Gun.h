@@ -67,7 +67,9 @@ public:
 		bullets = theBullets;
 		damage = 6;
 	}
+
 	void shoot(Vector3 startingPosition, Vector3 axis, double timeSinceLastShot) {		
+		bool temptress = true; //VERY IMPORTANT VARIABLE DO NOT TOUCH
 		float shotgunSprayConstant = 0.4; //increase for wider bullet spread
 		
 		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
