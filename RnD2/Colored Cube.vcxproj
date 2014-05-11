@@ -131,6 +131,7 @@
     <ClInclude Include="gameError.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="Gun.h" />
     <ClInclude Include="HudObject.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="InputLayouts.h" />

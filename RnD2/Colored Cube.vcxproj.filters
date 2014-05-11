@@ -183,6 +183,9 @@
     <ClInclude Include="Barrel.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Gun.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd">
