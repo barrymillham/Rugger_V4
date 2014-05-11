@@ -4,18 +4,20 @@
 #include "Audio.h"
 #include "constants.h"
 #include<vector>
+#include "Gun.h"
+#include "Player.h"
 using std::vector;
 
 class Pickup : public GameObject
 {
 public:
 	Pickup(){}
-	Pickup(Box *b, int* value, bool MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level);
+	Pickup(Box *b, int* value, int MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level, int gun_Type, Gun* gun);
 	~Pickup();
 
 	//Width and height in integral number of boxes(bricks)
 	virtual void update(float dt);
-	void activate();
+	void activate(Box* bulletBox, vector<Bullet*>* bullets);
 	void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
 	//void setPosition (Vector3 pos) {position = pos;}
 	//Vector3 getPosition() {return position;}
@@ -48,8 +50,10 @@ private:
 	float radius;
 	float radiusSquared;
 	int* value;
+	Gun* gun;
 	Audio* audio;
-	bool mod;
+	int mod;
+	int gunT;
 	int amount;
 	char* SOUND;
 	int mapIndex;
