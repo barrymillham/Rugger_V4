@@ -585,10 +585,10 @@ void ColoredCubeApp::initBuildingPositions() {
 		buildings[6].init(&brick, 2.0f, Vector3(700, 0, 150),	1,	120,	50,  108);//Left Side Building 7
 		buildings[7].init(&brick, 2.0f, Vector3(350, 0, 250),	1,	72,		50,  120);//Left Side Building 8
 
-		buildings[8].init(&brick, 2.0f, Vector3(800, 0, -200),	1,	95,		80,  95);//Left Side Building 9
-		buildings[9].init(&brick, 2.0f, Vector3(375, 0, -300),	1,	95,		50,  95);//Left Side Building 10
-		buildings[10].init(&brick, 2.0f, Vector3(850, 0, -550),	1,	95,		50,  95);//Left Side Building 11
-		buildings[11].init(&brick, 2.0f, Vector3(350, 0, -650),	1,	130,	50,  95);//Left Side Building 12
+		buildings[8].init(&brick, 2.0f, Vector3(750, 0, -200),	1,	90,		80,  95);//Left Side Building 9
+		buildings[9].init(&brick, 2.0f, Vector3(350, 0, -300),	1,	75,		50,  95);//Left Side Building 10
+		buildings[10].init(&brick, 2.0f, Vector3(750, 0, -550),	1,	120,		50,  95);//Left Side Building 11
+		buildings[11].init(&brick, 2.0f, Vector3(325, 0, -650),	1,	100,	50,  95);//Left Side Building 12
 		buildings[12].init(&brick, 2.0f, Vector3(800, 0, -1200),1,	120,	50,  250);//Left Side Building 13
 		buildings[13].init(&brick, 2.0f, Vector3(350, 0, -1300),1,	72,		50,  72);//Left Side Building 14
 
@@ -607,7 +607,7 @@ void ColoredCubeApp::initBuildingPositions() {
 		buildings[24].init(&brick, 2.0f, Vector3(-225, 0, -1000),1,	50,		60,  50);//Right Side Building 25
 		buildings[25].init(&brick, 2.0f, Vector3(-650, 0, -1300),1,	110,	50,  200);//Right Side Building 26
 		buildings[26].init(&brick, 2.0f, Vector3(-200, 0, -1300),1,	50,		30,  50);//Right Side Building 27
-	}	
+	}
 }
 
 void ColoredCubeApp::initWallPositions() {
