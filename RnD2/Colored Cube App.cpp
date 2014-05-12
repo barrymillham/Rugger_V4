@@ -67,7 +67,7 @@ namespace gameNS {
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
-	const int PLAYER_SPEED = 40;
+	const int PLAYER_SPEED = 20;
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 	const D3DXCOLOR DARKGREEN(0.0f, 0.4f, 0.0f, 1.0f);
@@ -362,7 +362,7 @@ void ColoredCubeApp::initApp()
 	initHUD();
 	
 	mClearColor = gameNS::DAY_SKY_COLOR;
-	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
+	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,5,0), Vector3(0,0,0), gameNS::PLAYER_SPEED, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -388,7 +388,7 @@ void ColoredCubeApp::initLamps() {
 		for (int i = 0; i < 4; i++)
 			lamps.push_back(LampPost());
 	else if (level == 2) 
-		for (int i = 0; i < 4; i++) 
+		for (int i = 0; i < 8; i++) 
 			lamps.push_back(LampPost());
 
 
@@ -402,6 +402,10 @@ void ColoredCubeApp::initLamps() {
 		lamps[1].init(&brick, Vector3(100.0f,0.1f,100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
 		lamps[2].init(&brick, Vector3(-100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 6.3f);
 		lamps[3].init(&brick, Vector3(100.0f,0.1f,-100.0f), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.2f);
+		lamps[4].init(&brick, Vector3(400, 0, 50), 1.0f, 1.0f, 1, 1, 1, 0.0f, 0.7944f);
+		lamps[5].init(&brick, Vector3(400, 0, -50), 1.0f, 1.0f, 1, 1, 1, 0.0f, 5.49f);
+		lamps[6].init(&brick, Vector3(500, 0, 50), 1.0f, 1.0f, 1, 1, 1, 0.0f, 2.3456f);
+		lamps[7].init(&brick, Vector3(500, 0, -50), 1.0f, 1.0f, 1, 1, 1, 0.0f, 3.9359f);
 	}
 }
 
@@ -573,7 +577,7 @@ void ColoredCubeApp::initBasicVariables() {
 	placedPickups = false;
 	dayCount = 1;
 	won = false;
-	startingLevelPosition = Vector3(0.0f,4.0f,0.0f);
+	startingLevelPosition = Vector3(0.0f,5.0f,0.0f);
 }
 
 void ColoredCubeApp::initBuildingPositions() {
@@ -1110,6 +1114,7 @@ void ColoredCubeApp::updateScene(float dt)
 		//Restricting the mouse movement
 		RECT restrict = {639, 399, 640, 400};
 		ClipCursor(&restrict);
+
 		Vector3 oldPos = camera.getPosition();
 		timect += dt;
 		updateGameState(); //Checks for win/lose/levelTransition conditions
@@ -1121,7 +1126,8 @@ void ColoredCubeApp::updateScene(float dt)
 		menu.update(dt);
 		updateDayNight();
 
-		camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED), &walking);
+		if(input->isKeyDown(VK_SHIFT)) camera.update(dt, 1.5*static_cast<float>(gameNS::PLAYER_SPEED), &walking);
+		else camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED), &walking);
 		
 
 		updateOrigin(dt);
@@ -1375,53 +1381,55 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 	{
 		if(player.collided(&walls[i]))
 		{
-			//Player position before collision
-			D3DXVECTOR3 pPos = pos;
-			D3DXVECTOR3 pVel = player.getVelocity();
-			//D3DXVec3Normalize(&pVel, &pVel);
-			D3DXVECTOR3 wallPos = walls[i].getPosition();
-			D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
-			D3DXVECTOR3 refPoint = camera.getLookatDirection();
+			camera.setPosition(pos);
+			//camera.setLookAt(camera.getOldLookat());
+			////Player position before collision
+			//D3DXVECTOR3 pPos = pos;
+			//D3DXVECTOR3 pVel = player.getVelocity();
+			////D3DXVec3Normalize(&pVel, &pVel);
+			//D3DXVECTOR3 wallPos = walls[i].getPosition();
+			//D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
+			//D3DXVECTOR3 refPoint = camera.getLookatDirection();
 
-			float depth = walls[i].getDepth();
-			float width = walls[i].getWidth();
-			float t = 0;
+			//float depth = walls[i].getDepth();
+			//float width = walls[i].getWidth();
+			//float t = 0;
 
-			//D1-4 represent points on each of the planes we want to check for intersection with
-			//We are just donig ray-plane intersection here, with the ray origin being at the 
-			D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
-			D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
+			////D1-4 represent points on each of the planes we want to check for intersection with
+			////We are just donig ray-plane intersection here, with the ray origin being at the 
+			//D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
+			//D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
 
-			//find the minimum intersection time and the normal of the surface that we intersect with
-			for(int l=0; l<4; l++)
-			{
-				float denom = D3DXVec3Dot(&N[l], &pVel);
-				if(denom != 0)
-				{
-					float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
-					if(time > 0 ){
-						if(t <= 0 || time < t && t < 1){
-							t = time;
-							wNormal = N[l];
-						}
-					}
-				}
-			}
+			////find the minimum intersection time and the normal of the surface that we intersect with
+			//for(int l=0; l<4; l++)
+			//{
+			//	float denom = D3DXVec3Dot(&N[l], &pVel);
+			//	if(denom != 0)
+			//	{
+			//		float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
+			//		if(time > 0 ){
+			//			if(t <= 0 || time < t && t < 1){
+			//				t = time;
+			//				wNormal = N[l];
+			//			}
+			//		}
+			//	}
+			//}
 
-			D3DXVECTOR3 npv;
-			D3DXVec3Normalize(&npv, &pVel);
+			//D3DXVECTOR3 npv;
+			//D3DXVec3Normalize(&npv, &pVel);
 
-			float deg = acos(D3DXVec3Dot(&npv, &wNormal));
-			deg *= 180/PI;
-			if(deg <= 210.f && deg >= 150.f ){
-				camera.setPosition(pos);
-			}
-			else
-			{
-				D3DXVec3Normalize(&pVel, &pVel);
-				camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
-			}
-			camera.setLookAt(camera.getPosition() + refPoint);
+			//float deg = acos(D3DXVec3Dot(&npv, &wNormal));
+			//deg *= 180/PI;
+			//if(deg <= 210.f && deg >= 150.f ){
+			//	camera.setPosition(pos);
+			//}
+			//else
+			//{
+			//	D3DXVec3Normalize(&pVel, &pVel);
+			//	camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			//}
+			//camera.setLookAt(camera.getPosition() + refPoint);
 		}
 
 		for (unsigned int j = 0; j < pBullets.size(); j++) {
@@ -1440,52 +1448,54 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 	{
 		if (buildings[i].getActiveState() == false) continue;
 		if(player.collided(&buildings[i])){
-			//Player position before collision
-			D3DXVECTOR3 pPos = pos;
-			D3DXVECTOR3 pVel = player.getVelocity();
-			//D3DXVec3Normalize(&pVel, &pVel);
-			D3DXVECTOR3 wallPos = buildings[i].getPosition();
-			D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
-			D3DXVECTOR3 refPoint = camera.getLookatDirection();
+			camera.setPosition(pos);
+			camera.setLookAt(camera.getOldLookat());
+			////Player position before collision
+			//D3DXVECTOR3 pPos = pos;
+			//D3DXVECTOR3 pVel = player.getVelocity();
+			////D3DXVec3Normalize(&pVel, &pVel);
+			//D3DXVECTOR3 wallPos = buildings[i].getPosition();
+			//D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
+			//D3DXVECTOR3 refPoint = camera.getLookatDirection();
 
-			float depth = buildings[i].getDepth();
-			float width = buildings[i].getWidth();
-			float t = 0;
+			//float depth = buildings[i].getDepth();
+			//float width = buildings[i].getWidth();
+			//float t = 0;
 
-			//D1-4 represent points on each of the planes we want to check for intersection with
-			//We are just donig ray-plane intersection here, with the ray origin being at the 
-			D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
-			D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
+			////D1-4 represent points on each of the planes we want to check for intersection with
+			////We are just donig ray-plane intersection here, with the ray origin being at the 
+			//D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
+			//D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
 
-			//find the minimum intersection time and the normal of the surface that we intersect with
-			for(int l=0; l<4; l++)
-			{
-				float denom = D3DXVec3Dot(&N[l], &pVel);
-				if(denom != 0)
-				{
-					float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
-					if(time > 0 ){
-						if(t <= 0 || time < t && t < 1){
-							t = time;
-							wNormal = N[l];
-						}
-					}
-				}
-			}
+			////find the minimum intersection time and the normal of the surface that we intersect with
+			//for(int l=0; l<4; l++)
+			//{
+			//	float denom = D3DXVec3Dot(&N[l], &pVel);
+			//	if(denom != 0)
+			//	{
+			//		float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
+			//		if(time > 0 ){
+			//			if(t <= 0 || time < t && t < 1){
+			//				t = time;
+			//				wNormal = N[l];
+			//			}
+			//		}
+			//	}
+			//}
 
-			D3DXVECTOR3 npv;
-			D3DXVec3Normalize(&npv, &pVel);
-			float deg = acos(D3DXVec3Dot(&npv, &wNormal));
-			deg *= 180/PI;
-			if(deg <= 210.f && deg >= 150.f ){
-				camera.setPosition(pos);
-			}
-			else
-			{
-				D3DXVec3Normalize(&pVel, &pVel);
-				camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
-			}
-			camera.setLookAt(camera.getPosition() + refPoint);
+			//D3DXVECTOR3 npv;
+			//D3DXVec3Normalize(&npv, &pVel);
+			//float deg = acos(D3DXVec3Dot(&npv, &wNormal));
+			//deg *= 180/PI;
+			//if(deg <= 210.f && deg >= 150.f ){
+			//	camera.setPosition(pos);
+			//}
+			//else
+			//{
+			//	D3DXVec3Normalize(&pVel, &pVel);
+			//	camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			//}
+			//camera.setLookAt(camera.getPosition() + refPoint);
 
 		}
 		for (unsigned int j = 0; j < pBullets.size(); j++) {

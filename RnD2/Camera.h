@@ -35,6 +35,7 @@ public:
 	void setLookAt(const D3DXVECTOR3& p){lookAt = p;}
 	void setPerspective();
 	void setPitch(float p) {pitch = p;}
+	Vector3 getOldLookat(){return oldLook;}
 
 private:
 	Matrix mView;
@@ -55,6 +56,7 @@ private:
 	Vector3 transformedReference; //direction to look
 	bool fly;
 	bool fall;
+	Vector3 oldLook;
 
 	Input* input;
 };

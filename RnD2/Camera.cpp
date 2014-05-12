@@ -82,6 +82,8 @@ void Camera::transformToMenu() {
 
 void Camera::update(float dt, float playerSpeeed, bool* walking)
 {
+	oldLook = lookAt;
+
 	int dx = input->getMouseRawX();
 	int dy = input->getMouseRawY();
 

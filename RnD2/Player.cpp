@@ -33,7 +33,7 @@ void Player::init(Box* bulletBox, vector<Bullet*>* bullets, Box* b, float r, Vec
 	score = 0;
 	fired = false;
 	health = 100;
-	currentGun = 1;
+	currentGun = 2;
 }
 
 void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
