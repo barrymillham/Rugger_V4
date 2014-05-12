@@ -65,7 +65,7 @@ namespace gameNS {
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
-	const int PLAYER_SPEED = 20;
+	const int PLAYER_SPEED = 40;
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 }
@@ -1146,7 +1146,7 @@ void ColoredCubeApp::updateScene(float dt)
 		mLights[0].ambient.r = 0.1f;
 		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 		{
-			if(enemy[i].getAttacking()) mLights[0].ambient.r = 1.0f; 
+			if(enemy[i].getAttacking()) mLights[0].ambient.r = 0.5f; 
 		}
 
 		for(int i=0; i<gameNS::NUM_FIRES; i++)
@@ -1214,7 +1214,7 @@ void ColoredCubeApp::updateDebugMode() {
 		player.setSpeed(500);
 	} 
 	if (input->wasKeyPressed(KEY_L)) {
-		position = D3DXVECTOR3(position.x, 5, position.z);
+		camera.setPosition(D3DXVECTOR3(camera.getPosition().x, 5, camera.getPosition().z));
 		debugMode = false;
 		input->clear(KEY_L);
 		player.setSpeed(200);
@@ -2060,9 +2060,9 @@ void ColoredCubeApp::setDeviceAndShaderInformation() {
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
 	// Enable run-time memory check for debug builds.
-#if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+//#endif
 
 
 	ColoredCubeApp theApp(hInstance);
