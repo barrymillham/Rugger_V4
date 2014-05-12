@@ -1143,6 +1143,12 @@ void ColoredCubeApp::updateScene(float dt)
 		handleBuildingCollisions(oldPos);
 		handleEnemyCollisions(dt);
 
+		mLights[0].ambient.r = 0.1f;
+		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
+		{
+			if(enemy[i].getAttacking()) mLights[0].ambient.r = 1.0f; 
+		}
+
 		for(int i=0; i<gameNS::NUM_FIRES; i++)
 			mFire[i].update(dt, gameTime);
 	}
@@ -1402,23 +1408,18 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 
 			D3DXVECTOR3 npv;
 			D3DXVec3Normalize(&npv, &pVel);
-			if((int)D3DXVec3Dot(&npv, &wNormal) == -1){
-				//t = 0;
-				camera.setPosition(pos);
-				continue;
-			}
 
 			float deg = acos(D3DXVec3Dot(&npv, &wNormal));
 			deg *= 180/PI;
-			if(deg <= 185.f && deg >= 175.f ){
+			if(deg <= 210.f && deg >= 150.f ){
 				camera.setPosition(pos);
 			}
 			else
 			{
 				D3DXVec3Normalize(&pVel, &pVel);
 				camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
-				camera.setLookAt(camera.getPosition() + refPoint);
 			}
+			camera.setLookAt(camera.getPosition() + refPoint);
 		}
 
 		for (unsigned int j = 0; j < pBullets.size(); j++) {
@@ -1427,7 +1428,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 				pBullets[j]->setVelocity(D3DXVECTOR3(0,0,0));
 				pBullets[j]->setPosition(D3DXVECTOR3(0,0,0));
 				shotTimer = 0;
-			}		
+			}
 		}
 	}
 }
@@ -1470,8 +1471,18 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 				}
 			}
 
-			D3DXVec3Normalize(&pVel, &pVel);
-			camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			D3DXVECTOR3 npv;
+			D3DXVec3Normalize(&npv, &pVel);
+			float deg = acos(D3DXVec3Dot(&npv, &wNormal));
+			deg *= 180/PI;
+			if(deg <= 210.f && deg >= 150.f ){
+				camera.setPosition(pos);
+			}
+			else
+			{
+				D3DXVec3Normalize(&pVel, &pVel);
+				camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			}
 			camera.setLookAt(camera.getPosition() + refPoint);
 
 		}

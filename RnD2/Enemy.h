@@ -37,6 +37,7 @@ public:
 	void setSpeed(float s){speed = s;}
 	void setHealth(int h){health = h;}
 	int getHealth(){return health;}
+	bool getAttacking(){return attacking;}
 	//float getWidth(){return width;}
 	//float getHeight(){return 2*height;}
 	//float getDepth(){return depth;}
@@ -69,6 +70,7 @@ private:
 	float lastAttacked;
 	int health;
 	D3DXVECTOR3 oldPos;
+	bool attacking;
 };
 
 

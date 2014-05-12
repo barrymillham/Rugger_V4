@@ -24,6 +24,7 @@ Enemy::Enemy()
 	velocity = Vector3(0.0f, 0.0f, 0.0f);
 	lastAttacked = 0.5f;
 	health = 100;
+	attacking = false;
 	for(int i=0; i<WAYPOINT_SIZE; i++)
 	{
 		for(int j=0; j<WAYPOINT_SIZE; j++)
@@ -66,6 +67,7 @@ void Enemy::update(float dt)
 //Call this to set appropriate velocity
 void Enemy::update(float dt, Player* p)
 {
+	attacking = false;
 	if(!active) return;
 
 	if(health <= 0)
@@ -86,6 +88,7 @@ void Enemy::update(float dt, Player* p)
 		velocity = D3DXVECTOR3(0,0,0);
 		attack(p);
 		facing = true;
+		attacking = true;
 	}
 	else if (dist <= 55)
 	{
