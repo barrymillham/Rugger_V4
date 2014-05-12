@@ -527,11 +527,11 @@ void ColoredCubeApp::initPickups() {
 
 		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level));
 		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 9, ZIPPER, audio, level));
-		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 9, NEW_GUN, audio, level));
-		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 9, NEW_GUN, audio, level));
-		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 9, NEW_GUN, audio, level));
-		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 9, NEW_GUN, audio, level));
-		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 9, NEW_GUN, audio, level));
+		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 0, NEW_GUN, audio, level));
+		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 0, NEW_GUN, audio, level));
+		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 0, NEW_GUN, audio, level));
+		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 0, NEW_GUN, audio, level));
+		nightPickups.push_back(Pickup(&greenBox, &player.currentGun, INCREASE, 1, 0, NEW_GUN, audio, level));
 
 		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level));
 		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 12, RELOAD, audio, level));
@@ -568,7 +568,7 @@ void ColoredCubeApp::initBasicGeometry() {
 	maroonBox.init(md3dDevice, 10000, colorNS::MAROON, mFX);
 	yellowGreenBox.init(md3dDevice, 1.f,D3DXCOLOR(0,0,0,0), mFX);
 	goldBox.init(md3dDevice, 1.0f, YELLOW, mFX);
-	blueBox.init(md3dDevice, 2.0f, BLUE, mFX);
+	blueBox.init(md3dDevice, 1.0f, BLUE, mFX);
 	rLine.init(md3dDevice, 10.0f, RED);
 	bLine.init(md3dDevice, 10.0f, BLACK);
 	gLine.init(md3dDevice, 10.0f, GREEN);
@@ -586,8 +586,6 @@ void ColoredCubeApp::initTextStrings() {
 	sText.addLine("Objective:", 30, 360);
 	sText.addLine("Collect items and shoot enemies to survive as long as you can!", 80, 390);
 	sText.addLine("PRESS SPACE BAR TO BEGIN !", 250, 500);
-	
-	
 
 	lText.addLine("TOO BAD, RUGGER, I WON!", 260, 180);
 	lText.addLine("Press SPACEBAR to exit", 276, 500);
@@ -1836,14 +1834,14 @@ void ColoredCubeApp::updateGameState() {
 			gameState = GameState::LOSE;
 			input->keyUp(KEY_SPACE);
 		}
-		if (nightCount == gameNS::NUM_NIGHTS_TO_ADVANCE && level == 1) {
+		if (dayCount > gameNS::NUM_NIGHTS_TO_ADVANCE && level == 1) {
 			Sleep(2000);
 			gameState = GameState::BEATLV1;
 			input->keyUp(KEY_SPACE);
 			input->keyUp(KEY_0);
 			nightCount = 0;
 		}
-		if (nightCount == gameNS::NUM_NIGHTS_TO_ADVANCE && level == 2) {
+		if (dayCount == gameNS::NUM_NIGHTS_TO_ADVANCE && level == 2) {
 			Sleep(2000);
 			gameState = GameState::WIN;
 			input->keyUp(KEY_SPACE);
