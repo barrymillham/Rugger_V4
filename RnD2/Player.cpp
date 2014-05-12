@@ -16,7 +16,7 @@ Player::~Player(void)
 
 void Player::init(Box* bulletBox, vector<Bullet*>* bullets, Box* b, float r, Vector3 pos, Vector3 vel, float sp, Audio* a, float s, float w, float d, float h)
 { 
-	gun = new Shotgun(bulletBox, bullets);
+	gun = new Pistol(bulletBox, bullets);
 	audio = a;
 	box = b;
 	radius = r;
@@ -82,7 +82,7 @@ void Player::grunt() {
 	}
 }
 
-void Player::update(float dt, D3DXVECTOR3 axis)
+void Player::update(float dt, D3DXVECTOR3 axis, Box* bulletBox, vector<Bullet*>* bullets)
 {
 	if(velocity != D3DXVECTOR3(0, 0, 0)) D3DXVec3Normalize(&velocity, &velocity);
 	velocity *= speed;
@@ -91,6 +91,13 @@ void Player::update(float dt, D3DXVECTOR3 axis)
 	D3DXMatrixScaling(&mScale, width, height, depth);
 	D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
 	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
+
+	if(gunT == 1){
+		setGun(new Pistol(bulletBox, bullets));
+	}
+	else if(gunT == 2){
+		setGun(new Shotgun(bulletBox, bullets));
+	}
 
 	gun->update(dt);
 	if(fired) shoot(axis);

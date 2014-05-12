@@ -47,7 +47,7 @@ Buildings
 using std::time;
 
 namespace gameNS {
-	const float DAYLEN = 10;
+	const float DAYLEN = 40;
 	const int NUM_WALLS = 28;
 	const int NUM_BUILDINGS = 39;
 	const int NUM_BARRELS = 24;
@@ -409,67 +409,67 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.clear();
 	nightPickups.clear();
 	if (level == 1) {
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level, 0, player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level, 0, player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level, 2, &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level, 2, &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level, 2,  &player.gunT));
 
 	
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level, 2,  &player.gunT));
 	} else if (level == 2) {
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level, 0,  &player.gunT));
 
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level, 0,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level, 0,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level, 0,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  &player.gunT));
 	}
 
 
@@ -1270,7 +1270,7 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	player.setVelocity(camera.getDirection());
 	D3DXVECTOR3 pos = player.getPosition();
 	
-	player.update(dt, camera.getLookatDirection()); //bullet should follow camera lookat vector
+	player.update(dt, camera.getLookatDirection(), &bulletBox, &pBullets); //bullet should follow camera lookat vector
 
 	//Update shooting
 	if(input->getMouseLButton())
@@ -1743,13 +1743,13 @@ void ColoredCubeApp::updatePickups(float dt) {
 	
 		for (unsigned int i = 0; i < dayPickups.size(); i++) {
 			if (player.collided(&dayPickups[i])) {
-				dayPickups[i].activate(&bulletBox, &pBullets);
+				dayPickups[i].activate();
 			}
 			dayPickups[i].update(dt);
 		}
 		for (unsigned int i = 0; i < nightPickups.size(); i++) {
 			if (player.collided(&nightPickups[i])) {
-				nightPickups[i].activate(&bulletBox, &pBullets);
+				nightPickups[i].activate();
 			}
 			nightPickups[i].update(dt);
 		}

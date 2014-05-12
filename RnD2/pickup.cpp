@@ -1,6 +1,6 @@
 #include "pickup.h"
 
-Pickup::Pickup(Box *b, int* value, int MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level, int gun_Type, Gun* gun) {
+Pickup::Pickup(Box *b, int* value, int MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level, int gun_Type, int* gun) {
 	radius = 1;
 	radius *= 1.01f; //fudge factor
 	active = true;
@@ -102,13 +102,15 @@ void Pickup::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVaria
 	if (glow) mfxGlow->SetInt(0);
 }
 
-void Pickup::activate(Box* bulletBox, vector<Bullet*>* bullets) {
+void Pickup::activate() {
 	if (mod == INCREASE)
 		(*value)+=amount;
 	else if (mod == DECREASE) 
 		(*value)-=amount;
-	if(gunT == 0) gun = new Pistol(bulletBox, bullets);
-	else if(gunT == 1) gun = new Shotgun(bulletBox, bullets);
+	if(gunT == 0) *gun = 0;
+	else if(gunT == 1) *gun = 1;
+	else if(gunT == 2) *gun = 2;
+
 
 	audio->playCue(SOUND);
 	setInActive();
