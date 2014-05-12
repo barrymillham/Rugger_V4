@@ -38,36 +38,65 @@ Pickup::Pickup(Box *b, int* value, int MOD, int amount, int mapIndex, const char
 		mapLocations.push_back(Vector3(230,0,230));
 		mapLocations.push_back(Vector3(230,0,-230));
 		mapLocations.push_back(Vector3(-230,0,-230));
+		mapLocations.push_back(Vector3(-220,0,-220));
 	}
 	else if(level == 2){
 		mapLocations.push_back(Vector3(500,0,1250));
+		mapLocations.push_back(Vector3(500,0,1250));
+		mapLocations.push_back(Vector3(-450,0,1150));
 		mapLocations.push_back(Vector3(-450,0,1150));
 		mapLocations.push_back(Vector3(475,0,700));
+		mapLocations.push_back(Vector3(475,0,700));
+		mapLocations.push_back(Vector3(-750,0,125));
 		mapLocations.push_back(Vector3(-750,0,125));
 
 		mapLocations.push_back(Vector3(750,0,25));
+		mapLocations.push_back(Vector3(750,0,25));
+		mapLocations.push_back(Vector3(-400,0,-50));
 		mapLocations.push_back(Vector3(-400,0,-50));
 		mapLocations.push_back(Vector3(200,0,-700));
+		mapLocations.push_back(Vector3(200,0,-700));
+		mapLocations.push_back(Vector3(-200,0,-800));
 		mapLocations.push_back(Vector3(-200,0,-800));
 
 		mapLocations.push_back(Vector3(75,0,700));
+		mapLocations.push_back(Vector3(75,0,700));
+		mapLocations.push_back(Vector3(75,0,700));
+		mapLocations.push_back(Vector3(75,0,-1100));
+		mapLocations.push_back(Vector3(75,0,-1100));
 		mapLocations.push_back(Vector3(75,0,-1100));
 		mapLocations.push_back(Vector3(900,0,950));
+		mapLocations.push_back(Vector3(900,0,950));
+		mapLocations.push_back(Vector3(-75,0,1200));
+		mapLocations.push_back(Vector3(-75,0,1200));
 		mapLocations.push_back(Vector3(-75,0,1200));
 
 		mapLocations.push_back(Vector3(-600,0,1250));
+		mapLocations.push_back(Vector3(-600,0,1250));
+		mapLocations.push_back(Vector3(750,0,275));
 		mapLocations.push_back(Vector3(750,0,275));
 		mapLocations.push_back(Vector3(-350,0,350));
+		mapLocations.push_back(Vector3(-350,0,350));
+		mapLocations.push_back(Vector3(-75,0,-300));
+		mapLocations.push_back(Vector3(-75,0,-300));
 		mapLocations.push_back(Vector3(-75,0,-300));
 
 		mapLocations.push_back(Vector3(-900,0,-300));
+		mapLocations.push_back(Vector3(-900,0,-300));
+		mapLocations.push_back(Vector3(850,0,-700));
 		mapLocations.push_back(Vector3(850,0,-700));
 		mapLocations.push_back(Vector3(-875,0,-1050));
+		mapLocations.push_back(Vector3(-875,0,-1050));
+		mapLocations.push_back(Vector3(950,0,1600));
 		mapLocations.push_back(Vector3(950,0,1600));
 
 		mapLocations.push_back(Vector3(-950,0,1600));
+		mapLocations.push_back(Vector3(-950,0,1600));
+		mapLocations.push_back(Vector3(550,0,125));
 		mapLocations.push_back(Vector3(550,0,125));
 		mapLocations.push_back(Vector3(-750,0,-150));
+		mapLocations.push_back(Vector3(-750,0,-150));
+
 
 	}
 	position = mapLocations[mapIndex];

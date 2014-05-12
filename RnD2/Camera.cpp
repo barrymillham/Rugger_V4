@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	speed = 10;
+	speed = 20;
 	FoV = 0.333*PI;
 	aspectRatio = 480.0f/640.0f;
 	nearClippingPlane = 1.0f;
