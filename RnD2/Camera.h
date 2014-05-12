@@ -31,6 +31,12 @@ public:
 	void flying(bool b){fly = b;}
 	void falling(bool b){fall = b;}
 
+	void setLookAt(const D3DXVECTOR3& p){
+		lookAt = p;
+		//Generate new matrix
+		D3DXMatrixLookAtLH(&mView, &position, &lookAt, &up);
+	}
+
 	void setPerspective();
 	void setPitch(float p) {pitch = p;}
 
