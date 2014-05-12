@@ -1166,8 +1166,9 @@ void ColoredCubeApp::updateScene(float dt)
 
 			for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 			{
-				enemy[i].initWaypoints2();
 				enemy[i].setInActive();
+				enemy[i].initWaypoints2();
+				
 			}
 		}
 		//lock the screen at a certain spot and render the cube with the transition graphic and then...
@@ -1713,7 +1714,7 @@ void ColoredCubeApp::updateDayNight() {
 				placedPickups = false;
 
 				int x = 0;
-				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && x < 4*nightCount; i++)
+				for(int i=0; i<gameNS::MAX_NUM_ENEMIES && x < 4+(4*nightCount); i++)
 				{
 					if(!enemy[i].getActiveState())
 					{
