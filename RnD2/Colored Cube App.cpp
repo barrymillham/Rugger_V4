@@ -362,7 +362,7 @@ void ColoredCubeApp::initApp()
 	initHUD();
 	
 	mClearColor = gameNS::DAY_SKY_COLOR;
-	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 0, audio, 1, 1, 1, 5);
+	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -1877,10 +1877,9 @@ void ColoredCubeApp::drawScene()
 		printText("Ammo: ", 20, 45, 0, 0, BLUE, player.getAmmo());
 		printText("Gun: ", 20, 65, 0, 0, gameNS::DARKGREEN, player.getGunName());
 		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
-		//printText("playerX = ", 20, 65, 0, 0, WHITE, player.getPosition().x);
-		//printText("playerZ = ", 20, 85, 0, 0, WHITE, player.getPosition().z);
-		printText("|", mClientWidth/2 - 2, mClientHeight/2-16, 0, 0, WHITE, "");
-		printText("--", (mClientWidth/2) - 6, mClientHeight/2-16, 0, 0, WHITE, "");
+		if(debugMode)printText("playerX = ", 20, 65, 0, 0, WHITE, player.getPosition().x);
+		if(debugMode)printText("playerZ = ", 20, 85, 0, 0, WHITE, player.getPosition().z);
+		printText("+", mClientWidth/2 - 2, mClientHeight/2-16, 0, 0, WHITE, "");
 	}
 	else if(gameState == INTROSCREEN)
 	{

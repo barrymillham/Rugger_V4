@@ -338,10 +338,17 @@ void Enemy::initWaypoints2()
 			}
 			else if (i == 1 && j == 1)
 			{
-				if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+				//if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
 				if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
 				if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
 				//if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
+			}
+			else if (i==0 && j==1)
+			{
+				if(i-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i-1][j]);
+				//if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
+				if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
+				if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
 			}
 			else if (i == 1 && j == 3)
 			{
@@ -356,7 +363,7 @@ void Enemy::initWaypoints2()
 				if(i+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i+1][j]);
 				if(j-1 >= 0) waypoints[i][j]->addNeighbor(waypoints[i][j-1]);
 				if(j+1 < WAYPOINT_SIZE) waypoints[i][j]->addNeighbor(waypoints[i][j+1]);
-			}			
+			}
 		}
 	}
 }
