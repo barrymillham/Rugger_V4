@@ -33,6 +33,7 @@ void Player::init(Box* bulletBox, vector<Bullet*>* bullets, Box* b, float r, Vec
 	score = 0;
 	fired = false;
 	health = 100;
+	currentGun = 1;
 }
 
 void Player::draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP)
@@ -92,13 +93,16 @@ void Player::update(float dt, D3DXVECTOR3 axis, Box* bulletBox, vector<Bullet*>*
 	D3DXMatrixTranslation(&mTranslate, position.x, position.y, position.z);
 	D3DXMatrixMultiply(&world, &mScale, &mTranslate);
 
-	if(gunT == 1){
+	if(currentGun == 1){
 		setGun(new Pistol(bulletBox, bullets));
-	}
-	else if(gunT == 2){
+	}else if(currentGun == 2){
 		setGun(new Shotgun(bulletBox, bullets));
+	}else if (currentGun == 3){
+		setGun(new MachineGun(bulletBox, bullets));
+	}else {
+		setGun(new MachineGun(bulletBox, bullets));
 	}
-
+		
 	gun->update(dt);
 	if(fired) shoot(axis);
 
@@ -111,7 +115,10 @@ void Player::shoot(D3DXVECTOR3 moveAxis)
 	timeSinceLastShot = 0;
 	fired = false;
 	if(ammo > 0) audio->playCue(FIRE);
-	else return; //and play an out of ammo sound if ya want
+	else {
+		audio->playCue(OUT_OF_AMMO);
+		return; 
+	}
 
 	gun->shoot(position, moveAxis, timeSinceLastShot);
 	ammo--;

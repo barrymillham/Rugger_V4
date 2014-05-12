@@ -38,7 +38,9 @@ public:
 	int health;
 	int ammo;
 	int score;
-	int gunT;
+	int currentGun;
+	string getGunName() {return gun->getName();}
+	bool canShoot() {return (timeSinceLastShot >= gun->getShotDelay());}
 
 	Gun* gun;
 

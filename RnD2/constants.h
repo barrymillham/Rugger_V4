@@ -1,6 +1,7 @@
 #ifndef Constants_H
 #define Constants_H
 #include <windows.h>
+#include <string>
 
 // window
 const char CLASS_NAME[] = "RUGBOI";
@@ -88,7 +89,8 @@ const char INTROMUSIC[] = "introMusic";
 const char RELOAD[] = "reload";
 const char ZIPPER[] = "zipper";
 const char WHOOSH[] = "whoosh";
-
+const char NEW_GUN[] = "newGun";
+const char OUT_OF_AMMO[] = "outOfAmmo";
 
 enum GameState {INTROSCREEN, INSTRUCTIONS, BEATLV1, WIN, LOSE, PLAYING};
 

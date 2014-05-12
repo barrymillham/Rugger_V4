@@ -16,8 +16,8 @@ Global Settings
     Header File = C:\Users\lehmanad1\Documents\GitHub\RuggerV3\RnD2\audio\RnD2_audio.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 3549811764;
-    Last Modified High = 30364346;
+    Last Modified Low = 3544086193;
+    Last Modified High = 30371218;
 
     Category
     {
@@ -253,10 +253,10 @@ Wave Bank
     Compression Preset Name = <none>;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 3549961868;
-    PC Bank Last Modified High = 30364346;
-    Bank Last Revised Low = 3364465643;
-    Bank Last Revised High = 30364346;
+    PC Bank Last Modified Low = 825893864;
+    PC Bank Last Modified High = 30371221;
+    Bank Last Revised Low = 627411165;
+    Bank Last Revised High = 30371221;
 
     Wave
     {
@@ -276,8 +276,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3403749851;
-            Last Modified High = 30364342;
+            Last Modified Low = 3829137799;
+            Last Modified High = 30364174;
         }
     }
 
@@ -299,8 +299,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3413006084;
-            Last Modified High = 30364342;
+            Last Modified Low = 1148348874;
+            Last Modified High = 30363594;
         }
     }
 
@@ -322,8 +322,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3413946720;
-            Last Modified High = 30364342;
+            Last Modified Low = 2083422940;
+            Last Modified High = 30363598;
         }
     }
 
@@ -345,8 +345,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3414186897;
-            Last Modified High = 30364342;
+            Last Modified Low = 1474659775;
+            Last Modified High = 30363594;
         }
     }
 
@@ -368,8 +368,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416388379;
-            Last Modified High = 30364342;
+            Last Modified Low = 1935027362;
+            Last Modified High = 30363731;
         }
     }
 
@@ -391,8 +391,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3419760647;
-            Last Modified High = 30364342;
+            Last Modified Low = 3570509343;
+            Last Modified High = 30363593;
         }
     }
 
@@ -414,8 +414,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3418189580;
-            Last Modified High = 30364342;
+            Last Modified Low = 2548160027;
+            Last Modified High = 30363591;
         }
     }
 
@@ -437,8 +437,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3419880713;
-            Last Modified High = 30364342;
+            Last Modified Low = 15392231;
+            Last Modified High = 30363594;
         }
     }
 
@@ -460,8 +460,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3419980799;
-            Last Modified High = 30364342;
+            Last Modified Low = 3741690618;
+            Last Modified High = 30363594;
         }
     }
 
@@ -483,8 +483,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3403819892;
-            Last Modified High = 30364342;
+            Last Modified Low = 3829197844;
+            Last Modified High = 30364174;
         }
     }
 
@@ -506,8 +506,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3414266928;
-            Last Modified High = 30364342;
+            Last Modified Low = 830941808;
+            Last Modified High = 30364176;
         }
     }
 
@@ -529,8 +529,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3414236922;
-            Last Modified High = 30364342;
+            Last Modified Low = 3728625443;
+            Last Modified High = 30364175;
         }
     }
 
@@ -552,8 +552,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3414316964;
-            Last Modified High = 30364342;
+            Last Modified Low = 3073751020;
+            Last Modified High = 30364189;
         }
     }
 
@@ -575,8 +575,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3414306955;
-            Last Modified High = 30364342;
+            Last Modified Low = 2771197848;
+            Last Modified High = 30364189;
         }
     }
 
@@ -598,8 +598,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416768616;
-            Last Modified High = 30364342;
+            Last Modified Low = 775739086;
+            Last Modified High = 30364279;
         }
     }
 
@@ -621,8 +621,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416798638;
-            Last Modified High = 30364342;
+            Last Modified Low = 775779124;
+            Last Modified High = 30364279;
         }
     }
 
@@ -644,8 +644,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416838665;
-            Last Modified High = 30364342;
+            Last Modified Low = 775819152;
+            Last Modified High = 30364279;
         }
     }
 
@@ -667,8 +667,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416878726;
-            Last Modified High = 30364342;
+            Last Modified Low = 775859179;
+            Last Modified High = 30364279;
         }
     }
 
@@ -690,8 +690,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416638538;
-            Last Modified High = 30364342;
+            Last Modified Low = 775639014;
+            Last Modified High = 30364279;
         }
     }
 
@@ -713,8 +713,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416668549;
-            Last Modified High = 30364342;
+            Last Modified Low = 775669051;
+            Last Modified High = 30364279;
         }
     }
 
@@ -736,8 +736,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3416718592;
-            Last Modified High = 30364342;
+            Last Modified Low = 775699070;
+            Last Modified High = 30364279;
         }
     }
 
@@ -759,8 +759,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3418079493;
-            Last Modified High = 30364342;
+            Last Modified Low = 3086690834;
+            Last Modified High = 30364282;
         }
     }
 
@@ -782,8 +782,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2879988244;
-            Last Modified High = 30364345;
+            Last Modified Low = 3748041348;
+            Last Modified High = 30364350;
         }
     }
 
@@ -805,8 +805,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2344119414;
-            Last Modified High = 30364346;
+            Last Modified Low = 3748261561;
+            Last Modified High = 30364350;
         }
     }
 
@@ -828,8 +828,54 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 8516577;
-            Last Modified High = 30364346;
+            Last Modified Low = 3748301578;
+            Last Modified High = 30364350;
+        }
+    }
+
+    Wave
+    {
+        Name = newGun;
+        File = newGun.wav;
+        Build Settings Last Modified Low = 3304465234;
+        Build Settings Last Modified High = 30371218;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 348560;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2893331387;
+            Last Modified High = 30371218;
+        }
+    }
+
+    Wave
+    {
+        Name = outOfAmmo;
+        File = outOfAmmo.wav;
+        Build Settings Last Modified Low = 498174199;
+        Build Settings Last Modified High = 30371221;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 158296;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 66794913;
+            Last Modified High = 30371221;
         }
     }
 }
@@ -841,8 +887,8 @@ Sound Bank
     Windows File = Win\Sound Bank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 3550632292;
-    Bank Last Modified High = 30364346;
+    Bank Last Modified Low = 826584349;
+    Bank Last Modified High = 30371221;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -2021,6 +2067,100 @@ Sound Bank
         }
     }
 
+    Sound
+    {
+        Name = newGun;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = newGun;
+                    Entry Index = 25;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = outOfAmmo;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = outOfAmmo;
+                    Entry Index = 26;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
     Cue
     {
         Name = 14;
@@ -2540,6 +2680,46 @@ Sound Bank
         {
             Name = zipper;
             Index = 24;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = newGun;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = newGun;
+            Index = 25;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = outOfAmmo;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = outOfAmmo;
+            Index = 26;
             Weight Min = 0;
             Weight Max = 255;
         }

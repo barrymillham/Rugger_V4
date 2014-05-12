@@ -1,6 +1,6 @@
 #include "pickup.h"
 
-Pickup::Pickup(Box *b, int* value, int MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level, int gun_Type, int* gun) {
+Pickup::Pickup(Box *b, int* value, int MOD, int amount, int mapIndex, const char* sound, Audio* a, unsigned int level) {
 	radius = 1;
 	radius *= 1.01f; //fudge factor
 	active = true;
@@ -73,10 +73,8 @@ Pickup::Pickup(Box *b, int* value, int MOD, int amount, int mapIndex, const char
 	position = mapLocations[mapIndex];
 	Pickup::mapIndex = mapIndex;
 	Pickup::value = value;
-	Pickup::gun = gun;
 	audio = a;
 	mod = MOD;
-	gunT = gun_Type;
 	Pickup::amount = amount;
 	Pickup::SOUND = const_cast<char*>(sound);
 	mfxGlow = box->getGlowVar();
@@ -107,10 +105,6 @@ void Pickup::activate() {
 		(*value)+=amount;
 	else if (mod == DECREASE) 
 		(*value)-=amount;
-	if(gunT == 0) *gun = 0;
-	else if(gunT == 1) *gun = 1;
-	else if(gunT == 2) *gun = 2;
-
 
 	audio->playCue(SOUND);
 	setInActive();

@@ -7,6 +7,7 @@
 #include "Box.h"
 #include <ctime>
 #include "Audio.h"
+#include <string>
 
 using namespace std;
 
@@ -31,12 +32,15 @@ public:
 			if(bullets->at(i)->getActiveState())
 				bullets->at(i)->draw(mfxWVPVar, mTech, mVP);
 	}
+	float getShotDelay() {return shotDelay;}
+	string getName() {return name;}
 	vector<Bullet*>* bullets;
 
 protected:
 	float shotDelay;
 	float damage;
 	Box* bulletBox;
+	string name;
 };
 
 
@@ -46,6 +50,8 @@ public:
 		bulletBox = b;
 		bullets = theBullets;
 		damage = 20;
+		shotDelay = 0.5f;
+		name = "Pistol";
 	}
 	void shoot(Vector3 startingPosition, Vector3 axis, double timeSinceLastShot) {
 		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
@@ -65,13 +71,23 @@ public:
 		srand(time(0));
 		bulletBox = b;
 		bullets = theBullets;
-		damage = 6;
+		damage = 4;
+		shotDelay = 1.0f;
+		name = "Shotgun";
+	}
+
+	float randOffset(float shotGunSprayConstant = 0.2) {
+		float constant = shotGunSprayConstant; //increase for wider bullet spread
+		float negate = (rand()%2 == 1)? -1.0f : 1.0f;
+		return ((rand()%600)/100.0f+0.8f)*constant*negate;
 	}
 
 	void shoot(Vector3 startingPosition, Vector3 axis, double timeSinceLastShot) {		
 		bool temptress = true; //VERY IMPORTANT VARIABLE DO NOT TOUCH
-		float shotgunSprayConstant = 0.4; //increase for wider bullet spread
 		
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
 		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
 		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
 		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
@@ -83,6 +99,9 @@ public:
 		int bullet3 = bullets->size()-3;
 		int bullet4 = bullets->size()-4;
 		int bullet5 = bullets->size()-5;
+		int bullet6 = bullets->size()-6;
+		int bullet7 = bullets->size()-7;
+		int bullet8 = bullets->size()-8;
 
 		bullets->at(bullet1)->setDamage(damage);
 		bullets->at(bullet1)->setPosition(startingPosition);
@@ -109,15 +128,54 @@ public:
 		bullets->at(bullet5)->setSpeed(bulletNS::SPEED);
 		bullets->at(bullet5)->setActive();
 
+		bullets->at(bullet6)->setDamage(damage);
+		bullets->at(bullet6)->setPosition(startingPosition);
+		bullets->at(bullet6)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet6)->setActive();
+
+		bullets->at(bullet7)->setDamage(damage);
+		bullets->at(bullet7)->setPosition(startingPosition);
+		bullets->at(bullet7)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet7)->setActive();
+
+		bullets->at(bullet8)->setDamage(damage);
+		bullets->at(bullet8)->setPosition(startingPosition);
+		bullets->at(bullet8)->setSpeed(bulletNS::SPEED);
+		bullets->at(bullet8)->setActive();
+
 		//Give them different axis to travel
 		bullets->at(bullet1)->setVelocity(axis);
-		bullets->at(bullet2)->setVelocity(Vector3(axis.x + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant,axis.y + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z));
-		bullets->at(bullet3)->setVelocity(Vector3(axis.x - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant,axis.y - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z));
-		bullets->at(bullet4)->setVelocity(Vector3(axis.x, axis.y + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z + ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant));
-		bullets->at(bullet5)->setVelocity(Vector3(axis.x, axis.y - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant, axis.z - ((rand()%600)/100.0f+0.8f)*shotgunSprayConstant));
+		bullets->at(bullet2)->setVelocity(Vector3(axis.x + randOffset(), axis.y + randOffset(), axis.z + randOffset()));
+		bullets->at(bullet3)->setVelocity(Vector3(axis.x + randOffset(), axis.y + randOffset(), axis.z + randOffset()));
+		bullets->at(bullet4)->setVelocity(Vector3(axis.x + randOffset(), axis.y + randOffset(), axis.z + randOffset()));
+		bullets->at(bullet5)->setVelocity(Vector3(axis.x + randOffset(), axis.y + randOffset(), axis.z + randOffset()));
+		bullets->at(bullet6)->setVelocity(Vector3(axis.x + randOffset(0.1f), axis.y + randOffset(0.1f), axis.z + randOffset(0.1f)));
+		bullets->at(bullet7)->setVelocity(Vector3(axis.x + randOffset(0.1f), axis.y + randOffset(0.1f), axis.z + randOffset(0.1f)));
+		bullets->at(bullet8)->setVelocity(Vector3(axis.x + randOffset(0.1f), axis.y + randOffset(0.1f), axis.z + randOffset(0.1f)));
+
 	}
 };
 
+
+class MachineGun : public Gun {
+public:
+	MachineGun(Box* b, vector<Bullet*>* theBullets) { 
+		bulletBox = b;
+		bullets = theBullets;
+		damage = 10;
+		shotDelay = 0.1f;
+		name = "Machine Gun";
+	}
+	void shoot(Vector3 startingPosition, Vector3 axis, double timeSinceLastShot) {
+		bullets->push_back(new Bullet(bulletBox, 2.0f, Vector3(0, 0, 0), Vector3(0,0,0), 0, 1));
+		int index = bullets->size()-1;
+		bullets->at(index)->setDamage(damage);
+		bullets->at(index)->setPosition(startingPosition);
+		bullets->at(index)->setSpeed(bulletNS::SPEED);
+		bullets->at(index)->setVelocity(axis);
+		bullets->at(index)->setActive();
+	}
+};
 
 
 
