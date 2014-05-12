@@ -800,7 +800,6 @@ void ColoredCubeApp::initLights()
 	mLightNum = gameNS::NUM_LIGHTS;
  
 	// Parallel light.
-	//This is used for lighting the entire world
 	mLights[0].dir      = D3DXVECTOR3(0.57735f, -0.57735f, 0.57735f);
 	mLights[0].ambient  = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
 	//mLights[0].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
@@ -813,34 +812,34 @@ void ColoredCubeApp::initLights()
 	mLights[0].att.x = 0.0f;
 	mLights[0].att.y = 0.01f;
 	mLights[0].att.z = 0.0f;
+
+	// Pointlight--position is changed every frame to animate.
+	//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+	mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	//mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	//mLights[1].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	mLights[1].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[1].att.x    = 0.0f;
+	mLights[1].att.y    = 0.1f;
+	mLights[1].att.z    = 0.0f;
+	mLights[1].range    = 50.0f;
+	
+	// Spotlight--position and direction changed every frame to animate.
+	mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	mLights[2].diffuse  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	//mLights[2].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	mLights[2].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//mLights[2].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	mLights[2].att.x    = 1.0f;
+	mLights[2].att.y    = 0.0f;
+	mLights[2].att.z    = 0.0f;
+	mLights[2].spotPow  = 128.0f;
+	mLights[2].range    = 0.0f;
 	
 	if(level == 1)
 	{
-		// Pointlight--position is changed every frame to animate.
-		//mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
-		mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-		//mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-		//mLights[1].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		mLights[1].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		mLights[1].att.x    = 0.0f;
-		mLights[1].att.y    = 0.1f;
-		mLights[1].att.z    = 0.0f;
-		mLights[1].range    = 50.0f;
-	
-		// Spotlight--position and direction changed every frame to animate.
-		mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		//mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-		mLights[2].diffuse  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		//mLights[2].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-		mLights[2].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		//mLights[2].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		mLights[2].att.x    = 1.0f;
-		mLights[2].att.y    = 0.0f;
-		mLights[2].att.z    = 0.0f;
-		mLights[2].spotPow  = 128.0f;
-		mLights[2].range    = 0.0f;
-
 		//Inner corner lights
 		mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -936,31 +935,6 @@ void ColoredCubeApp::initLights()
 
 	else if (level == 2)
 	{
-		// Pointlight--position is changed every frame to animate.
-		mLights[1].ambient  = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
-		mLights[1].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-		//mLights[1].diffuse  = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		mLights[1].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-		//mLights[1].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		mLights[1].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		mLights[1].att.x    = 0.0f;
-		mLights[1].att.y    = 0.1f;
-		mLights[1].att.z    = 0.0f;
-		mLights[1].range    = 50.0f;
-	
-		// Spotlight--position and direction changed every frame to animate.
-		mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		//mLights[2].ambient  = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-		mLights[2].diffuse  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		//mLights[2].diffuse  = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-		mLights[2].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		//mLights[2].specular = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		mLights[2].att.x    = 1.0f;
-		mLights[2].att.y    = 0.0f;
-		mLights[2].att.z    = 0.0f;
-		mLights[2].spotPow  = 128.0f;
-		mLights[2].range    = 0.0f;
-
 		//Lamppost lights
 		mLights[3].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 		mLights[3].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
@@ -1042,7 +1016,7 @@ void ColoredCubeApp::initLights()
 		mLights[11].att.x    = 0.0f;
 		mLights[11].att.y    = 0.55f;
 		mLights[11].att.z    = 0.0f;
-		mLights[11].range    = 90.0f;
+		mLights[11].range    = 200.0f;
 		mLights[11].pos = D3DXVECTOR3(0, 10, -1500);
 
 		mLights[12].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1508,7 +1482,7 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 				shotTimer = 0;
 			}
 		}
-	}
+ 	}
 }
 
 void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
@@ -1778,7 +1752,7 @@ void ColoredCubeApp::updateDayNight() {
 		{
 			if(timeOfDay == "Evening")
 			{
-				nightCount++;
+				
 				placedPickups = false;
 
 				int x = 0;
@@ -1806,6 +1780,7 @@ void ColoredCubeApp::updateDayNight() {
 		{
 			if (timeOfDay == "Dawn")
 			{
+				nightCount++;
 				placedPickups = false;
 				nightDayTrans = true;
 			}
@@ -1821,28 +1796,26 @@ void ColoredCubeApp::updateDayNight() {
 	}
 	if(timect >= gameNS::DAYLEN - gameNS::TRANSITIONTIME)
 	{
-		mLights[0].diffuse  = D3DXCOLOR(0.45f, 0.45f, 0.45f, 1.0f);
 		if(night) 
 		{
 			timeOfDay = "Dawn";
 			mClearColor += D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
-			//mClearColor += (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-			mLights[0].diffuse	+= D3DXCOLOR(((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f -0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			
+			mLights[0].diffuse += D3DXCOLOR(((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0 -0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
 			for(int i=3; i<gameNS::NUM_LIGHTS; i++)
 			{
-				mLights[i].att.y	+= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+				mLights[i].att.y	+= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
 			}
 		}
 		else 
 		{
 			timeOfDay = "Evening";
 			mClearColor -= D3DXCOLOR(((gameNS::DAY_SKY_COLOR.r-gameNS::NIGHT_SKY_COLOR.r)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.g-gameNS::NIGHT_SKY_COLOR.g)/(gameNS::TRANSITIONTIME))*dt, ((gameNS::DAY_SKY_COLOR.b-gameNS::NIGHT_SKY_COLOR.b)/(gameNS::TRANSITIONTIME))*dt, 1.0f);
-			//mClearColor -= (gameNS::DAY_SKY_COLOR - gameNS::NIGHT_SKY_COLOR)/((gameNS::TRANSITIONTIME)*dt);
-
-			mLights[0].diffuse -= D3DXCOLOR(((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, ((1.0f-0.1f)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
+			
+			mLights[0].diffuse -= D3DXCOLOR(((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, ((1.0-0.1)/(gameNS::TRANSITIONTIME))*dt, 0.0f);
 			for(int i=3; i<gameNS::NUM_LIGHTS; i++)
 			{
-				mLights[i].att.y	-= ((0.55f-0.05f)/(gameNS::TRANSITIONTIME))*dt;
+				mLights[i].att.y	-= ((0.55-0.05f)/(gameNS::TRANSITIONTIME))*dt;
 			}
 		}
 	}
