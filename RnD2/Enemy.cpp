@@ -48,12 +48,14 @@ void Enemy::init(Box *b, float r, Vector3 pos, Vector3 vel, float sp, float s, i
 	//Translate(&world, position.x, position.y, position.z);
 
 	destination = D3DXVECTOR3(0, 0, 0);
-	initWaypoints2();
+	initWaypoints();
 }
 
 //Call this after calculating collisions
 void Enemy::update(float dt)
 {
+	D3DXVec3Normalize(&velocity, &velocity);
+	velocity *= speed;
 	position = position + velocity * dt;
 	Identity(&world);
 	D3DXMatrixScaling(&mScale, width, height, depth);
@@ -92,7 +94,7 @@ void Enemy::update(float dt, Player* p)
 		D3DXVECTOR3 tar;
 		D3DXVec3Normalize(&tar, &(p->getPosition() - position));
 		tar.y = 0;
-		velocity = tar * speed;
+		velocity = tar;
 	}
 	else
 	{

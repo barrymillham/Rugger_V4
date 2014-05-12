@@ -32,6 +32,7 @@ public:
 	void falling(bool b){fall = b;}
 	void transformToWorld(Vector3 position = Vector3(-1.0f, -1.0f, -1.0f), Vector3 axis = Vector3(0.0f,0.0f,1.0f));
 	void transformToMenu();
+	void setLookAt(const D3DXVECTOR3& p){lookAt = p;}
 	void setPerspective();
 	void setPitch(float p) {pitch = p;}
 

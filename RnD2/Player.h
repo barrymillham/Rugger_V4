@@ -16,7 +16,7 @@ public:
 	//Player takes a pointer to a bullet which will be handled completely by the player class: update, drawing, and all
 	void init(Box* bulletBox, vector<Bullet*>* bullets, Box* b, float r, Vector3 pos, Vector3 vel, float sp, Audio* a, float s = 1, float w = 1, float d = 1, float h = 1);
 	void draw(ID3D10EffectMatrixVariable* mfxWVPVar, ID3D10EffectMatrixVariable* mfxWorldVar, ID3D10EffectTechnique* mTech, Matrix* mVP);
-	void update(float dt, D3DXVECTOR3 moveAxis);
+	void update(float dt, D3DXVECTOR3 moveAxis, Box* bulletBox, vector<Bullet*>* bullets);
 
 	void shoot(D3DXVECTOR3 moveAxis);
 	void rotateTargeting(int s);
@@ -38,6 +38,7 @@ public:
 	int health;
 	int ammo;
 	int score;
+	int gunT;
 
 	Gun* gun;
 

@@ -47,7 +47,7 @@ Buildings
 using std::time;
 
 namespace gameNS {
-	const float DAYLEN = 10;
+	const float DAYLEN = 40;
 	const int NUM_WALLS = 28;
 	const int NUM_BUILDINGS = 39;
 	const int NUM_BARRELS = 24;
@@ -65,7 +65,7 @@ namespace gameNS {
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
-	const int PLAYER_SPEED = 40;	
+	const int PLAYER_SPEED = 20;
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 }
@@ -114,6 +114,8 @@ public:
 	void handleWallCollisions(Vector3 pos);
 	void handleLampCollisions(Vector3 pos);
 	void handleEnemyCollisions(float dt);
+
+	void collisionSlide(GameObject* mobile, GameObject* still);
 
 	void drawScene(); 
 	void drawLine(LineObject*);
@@ -405,67 +407,67 @@ void ColoredCubeApp::initPickups() {
 	dayPickups.clear();
 	nightPickups.clear();
 	if (level == 1) {
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level, 0, player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level, 0, player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 0, ZIPPER, audio, level, 2, &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 1, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 2, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 3, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 15, 4, RELOAD, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 5, ZIPPER, audio, level, 2, &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 6, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 7, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 8, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 9, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 13, WHOOSH, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 14, WHOOSH, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 15, WHOOSH, audio, level, 2,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 5, 16, WHOOSH, audio, level, 2,  &player.gunT));
 
 	
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 13, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 14, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 15, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 13, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 14, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 15, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 7, 16, WHOOSH, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 13, RELOAD, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 14, RELOAD, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 15, RELOAD, audio, level, 2,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 50, 16, RELOAD, audio, level, 2,  &player.gunT));
 	} else if (level == 2) {
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level, 0,  player.gun));
-		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level, 0,  player.gun));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 0, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 1, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 2, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 3, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 4, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 5, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 6, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 7, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 8, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 20, 9, RELOAD, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 10, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 11, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 12, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 13, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 14, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 15, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 16, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 17, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 15, 18, ZIPPER, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 19, WHOOSH, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 20, WHOOSH, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 21, WHOOSH, audio, level, 0,  &player.gunT));
+		dayPickups.push_back(Pickup(&goldBox, &player.speed, INCREASE, 10, 22, WHOOSH, audio, level, 0,  &player.gunT));
 
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level, 0,  player.gun));
-		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  player.gun));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 9, RELOAD, audio, level, 0,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 12, ZIPPER, audio, level, 0,  &player.gunT));
+		nightPickups.push_back(Pickup(&blueBox, &player.ammo, INCREASE, 30, 10, RELOAD, audio, level, 0,  &player.gunT));
+		nightPickups.push_back(Pickup(&redBox, &player.health, INCREASE, 50, 16, ZIPPER, audio, level, 0,  &player.gunT));
 	}
 
 
@@ -803,37 +805,37 @@ void ColoredCubeApp::initLights()
 
 		//Enemy entry vectors
 		mLights[7].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[7].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[7].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		mLights[7].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[7].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
 		mLights[7].att.x    = 0.0f;
-		mLights[7].att.y    = 0.45f;
+		mLights[7].att.y    = 0.55f;
 		mLights[7].att.z    = 0.0f;
-		mLights[7].range    = 35.0f;
+		mLights[7].range    = 90.0f;
 		mLights[7].pos = D3DXVECTOR3(200, 10, 0);
 
 		mLights[8].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[8].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[8].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		mLights[8].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[8].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
 		mLights[8].att.x    = 0.0f;
-		mLights[8].att.y    = 0.45f;
+		mLights[8].att.y    = 0.55f;
 		mLights[8].att.z    = 0.0f;
-		mLights[8].range    = 35.0f;
+		mLights[8].range    = 90.0f;
 		mLights[8].pos = D3DXVECTOR3(-200, 10, 0);
 
 		mLights[9].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[9].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[9].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		mLights[9].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[9].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
 		mLights[9].att.x    = 0.0f;
-		mLights[9].att.y    = 0.45f;
+		mLights[9].att.y    = 0.55f;
 		mLights[9].att.z    = 0.0f;
-		mLights[9].range    = 35.0f;
+		mLights[9].range    = 90.0f;
 		mLights[9].pos = D3DXVECTOR3(0, 10, -200);
 
 		mLights[10].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[10].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[10].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		mLights[10].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[10].specular = D3DXCOLOR(1.0f, 0.55f, 1.0f, 1.0f);
 		mLights[10].att.x    = 0.0f;
-		mLights[10].att.y    = 0.45f;
+		mLights[10].att.y    = 0.55f;
 		mLights[10].att.z    = 0.0f;
 		mLights[10].range    = 35.0f;
 		mLights[10].pos = D3DXVECTOR3(0, 10, 200);
@@ -853,7 +855,7 @@ void ColoredCubeApp::initLights()
 			mLights[i].diffuse	= D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			mLights[i].specular	= D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			mLights[i].range	= 0.0f;
-			mLights[i].pos		= D3DXVECTOR3(0, 0, 0);
+			mLights[i].pos		= D3DXVECTOR3(0, 100, 0);
 		}
 	}
 
@@ -1082,12 +1084,9 @@ void ColoredCubeApp::updateScene(float dt)
 {
 	ColoredCubeApp::dt = dt;
 	gameTime += dt;
+	bool playing = (!endScreen && !startScreen);
 	//bool playing = (!endScreen && !startScreen);
-	Vector3 oldPos = position;
 	
-	//Restricting the mouse movement
-	RECT restrict = {639, 399, 640, 400};
-	ClipCursor(&restrict);
 
 	if(input->isKeyDown(VK_ESCAPE)) 
 		PostQuitMessage(0);
@@ -1110,6 +1109,10 @@ void ColoredCubeApp::updateScene(float dt)
 		}
 	}
 	if(gameState == GameState::PLAYING){
+		//Restricting the mouse movement
+		RECT restrict = {639, 399, 640, 400};
+		ClipCursor(&restrict);
+		Vector3 oldPos = camera.getPosition();
 		timect += dt;
 		updateGameState(); //Checks for win/lose/levelTransition conditions
 		if(input->isKeyDown(VK_ESCAPE))  PostQuitMessage(0);
@@ -1119,7 +1122,10 @@ void ColoredCubeApp::updateScene(float dt)
 		updateMusic();
 		menu.update(dt);
 		updateDayNight();
+
 		camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED), &walking);
+		
+
 		updateOrigin(dt);
 		handleUserInput();
 		updatePlayer(dt);
@@ -1143,12 +1149,18 @@ void ColoredCubeApp::updateScene(float dt)
 	if (gameState == GameState::BEATLV1) {
 		if (level == 1) {
 			menu.update(dt);
+			camera.transformToMenu();
 			level = 2;
 			ColoredCubeApp::initLamps();
 			ColoredCubeApp::initPickups();
 			ColoredCubeApp::initWallPositions();
 			ColoredCubeApp::initBuildingPositions();
-			camera.transformToMenu();
+			ColoredCubeApp::initLights();
+			for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
+			{
+				enemy[i].initWaypoints2();
+				enemy[i].setInActive();
+			}
 		}
 		//lock the screen at a certain spot and render the cube with the transition graphic and then...
 		if(input->isKeyDown(VK_SPACE)) {
@@ -1238,9 +1250,10 @@ void ColoredCubeApp::updateBuildings(float dt) {
 
 void ColoredCubeApp::updatePlayer(float dt) {
 	player.setPosition(camera.getPosition());
+	player.setVelocity(camera.getDirection());
 	D3DXVECTOR3 pos = player.getPosition();
 	
-	player.update(dt, camera.getLookatDirection()); //bullet should follow camera lookat vector
+	player.update(dt, camera.getLookatDirection(), &bulletBox, &pBullets); //bullet should follow camera lookat vector
 
 	//Update shooting
 	if(input->getMouseLButton())
@@ -1354,7 +1367,43 @@ void ColoredCubeApp::handleWallCollisions(Vector3 pos) {
 	{
 		if(player.collided(&walls[i]))
 		{
-			position = pos;
+			//Player position before collision
+			D3DXVECTOR3 pPos = pos;
+			D3DXVECTOR3 pVel = player.getVelocity();
+			//D3DXVec3Normalize(&pVel, &pVel);
+			D3DXVECTOR3 wallPos = walls[i].getPosition();
+			D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
+			D3DXVECTOR3 refPoint = camera.getLookatDirection();
+
+			float depth = walls[i].getDepth();
+			float width = walls[i].getWidth();
+			float t = 0;
+
+			//D1-4 represent points on each of the planes we want to check for intersection with
+			//We are just donig ray-plane intersection here, with the ray origin being at the 
+			D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
+			D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
+
+			//find the minimum intersection time and the normal of the surface that we intersect with
+			for(int l=0; l<4; l++)
+			{
+				float denom = D3DXVec3Dot(&N[l], &pVel);
+				if(denom != 0)
+				{
+					float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
+					if(time > 0 ){
+						if(t <= 0 || time < t && t < 1){
+							t = time;
+							wNormal = N[l];
+						}
+					}
+				}
+			}
+
+			D3DXVec3Normalize(&pVel, &pVel);
+			camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			camera.setLookAt(camera.getPosition() + refPoint);
+			
 		}
 
 		for (unsigned int j = 0; j < pBullets.size(); j++) {
@@ -1372,8 +1421,45 @@ void ColoredCubeApp::handleBuildingCollisions(Vector3 pos) {
 	for(int i=0; i<buildings.size(); i++)
 	{
 		if (buildings[i].getActiveState() == false) continue;
-		if(player.collided(&buildings[i]))
-			position = pos;
+		if(player.collided(&buildings[i])){
+			//Player position before collision
+			D3DXVECTOR3 pPos = pos;
+			D3DXVECTOR3 pVel = player.getVelocity();
+			//D3DXVec3Normalize(&pVel, &pVel);
+			D3DXVECTOR3 wallPos = buildings[i].getPosition();
+			D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
+			D3DXVECTOR3 refPoint = camera.getLookatDirection();
+
+			float depth = buildings[i].getDepth();
+			float width = buildings[i].getWidth();
+			float t = 0;
+
+			//D1-4 represent points on each of the planes we want to check for intersection with
+			//We are just donig ray-plane intersection here, with the ray origin being at the 
+			D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
+			D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
+
+			//find the minimum intersection time and the normal of the surface that we intersect with
+			for(int l=0; l<4; l++)
+			{
+				float denom = D3DXVec3Dot(&N[l], &pVel);
+				if(denom != 0)
+				{
+					float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
+					if(time > 0 ){
+						if(t <= 0 || time < t && t < 1){
+							t = time;
+							wNormal = N[l];
+						}
+					}
+				}
+			}
+
+			D3DXVec3Normalize(&pVel, &pVel);
+			camera.setPosition(camera.getPosition() - (D3DXVec3Dot(&(camera.getPosition()-(pPos + t*(pVel*gameNS::PLAYER_SPEED))), &wNormal)*wNormal));
+			camera.setLookAt(camera.getPosition() + refPoint);
+
+		}
 		for (unsigned int j = 0; j < pBullets.size(); j++) {
 			if (pBullets[j]->collided(&buildings[i])) {
 				pBullets[j]->setInActive();
@@ -1423,72 +1509,83 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 		{
 			if(enemy[i].collided(&walls[j]))
 			{
-				D3DXVECTOR3 enPos = enemy[i].getOldPos();
-				D3DXVECTOR3 wPos = walls[j].getPosition();
-				D3DXVECTOR3 wNormal(0, 0, 0);
-				D3DXVECTOR3 D; //D is a point on the plane
+				//Player position before collision
+				D3DXVECTOR3 pPos = enemy[i].getOldPos();
+				D3DXVECTOR3 pVel = enemy[i].getVelocity();
+				//D3DXVec3Normalize(&pVel, &pVel);
+				D3DXVECTOR3 wallPos = walls[j].getPosition();
+				D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
+				//D3DXVECTOR3 refPoint = camera.getLookatDirection();
 
-				D3DXVECTOR3 S = enPos;
-				D3DXVECTOR3 L = wNormal;
-				D3DXVECTOR3 V = enemy[i].getVelocity();
-				float t;
-				D3DXVECTOR3 Q;
-				//We know that the enemy will collide after the update
-				//So we want to find out how the enemy collides with the wall
-				if(enPos.x < walls[j].getWidth() + wPos.x && enPos.x > walls[j].getWidth() - wPos.x)
-				{
-					//Then we know that it will collide along the +- z normal
-					if(enPos.z < wPos.z)
-					{
-						wNormal = D3DXVECTOR3(0, 0, -1);
-						D = D3DXVECTOR3(wPos.x - 1.25, wPos.y, wPos.z - walls[j].getDepth());
-					}
-					else
-					{
-						wNormal = D3DXVECTOR3(0, 0, 1);
-						D = D3DXVECTOR3(wPos.x + 1.25, wPos.y, wPos.z + walls[j].getDepth());
-					}
+				float depth = walls[j].getDepth();
+				float width = walls[j].getWidth();
+				float t = 0;
 
-					//Assume that a bounding sphere around the enemy is ~2.25
-					t = D3DXVec3Dot(&wNormal, &(D - enPos)) / D3DXVec3Dot(&wNormal, &(D - enemy[i].getPosition()));
-					
-				}
-				else if (enPos.z < walls[j].getDepth() + wPos.z && enPos.z > walls[j].getDepth() - wPos.z)
-				{
-					if(enPos.x < wPos.x)
-					{
-						wNormal = D3DXVECTOR3(-1, 0, 0);
-						D = D3DXVECTOR3(wPos.x - walls[j].getWidth(), wPos.y, wPos.z - 1.25);
-					}
-					else
-					{
-						wNormal = D3DXVECTOR3(1, 0, 0);
-						D = D3DXVECTOR3(wPos.x + walls[j].getWidth(), wPos.y, wPos.z + 1.25);
-					}
-					t = D3DXVec3Dot(&wNormal, &(D - enPos)) / D3DXVec3Dot(&wNormal, &(D - enemy[i].getPosition()));
-				}
-				else
-				{
-					//enemy[i].setPosition(enemy[i].getOldPos());
-					t = 0;
+				//D1-4 represent points on each of the planes we want to check for intersection with
+				//We are just donig ray-plane intersection here, with the ray origin being at the 
+				D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
+				D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
 
+				//find the minimum intersection time and the normal of the surface that we intersect with
+				for(int l=0; l<4; l++)
+				{
+					float denom = D3DXVec3Dot(&N[l], &pVel);
+					if(denom != 0)
+					{
+						float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
+						if(time > 0 ){
+							if(t <= 0 || time < t && t < 1){
+								t = time;
+								wNormal = N[l];
+							}
+						}
+					}
 				}
 
-				if(wNormal != D3DXVECTOR3(0, 0, 0))
-				{
-					Q = enPos + t*enemy[i].getPosition();
-					D3DXVECTOR3 P3 = enemy[i].getPosition() - (D3DXVec3Dot(&(enemy[i].getPosition() - Q), &wNormal))*wNormal;
-					enemy[i].setPosition(P3);
-				}
-				
-				
+				D3DXVec3Normalize(&pVel, &pVel);
+				enemy[i].setPosition(enemy[i].getPosition() - (D3DXVec3Dot(&(enemy[i].getPosition()-(pPos + t*(pVel*enemy[i].getSpeed()))), &wNormal)*wNormal));
+				//camera.setLookAt(camera.getPosition() + refPoint);
 			}
 		}
 		for(int j=0; j<buildings.size(); j++)
 		{
 			if(enemy[i].collided(&buildings[j])) 
 			{
-				enemy[i].setPosition(enemy[i].getOldPos());
+				//Player position before collision
+				D3DXVECTOR3 pPos = enemy[i].getOldPos();
+				D3DXVECTOR3 pVel = enemy[i].getVelocity();
+				//D3DXVec3Normalize(&pVel, &pVel);
+				D3DXVECTOR3 wallPos = buildings[j].getPosition();
+				D3DXVECTOR3 wNormal(0, 0, 0); //normal of the wall surface where the player intersects
+				//D3DXVECTOR3 refPoint = camera.getLookatDirection();
+
+				float depth = buildings[j].getDepth();
+				float width = buildings[j].getWidth();
+				float t = 0;
+
+				//D1-4 represent points on each of the planes we want to check for intersection with
+				//We are just donig ray-plane intersection here, with the ray origin being at the 
+				D3DXVECTOR3 D[4] = {D3DXVECTOR3(wallPos.x + width + 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x - width - 2.1, wallPos.y, wallPos.z), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z+depth + 2.1), D3DXVECTOR3(wallPos.x, wallPos.y, wallPos.z-depth - 2.1)};
+				D3DXVECTOR3 N[4] = {D3DXVECTOR3(1, 0, 0), D3DXVECTOR3(-1, 0, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR3(0, 0, -1)};
+
+				//find the minimum intersection time and the normal of the surface that we intersect with
+				for(int l=0; l<4; l++)
+				{
+					float denom = D3DXVec3Dot(&N[l], &pVel);
+					if(denom != 0)
+					{
+						float time = D3DXVec3Dot(&N[l], &(D[l]-pPos))/denom;
+						if(time > 0 ){
+							if(t <= 0 || time < t && t < 1){
+								t = time;
+								wNormal = N[l];
+							}
+						}
+					}
+				}
+
+				D3DXVec3Normalize(&pVel, &pVel);
+				enemy[i].setPosition(enemy[i].getPosition() - (D3DXVec3Dot(&(enemy[i].getPosition()-(pPos + t*(pVel*enemy[i].getSpeed()))), &wNormal)*wNormal));
 			}
 		}
 	}
@@ -1557,13 +1654,13 @@ void ColoredCubeApp::updatePickups(float dt) {
 	
 		for (unsigned int i = 0; i < dayPickups.size(); i++) {
 			if (player.collided(&dayPickups[i])) {
-				dayPickups[i].activate(&bulletBox, &pBullets);
+				dayPickups[i].activate();
 			}
 			dayPickups[i].update(dt);
 		}
 		for (unsigned int i = 0; i < nightPickups.size(); i++) {
 			if (player.collided(&nightPickups[i])) {
-				nightPickups[i].activate(&bulletBox, &pBullets);
+				nightPickups[i].activate();
 			}
 			nightPickups[i].update(dt);
 		}
@@ -1754,6 +1851,8 @@ void ColoredCubeApp::drawScene()
 		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
 		printText("playerX = ", 20, 65, 0, 0, WHITE, player.getPosition().x);
 		printText("playerZ = ", 20, 85, 0, 0, WHITE, player.getPosition().z);
+		printText("|", mClientWidth/2, mClientHeight/2, 0, 0, WHITE);
+		printText("--", (mClientWidth/2) - 4, mClientHeight/2, 0, 0, WHITE);
 	}
 	else if(gameState == INTROSCREEN)
 	{
