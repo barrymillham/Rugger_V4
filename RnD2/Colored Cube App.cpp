@@ -804,37 +804,37 @@ void ColoredCubeApp::initLights()
 
 		//Enemy entry vectors
 		mLights[7].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[7].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[7].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		mLights[7].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[7].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
 		mLights[7].att.x    = 0.0f;
-		mLights[7].att.y    = 0.45f;
+		mLights[7].att.y    = 0.55f;
 		mLights[7].att.z    = 0.0f;
-		mLights[7].range    = 35.0f;
+		mLights[7].range    = 90.0f;
 		mLights[7].pos = D3DXVECTOR3(200, 10, 0);
 
 		mLights[8].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[8].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[8].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		mLights[8].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[8].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
 		mLights[8].att.x    = 0.0f;
-		mLights[8].att.y    = 0.45f;
+		mLights[8].att.y    = 0.55f;
 		mLights[8].att.z    = 0.0f;
-		mLights[8].range    = 35.0f;
+		mLights[8].range    = 90.0f;
 		mLights[8].pos = D3DXVECTOR3(-200, 10, 0);
 
 		mLights[9].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[9].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[9].specular = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		mLights[9].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[9].specular = D3DXCOLOR(1.0f, 0.55f, 0.0f, 1.0f);
 		mLights[9].att.x    = 0.0f;
-		mLights[9].att.y    = 0.45f;
+		mLights[9].att.y    = 0.55f;
 		mLights[9].att.z    = 0.0f;
-		mLights[9].range    = 35.0f;
+		mLights[9].range    = 90.0f;
 		mLights[9].pos = D3DXVECTOR3(0, 10, -200);
 
 		mLights[10].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-		mLights[10].diffuse  = D3DXCOLOR(0.9f, 0.5f, 0.5f, 1.0f);
-		mLights[10].specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		mLights[10].diffuse  = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		mLights[10].specular = D3DXCOLOR(1.0f, 0.55f, 1.0f, 1.0f);
 		mLights[10].att.x    = 0.0f;
-		mLights[10].att.y    = 0.45f;
+		mLights[10].att.y    = 0.55f;
 		mLights[10].att.z    = 0.0f;
 		mLights[10].range    = 35.0f;
 		mLights[10].pos = D3DXVECTOR3(0, 10, 200);
@@ -854,7 +854,7 @@ void ColoredCubeApp::initLights()
 			mLights[i].diffuse	= D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			mLights[i].specular	= D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 			mLights[i].range	= 0.0f;
-			mLights[i].pos		= D3DXVECTOR3(0, 0, 0);
+			mLights[i].pos		= D3DXVECTOR3(0, 100, 0);
 		}
 	}
 
@@ -1134,6 +1134,7 @@ void ColoredCubeApp::updateScene(float dt)
 			ColoredCubeApp::initPickups();
 			ColoredCubeApp::initWallPositions();
 			ColoredCubeApp::initBuildingPositions();
+			ColoredCubeApp::initLights();
 			for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 			{
 				enemy[i].initWaypoints2();
