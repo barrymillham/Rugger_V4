@@ -65,9 +65,7 @@ namespace gameNS {
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
-	const int PLAYER_SPEED = 40;
-	//const int ROAD_LENGTH = 891;
-	//const int ROAD_WIDTH = 77;
+	const int PLAYER_SPEED = 40;	
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 }
@@ -104,7 +102,6 @@ public:
 	void updateUniqueObjects(float dt);
 	void updatePlayer(float dt);
 	void updateEnemies(float dt);
-	void updateCamera();
 	void updateDayNight();
 	void updateLamps(float dt);
 	void updateDebugMode();
@@ -167,7 +164,7 @@ private:
 	vector<Pickup> nightPickups;
 	vector<HudObject> hudObjects;
 	vector<Bullet*> pBullets;
-	Quad menu;
+	Wall menu;
 
 	//Lighting and Camera-specific declarations
 	Light mLights[gameNS::NUM_LIGHTS];
@@ -180,6 +177,8 @@ private:
 	D3DXVECTOR3 perpAxis;
 	D3DXVECTOR3 moveAxis;
 
+
+	Vector3 startingLevelPosition;
 	//Pathfinding stuff
 	Box inactiveLine;
 	Box activeLine;
@@ -232,6 +231,17 @@ private:
 	ID3D10ShaderResourceView* mSpecMapRVRed;
 	ID3D10ShaderResourceView* mDiffuseMapRVYellow;
 	ID3D10ShaderResourceView* mSpecMapRVYellow;
+	ID3D10ShaderResourceView* mDiffuseMapRVIntroMenu;
+	ID3D10ShaderResourceView* mSpecMapRVIntroMenu;
+	ID3D10ShaderResourceView* mDiffuseMapRVInstructionsMenu;
+	ID3D10ShaderResourceView* mSpecMapRVInstructionsMenu;
+	ID3D10ShaderResourceView* mDiffuseMapRVYouWinMenu;
+	ID3D10ShaderResourceView* mSpecMapRVYouWinMenu;
+	ID3D10ShaderResourceView* mDiffuseMapRVIWinMenu;
+	ID3D10ShaderResourceView* mSpecMapRVIWinMenu;
+	ID3D10ShaderResourceView* mDiffuseMapRVLevel2;
+	ID3D10ShaderResourceView* mSpecMapRVLevel2;
+
 	ID3D10EffectShaderResourceVariable* mfxDiffuseMapVar;
 	ID3D10EffectShaderResourceVariable* mfxSpecMapVar;
 	ID3D10EffectMatrixVariable* mfxTexMtxVar;
@@ -328,37 +338,24 @@ void ColoredCubeApp::initApp()
 
 	SetCursorPos(0,0);
 	ShowCursor(false);
-	initBasicVariables(); //Like shotTimer, etc.
 	audio->playCue(INTROMUSIC);
 	startScreen = true;
-	level = 1;
-	position = D3DXVECTOR3(0, 5, 0); 
+
+	initBasicVariables(); //Like shotTimer, etc
 	initBasicGeometry(); //must happen before init player
 	initTextStrings(); //Like start/end screen text
 	initUniqueObjects(); //Like the floor
 	initBarrels();
-
 	initOrigin();
 	initPickups();
 	initWallPositions();
 	initBuildingPositions();
-
 	initLamps();
 	initLights();
-	
 	initEnemies();
 	initHUD();
-
-	menu.init(md3dDevice, 1.0f, WHITE);
-	menu.setPosition(position);
-	menu.setRotYAngle((float)ToRadian(90));
-	menu.setRotZAngle((float)ToRadian(0));
-	menu.setRotXAngle((float)ToRadian(-90));
-
-	//mClearColor = D3DXCOLOR(0.15f, 0.15f, 0.15f, 1.0f);
-	//mClearColor = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
+	
 	mClearColor = gameNS::DAY_SKY_COLOR;
-
 	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,4,0), Vector3(0,0,0), 200, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
@@ -373,6 +370,7 @@ void ColoredCubeApp::initApp()
 
 	initShaderResources();
 	camera.init(input, position, Vector3(1, 0, 0), player.getPosition() + Vector3(1, 0, 0));
+	camera.transformToWorld(player.getPosition());
 	initFire();
 
 	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
@@ -529,6 +527,7 @@ void ColoredCubeApp::initBasicVariables() {
 	nightDayTrans = false;
 	walking = false;
 
+	level = 1;
 	score = 0;
 	firstpass = true;
 	startScreen = true;
@@ -548,6 +547,7 @@ void ColoredCubeApp::initBasicVariables() {
 	placedPickups = false;
 	dayCount = 1;
 	won = false;
+	startingLevelPosition = Vector3(0.0f,4.0f,0.0f);
 }
 
 void ColoredCubeApp::initBuildingPositions() {
@@ -668,6 +668,7 @@ void ColoredCubeApp::initWallPositions() {
 void ColoredCubeApp::initUniqueObjects() {
 	floor.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 250, 500, 250);
 	floor2.init(&yellowGreenBox, 2.0f, Vector3(0,-1000.0f,0), Vector3(0,0,0), 1, 1.0f, 975, 500, 1625);
+	menu.init(&clearBox, 2.0f, Vector3(-998.0f,-1100.0f,-727.1f), Vector3(0,0,0), 1, 1.0f, 75, 100, 100);
 }
 
 void ColoredCubeApp::initBarrels() {
@@ -1032,6 +1033,16 @@ void ColoredCubeApp::initShaderResources() {
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVRed, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"yellow.png", 0, 0, &mDiffuseMapRVYellow, 0 ));
 	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVYellow, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"introMenu.png", 0, 0, &mDiffuseMapRVIntroMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVIntroMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"instructions.png", 0, 0, &mDiffuseMapRVInstructionsMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVInstructionsMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"youWin.png", 0, 0, &mDiffuseMapRVYouWinMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVYouWinMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"iWin.png", 0, 0, &mDiffuseMapRVIWinMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVIWinMenu, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"onToLevel2.png", 0, 0, &mDiffuseMapRVLevel2, 0 ));
+	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, L"defaultspec.dds", 0, 0, &mSpecMapRVLevel2, 0 ));
 }
 
 void ColoredCubeApp::initFire() {
@@ -1078,22 +1089,30 @@ void ColoredCubeApp::updateScene(float dt)
 	RECT restrict = {639, 399, 640, 400};
 	ClipCursor(&restrict);
 
-	if(input->isKeyDown(VK_ESCAPE)) PostQuitMessage(0);
+	if(input->isKeyDown(VK_ESCAPE)) 
+		PostQuitMessage(0);
 
 	if (gameState == GameState::INTROSCREEN){
+		camera.transformToMenu();
+		menu.update(dt);
 		if(input->isKeyDown(VK_SPACE)){
 			gameState = GameState::INSTRUCTIONS;
+			input->keyUp(VK_SPACE);
 		}
 	}
 	if (gameState == GameState::INSTRUCTIONS) {
-		gameState = GameState::PLAYING;
-		audio->stopCue(INTROMUSIC);
-		input->setMouseLButton(false);
+		if(input->isKeyDown(VK_SPACE)){
+			menu.update(dt);
+			audio->stopCue(INTROMUSIC);
+			gameState = GameState::PLAYING;
+			camera.transformToWorld(player.getPosition());
+			input->keyUp(VK_SPACE);
+		}
 	}
 	if(gameState == GameState::PLAYING){
 		timect += dt;
 		updateGameState(); //Checks for win/lose/levelTransition conditions
-
+		if(input->isKeyDown(VK_ESCAPE))  PostQuitMessage(0);
 		D3DApp::updateScene(dt);
 		menu.update(dt);
 		updateDebugMode();
@@ -1123,22 +1142,30 @@ void ColoredCubeApp::updateScene(float dt)
 	}
 	if (gameState == GameState::BEATLV1) {
 		if (level == 1) {
+			menu.update(dt);
 			level = 2;
 			ColoredCubeApp::initLamps();
 			ColoredCubeApp::initPickups();
 			ColoredCubeApp::initWallPositions();
 			ColoredCubeApp::initBuildingPositions();
+			camera.transformToMenu();
 		}
 		//lock the screen at a certain spot and render the cube with the transition graphic and then...
-		if(input->isKeyDown(VK_SPACE))
+		if(input->isKeyDown(VK_SPACE)) {
+			camera.transformToWorld(startingLevelPosition);
 			gameState = GameState::PLAYING;
+		}
 	}
 	if(gameState == GameState::LOSE){
+		camera.transformToMenu();
+		menu.update(dt);
 		//lock the screen at a certain spot and render the cube with the transition graphic and then...
 		if(input->isKeyDown(VK_SPACE))
 			PostQuitMessage(0);
 	}
 	if (gameState == GameState::WIN) {
+		camera.transformToMenu();
+		menu.update(dt);
 		//Lock the screen at a certain spot and render the cube with the transition graphic and then...
 		if (input->isKeyDown(VK_SPACE))
 			PostQuitMessage(0);
@@ -1178,51 +1205,6 @@ void ColoredCubeApp::updateDebugMode() {
 		gameNS::PLAY_MUSIC = false;
 		audio->stopCue(MUSIC);
 	}
-}
-
-void ColoredCubeApp::updateCamera() {
-	//int dx = input->getMouseRawX();
-	//int dy = input->getMouseRawY();
-	//float _speed = 6.0;
-
-	//D3DXVECTOR3 transformRef(1, 0, 0); 
-	//D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
-	//Vector3 direction = Vector3(0,0,0);
-
-	//bool yawUpdate = (dx != 0)?true:false;
-	//bool pitchUpdate = (dy != 0)?true:false;
-	//
-	//if(dx < 0) yaw -= _speed*dt;
-	//if(dx > 0) yaw += _speed*dt;
-	//if(dy < 0) pitch += (_speed/2)*dt;
-	//if(dy > 0) pitch -= (_speed/2)*dt;
-	//// Restrict the angle pitch and radius mRadius.
-	//if( pitch < -(PI/2.0f) + 0.01f)		pitch = -(PI/2.0f) + 0.01f;
-	//if( pitch > PI/2.0f - 0.01f)		pitch = (PI/2.0f) - 0.01f;
-
-	//walking = false;
-	//if(GetAsyncKeyState('A') & 0x8000) direction.z = 1;
-	//if(GetAsyncKeyState('D') & 0x8000) direction.z = -1;
-	//if(GetAsyncKeyState('S') & 0x8000) {direction.x = -1; moveAxis.y = 0;}
-	//if(GetAsyncKeyState('W') & 0x8000) {direction.x = 1;  moveAxis.y = 0;}
-
-	////Generate transformation matrices
-	//Matrix yawR = *D3DXMatrixRotationY(&yawR, yaw);
-	//Matrix pitchR = *D3DXMatrixRotationZ(&pitchR, pitch);
-	//Matrix temp = pitchR * yawR; 
-
-	//if (direction != Vector3(0,0,0)) {
-	//	walking = true;
-	//	Transform(&direction, &direction, &yawR);
-	//	position += direction * player.getSpeed() * dt;
-	//}
-	//
-	//Transform(&transformRef, &transformRef, &temp);
-	//Normalize(&transformRef, &transformRef);
-	//lookAt = transformRef * player.getSpeed() * dt;
-	//lookAt += position;
-
-	//D3DXMatrixLookAtLH(&mView, &position, &lookAt, &up);
 }
 
 void ColoredCubeApp::doEndScreen() {
@@ -1747,11 +1729,7 @@ void ColoredCubeApp::drawScene()
 		//	mTech->GetPassByIndex( p )->Apply(0);
 		//	//menu.draw();
 		//}
-			
 
-		//What are these and should they be doing this every frame? Probably not...
-		mfxDiffuseMapVar->SetResource(mDiffuseMapRVBullet);
-		mfxSpecMapVar->SetResource(mSpecMapRVBullet);
 		
 		//Draw particle systems last besides text
 		if (level == 2) {	
@@ -1779,23 +1757,35 @@ void ColoredCubeApp::drawScene()
 	}
 	else if(gameState == INTROSCREEN)
 	{
-		D3D10_TECHNIQUE_DESC techDesc;
-		mTech->GetDesc( &techDesc );
-		for(UINT p = 0; p < techDesc.Passes; ++p)
-		{
-			menu.draw();
-		}
-		printText(sText);
+		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVIntroMenu);
+		mfxSpecMapVar->SetResource(mSpecMapRVIntroMenu);
+		menu.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 	}
 	else if (gameState == INSTRUCTIONS) {
-
+		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVInstructionsMenu);
+		mfxSpecMapVar->SetResource(mSpecMapRVInstructionsMenu);
+		menu.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
+	}
+	else if (gameState == BEATLV1) {
+		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVLevel2);
+		mfxSpecMapVar->SetResource(mSpecMapRVLevel2);
+		menu.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 	}
 	else if (gameState == LOSE) { // End Screen 
-		printText(lText);
+		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVIWinMenu);
+		mfxSpecMapVar->SetResource(mSpecMapRVIWinMenu);
+		menu.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
 	}
 	else if (gameState == WIN) {
-		printText(wText);
+		mVP = camera.getViewMatrix()*camera.getProjectionMatrix();
+		mfxDiffuseMapVar->SetResource(mDiffuseMapRVYouWinMenu);
+		mfxSpecMapVar->SetResource(mSpecMapRVYouWinMenu);
+		menu.draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		printText("Score: ", 350, 280, 0, 0, WHITE, player.getScore());
 	}
 	

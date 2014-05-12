@@ -30,7 +30,8 @@ public:
 	float getFoV() {return FoV;}
 	void flying(bool b){fly = b;}
 	void falling(bool b){fall = b;}
-
+	void transformToWorld(Vector3 position = Vector3(-1.0f, -1.0f, -1.0f), Vector3 axis = Vector3(0.0f,0.0f,1.0f));
+	void transformToMenu();
 	void setPerspective();
 	void setPitch(float p) {pitch = p;}
 
@@ -38,7 +39,7 @@ private:
 	Matrix mView;
 	Matrix mProj;
 	Vector3 position;
-	Vector3 direction;
+	Vector3 direction; //direction to walk (not look)
 	float speed;
 	float aspectRatio;
 	float FoV;
@@ -50,7 +51,7 @@ private:
 	float yaw;
 	float pitch;
 	float roll;
-	Vector3 transformedReference;
+	Vector3 transformedReference; //direction to look
 	bool fly;
 	bool fall;
 
