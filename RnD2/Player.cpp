@@ -3,9 +3,9 @@
 
 Player::Player(void) : GameObject()
 {
-	health = 100;
+	health = 1000;
 	ammo = 25;
-	speed = 200;
+	speed = 20;
 }
 
 

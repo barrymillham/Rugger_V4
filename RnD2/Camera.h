@@ -34,7 +34,7 @@ public:
 	void setLookAt(const D3DXVECTOR3& p){
 		lookAt = p;
 		//Generate new matrix
-		D3DXMatrixLookAtLH(&mView, &position, &lookAt, &up);
+		//D3DXMatrixLookAtLH(&mView, &position, &lookAt, &up);
 	}
 
 	void setPerspective();
