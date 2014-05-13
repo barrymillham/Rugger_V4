@@ -1144,7 +1144,6 @@ void ColoredCubeApp::updateScene(float dt)
 		//	else camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED2), &walking);
 		//}
 		
-
 		updateOrigin(dt);
 		handleUserInput();
 		updatePlayer(dt);
