@@ -8,7 +8,7 @@ Camera::Camera()
 	nearClippingPlane = 1.0f;
 	farClippingPlane = 10000.0f;
 	up = Vector3(0.0f, 1.0f, 0.0f);
-	position = Vector3(-10,0,0);
+	position = Vector3(10,0,10);
 	lookAt = Vector3(0.0f, 0.0f, 0.0f);
 	yaw = 0.0f;
 	roll = 0.0f;

@@ -49,7 +49,7 @@ using std::string;
 using std::time;
 
 namespace gameNS {
-	const float DAYLEN = 40;
+	const float DAYLEN = 10;
 	const int NUM_WALLS = 28;
 	const int NUM_BUILDINGS = 39;
 	const int NUM_BARRELS = 24;
@@ -65,9 +65,10 @@ namespace gameNS {
 	const float FOOTSTEP_GAP = 0.45f;
 	int GRASSY_AREA_WIDTH = 110;
 	const int FLASHLIGHT_NUM = 2;
-	const int NUM_NIGHTS_TO_ADVANCE = 2;
+	const int NUM_NIGHTS_TO_ADVANCE = 1;
 	const float FAR_CLIP = 10000.0f;
-	const int PLAYER_SPEED = 40;
+	const int PLAYER_SPEED = 20;
+	const int PLAYER_SPEED2 = 40;
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 	const D3DXCOLOR DARKGREEN(0.0f, 0.4f, 0.0f, 1.0f);
@@ -367,10 +368,10 @@ void ColoredCubeApp::initApp()
 	initHUD();
 	
 	mClearColor = gameNS::DAY_SKY_COLOR;
-	//if(level == 1)
+	if(level == 1)
 		player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,5,0), Vector3(0,0,0), gameNS::PLAYER_SPEED, audio, 1, 1, 1, 5);
-	//else if(level == 2)
-	//	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(0,5,1590), Vector3(0,0,0), gameNS::PLAYER_SPEED2, audio, 1, 1, 1, 5);
+	else if(level == 2)
+		player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(0,5,1590), Vector3(0,0,0), gameNS::PLAYER_SPEED2, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -1180,12 +1181,15 @@ void ColoredCubeApp::updateScene(float dt)
 		if (level == 1) {
 			menu.update(dt);
 			camera.transformToMenu();
+			D3DXVECTOR3 pos = D3DXVECTOR3(10,0,10);
+			camera.setPosition(pos);
 			level = 2;
 			ColoredCubeApp::initLamps();
 			ColoredCubeApp::initPickups();
 			ColoredCubeApp::initWallPositions();
 			ColoredCubeApp::initBuildingPositions();
 			ColoredCubeApp::initLights();
+
 			/*timeOfDay = "Day";
 			night = false;
 			timect = 0.0f;*/
