@@ -1173,6 +1173,8 @@ void ColoredCubeApp::updateScene(float dt)
 
 		for(int i=0; i<gameNS::NUM_FIRES; i++)
 			mFire[i].update(dt, gameTime);
+
+		if(level == 2 && nightCount >= 2)gameState = GameState::WIN;
 	}
 	if (gameState == GameState::BEATLV1) {
 		if (level == 1) {
