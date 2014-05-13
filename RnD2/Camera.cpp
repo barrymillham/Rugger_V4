@@ -89,7 +89,7 @@ void Camera::update(float dt, float playerSpeeed, bool* walking)
 
 	bool rotated = false;
 	//float _speed = 100;
-	float cameraSpeed = 3.f;
+	float cameraSpeed = 2.f;
 	speed = cameraSpeed;
 	float playerSpeed = playerSpeeed;
 	float deltaYaw = 0;
@@ -106,19 +106,22 @@ void Camera::update(float dt, float playerSpeeed, bool* walking)
 	Identity(&pitchR);
 	Identity(&rollR);
 
-	if(dx > 0)
+	//if(dx > 0)
+	if(input->isKeyDown(VK_RIGHT))
 	{
 		deltaYaw += cameraSpeed*dt;
 		yaw += deltaYaw;
 		rotated = true;
 	}
-	if(dx < 0)
+	//if(dx < 0)
+	if(input->isKeyDown(VK_LEFT))
 	{
 		rotated = true;
 		deltaYaw -= cameraSpeed*dt;
 		yaw += deltaYaw;
 	}
-	if(dy < 0)
+	//if(dy < 0)
+	if(input->isKeyDown(VK_UP))
 	{
 		rotated = true;
 		deltaPitch -= cameraSpeed * 0.9 * dt;
@@ -126,7 +129,8 @@ void Camera::update(float dt, float playerSpeeed, bool* walking)
 			deltaPitch = -1;
 		pitch += deltaPitch;
 	}
-	if(dy > 0)
+	//if(dy > 0)
+	if(input->isKeyDown(VK_DOWN))
 	{
 		rotated = true;
 		deltaPitch += cameraSpeed * 0.9 * dt;

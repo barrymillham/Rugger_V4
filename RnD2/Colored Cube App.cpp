@@ -1282,7 +1282,8 @@ void ColoredCubeApp::updatePlayer(float dt) {
 	player.update(dt, camera.getLookatDirection(), &bulletBox, &pBullets); //bullet should follow camera lookat vector
 
 	//Update shooting
-	if(input->getMouseLButton())
+	//if(input->getMouseLButton())
+	if(input->isKeyDown(VK_SPACE))
 	{
 		if(player.canShoot()) 
 			player.fired = true; //this player value being set dictates whether the player shoots the next time player.update() is called
