@@ -68,6 +68,7 @@ namespace gameNS {
 	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
 	const int PLAYER_SPEED = 20;
+	const int PLAYER_SPEED2 = 50;
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 	const D3DXCOLOR DARKGREEN(0.0f, 0.4f, 0.0f, 1.0f);
@@ -367,7 +368,10 @@ void ColoredCubeApp::initApp()
 	initHUD();
 	
 	mClearColor = gameNS::DAY_SKY_COLOR;
-	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,5,0), Vector3(0,0,0), gameNS::PLAYER_SPEED, audio, 1, 1, 1, 5);
+	if(level == 1)
+		player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,5,0), Vector3(0,0,0), gameNS::PLAYER_SPEED, audio, 1, 1, 1, 5);
+	else if(level == 2)
+		player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(0,5,1590), Vector3(0,0,0), gameNS::PLAYER_SPEED2, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -1132,8 +1136,14 @@ void ColoredCubeApp::updateScene(float dt)
 		menu.update(dt);
 		updateDayNight();
 
-		if(input->isKeyDown(VK_SHIFT)) camera.update(dt, 1.5*static_cast<float>(gameNS::PLAYER_SPEED), &walking);
-		else camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED), &walking);
+		if(level == 1){
+			if(input->isKeyDown(VK_SHIFT)) camera.update(dt, 1.5*static_cast<float>(gameNS::PLAYER_SPEED), &walking);
+			else camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED), &walking);
+		}
+		else if(level == 2){
+			if(input->isKeyDown(VK_SHIFT)) camera.update(dt, 1.5*static_cast<float>(gameNS::PLAYER_SPEED2), &walking);
+			else camera.update(dt, static_cast<float>(gameNS::PLAYER_SPEED2), &walking);
+		}
 		
 
 		updateOrigin(dt);
