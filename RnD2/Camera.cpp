@@ -89,7 +89,7 @@ void Camera::update(float dt, float playerSpeeed, bool* walking)
 
 	bool rotated = false;
 	//float _speed = 100;
-	float cameraSpeed = 4.0f;
+	float cameraSpeed = 3.f;
 	speed = cameraSpeed;
 	float playerSpeed = playerSpeeed;
 	float deltaYaw = 0;
