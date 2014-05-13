@@ -292,6 +292,9 @@ private:
 	//PARTICLES
 	PSystem mFire[gameNS::NUM_FIRES];
 	float gameTime;
+
+	bool attacked;
+	float sinceLastAttacked;
 };
 
 ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
@@ -305,6 +308,8 @@ ColoredCubeApp::ColoredCubeApp(HINSTANCE hInstance)
 	D3DXMatrixIdentity(&mWVP); 
 	D3DXMatrixIdentity(&mVP); 
 	gameTime = 0.0f;
+	attacked = false;
+	sinceLastAttacked = 0.0f;
 }
 
 ColoredCubeApp::~ColoredCubeApp()
@@ -1117,6 +1122,7 @@ void ColoredCubeApp::updateScene(float dt)
 
 		Vector3 oldPos = camera.getPosition();
 		timect += dt;
+		sinceLastAttacked += dt;
 		updateGameState(); //Checks for win/lose/levelTransition conditions
 		if(input->isKeyDown(VK_ESCAPE))  PostQuitMessage(0);
 		D3DApp::updateScene(dt);
@@ -1147,10 +1153,15 @@ void ColoredCubeApp::updateScene(float dt)
 		handleBuildingCollisions(oldPos);
 		handleEnemyCollisions(dt);
 
-		mLights[0].ambient.r = 0.1f;
+		//mLights[0].ambient.r = 0.1f;
+		attacked = false;
 		for(int i=0; i<gameNS::MAX_NUM_ENEMIES; i++)
 		{
-			if(enemy[i].getAttacking()) mLights[0].ambient.r = 0.5f; 
+			if(enemy[i].getAttacking())
+			{
+				attacked = true;
+				sinceLastAttacked = 0;
+			}
 		}
 
 		for(int i=0; i<gameNS::NUM_FIRES; i++)
@@ -1835,6 +1846,7 @@ void ColoredCubeApp::drawScene()
 	setDeviceAndShaderInformation();
 
 	if(gameState == PLAYING) {	
+		
 		if(debugMode) for(int i=0; i<WAYPOINT_SIZE*WAYPOINT_SIZE; i++) wayLine[i].draw(mfxWVPVar, mfxWorldVar, mTech, &mVP);
 		mfxDiffuseMapVar->SetResource(mDiffuseMapRVEnemy);
 		mfxSpecMapVar->SetResource(mSpecMapRVEnemy);
@@ -1890,6 +1902,7 @@ void ColoredCubeApp::drawScene()
 		printText(timeOfDay + " ", 670, 20, 0, 0, WHITE, dayCount);
 		if(debugMode)printText("playerX = ", 20, 65, 0, 0, WHITE, player.getPosition().x);
 		if(debugMode)printText("playerZ = ", 20, 85, 0, 0, WHITE, player.getPosition().z);
+		if(attacked || sinceLastAttacked < 0.25) printText("!", mClientWidth/2 , mClientHeight/2 - 50, 0, 0, RED, "");
 		printText("+", mClientWidth/2 - 2, mClientHeight/2-16, 0, 0, WHITE, "");
 	}
 	else if(gameState == INTROSCREEN)
