@@ -67,7 +67,7 @@ namespace gameNS {
 	const int FLASHLIGHT_NUM = 2;
 	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
-	const int PLAYER_SPEED = 20;
+	const int PLAYER_SPEED = 40;
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 	const D3DXCOLOR DARKGREEN(0.0f, 0.4f, 0.0f, 1.0f);
@@ -1557,7 +1557,7 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 		}
 		for(int j=0; j<walls.size(); j++)
 		{
-			if(enemy[i].collided(&walls[j]))
+			if(enemy[i].collided(&walls[j]) && D3DXVec3LengthSq(&(enemy[i].getPosition() - player.getPosition())) < 100*100)
 			{
 				////Player position before collision
 				//D3DXVECTOR3 pPos = enemy[i].getOldPos();
@@ -1595,7 +1595,7 @@ void ColoredCubeApp::handleEnemyCollisions(float dt)
 		}
 		for(int j=0; j<buildings.size(); j++)
 		{
-			if(enemy[i].collided(&buildings[j])) 
+			if(enemy[i].collided(&buildings[j])&& D3DXVec3LengthSq(&(enemy[i].getPosition() - player.getPosition())) < 100*100) 
 			{
 				////Player position before collision
 				//D3DXVECTOR3 pPos = enemy[i].getOldPos();
