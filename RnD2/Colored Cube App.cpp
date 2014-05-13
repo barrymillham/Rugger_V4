@@ -976,7 +976,7 @@ void ColoredCubeApp::initLights()
 		mLights[11].att.x    = 0.0f;
 		mLights[11].att.y    = 0.55f;
 		mLights[11].att.z    = 0.0f;
-		mLights[11].range    = 200.0f;
+		mLights[11].range    = 0.0f;
 		mLights[11].pos = D3DXVECTOR3(0, 10, -1500);
 
 		mLights[12].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -985,7 +985,7 @@ void ColoredCubeApp::initLights()
 		mLights[12].att.x    = 0.0f;
 		mLights[12].att.y    = 0.55f;
 		mLights[12].att.z    = 0.0f;
-		mLights[12].range    = 200.0f;
+		mLights[12].range    = 0.0f;
 		mLights[12].pos = D3DXVECTOR3(-25, 10, -1400);
 
 		mLights[13].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -994,7 +994,7 @@ void ColoredCubeApp::initLights()
 		mLights[13].att.x    = 0.0f;
 		mLights[13].att.y    = 0.55f;
 		mLights[13].att.z    = 0.0f;
-		mLights[13].range    = 200.0f;
+		mLights[13].range    = 0.0f;
 		mLights[13].pos = D3DXVECTOR3(25, 10, -1400);
 
 		mLights[14].ambient  = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1003,7 +1003,7 @@ void ColoredCubeApp::initLights()
 		mLights[14].att.x    = 0.0f;
 		mLights[14].att.y    = 0.55f;
 		mLights[14].att.z    = 0.0f;
-		mLights[14].range    = 200.0f;
+		mLights[14].range    = 0.0f;
 		mLights[14].pos = D3DXVECTOR3(0, 10, -1300);
 	}
 }
