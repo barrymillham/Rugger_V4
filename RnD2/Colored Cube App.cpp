@@ -49,7 +49,9 @@ using std::string;
 using std::time;
 
 namespace gameNS {
-	const float DAYLEN = 10;
+	const float DAYLEN = 40;
+	const float TRANSITIONTIME = 10;
+
 	const int NUM_WALLS = 28;
 	const int NUM_BUILDINGS = 39;
 	const int NUM_BARRELS = 24;
@@ -57,7 +59,7 @@ namespace gameNS {
 	const int NUM_BULLETS = 100;
 	const int NUM_LIGHTS = 15;
 	const int NUM_FIRES = 12;
-	const float TRANSITIONTIME = 10;
+	
 	const D3DXCOLOR NIGHT_SKY_COLOR = D3DXCOLOR(0.049f, 0.049f, 0.2195f, 1.0f);
 	const D3DXCOLOR DAY_SKY_COLOR = D3DXCOLOR(0.529f, 0.808f, 0.98f, 1.0f);
 	const int MAX_NUM_ENEMIES = 20;
@@ -65,10 +67,9 @@ namespace gameNS {
 	const float FOOTSTEP_GAP = 0.45f;
 	int GRASSY_AREA_WIDTH = 110;
 	const int FLASHLIGHT_NUM = 2;
-	const int NUM_NIGHTS_TO_ADVANCE = 1;
+	const int NUM_NIGHTS_TO_ADVANCE = 2;
 	const float FAR_CLIP = 10000.0f;
-	const int PLAYER_SPEED = 20;
-	const int PLAYER_SPEED2 = 40;
+	const int PLAYER_SPEED = 30;
 	const int ROAD_LENGTH = 4000;
 	const int ROAD_WIDTH = 170;
 	const D3DXCOLOR DARKGREEN(0.0f, 0.4f, 0.0f, 1.0f);
@@ -368,10 +369,7 @@ void ColoredCubeApp::initApp()
 	initHUD();
 	
 	mClearColor = gameNS::DAY_SKY_COLOR;
-	if(level == 1)
-		player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,5,0), Vector3(0,0,0), gameNS::PLAYER_SPEED, audio, 1, 1, 1, 5);
-	else if(level == 2)
-		player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(0,5,1590), Vector3(0,0,0), gameNS::PLAYER_SPEED2, audio, 1, 1, 1, 5);
+	player.init(&bulletBox, &pBullets, &mBox, sqrt(2.0f), Vector3(3,5,0), Vector3(0,0,0), gameNS::PLAYER_SPEED, audio, 1, 1, 1, 5);
 
 	mWallMesh.init(md3dDevice, 1.0f, mFX);
 	mBuildingMesh.init(md3dDevice, 1.0f, mFX);
@@ -385,7 +383,7 @@ void ColoredCubeApp::initApp()
 
 	initShaderResources();
 	camera.init(input, position, Vector3(1, 0, 0), player.getPosition() + Vector3(1, 0, 0));
-	camera.transformToWorld(player.getPosition());
+	//camera.transformToWorld(player.getPosition());
 	initFire();
 
 	//mFire.setEmitPos(D3DXVECTOR3(10, 10, 10));
@@ -586,7 +584,7 @@ void ColoredCubeApp::initBasicVariables() {
 	placedPickups = false;
 	dayCount = 1;
 	won = false;
-	startingLevelPosition = Vector3(0.0f,5.0f,0.0f);
+	startingLevelPosition = Vector3(0.0f,5.0f, -1250.0f);
 }
 
 void ColoredCubeApp::initBuildingPositions() {
@@ -1203,6 +1201,7 @@ void ColoredCubeApp::updateScene(float dt)
 		//lock the screen at a certain spot and render the cube with the transition graphic and then...
 		if(input->isKeyDown(VK_SPACE)) {
 			camera.transformToWorld(startingLevelPosition);
+			//camera.setLookAt(camera.getPosition() + D3DXVECTOR3(0, 0, -1));
 			gameState = GameState::PLAYING;
 		}
 	}
