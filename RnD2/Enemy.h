@@ -10,9 +10,9 @@ using std::list;
 
 
 namespace enemyNS {
-	const float SPEED = 20.0f;
-	const float NIGHT_SPEED = 50.0f;
-	const float DAY_SPEED = 20.0f;
+	const float SPEED = 5.0f;
+	const float NIGHT_SPEED = 5.0f;
+	const float DAY_SPEED = 5.0f;
 }
 
 class Enemy : public GameObject
